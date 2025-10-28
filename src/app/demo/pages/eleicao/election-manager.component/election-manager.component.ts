@@ -269,64 +269,82 @@ export class EleicaoManageComponent implements OnInit {
     }
   }
 
-getCandidatoNome(cargo: Cargo, userId: string): string {
+  // =============================================
+  // NOVA FUNÇÃO: Copiar link de votação
+  // =============================================
+  async onCopiarLink(eleicaoId: string) {
+    const origin = window.location.origin; // Pega 'http://localhost:4200' ou 'https://seu-dominio.com'
+    const link = `${origin}/votar/${eleicaoId}`; // Monta o link público
+
+    try {
+      // Tenta usar a API de Clipboard (moderna e segura)
+      await navigator.clipboard.writeText(link);
+      alert(`Link de votação copiado!\n\n${link}`);
+    } catch (err) {
+      console.error('Falha ao copiar link: ', err);
+      // Fallback para caso o clipboard falhe (ex: em http ou permissões)
+      alert(`Falha ao copiar. Copie manualmente:\n\n${link}`);
+    }
+  }
+
+  getCandidatoNome(cargo: Cargo, userId: string): string {
     return cargo.candidatosIniciais.find(c => c.userId === userId)?.nome || 'Desconhecido';
   }
 
   // Adicione esta função em qualquer lugar dentro da classe EleicaoManageComponent
-async onForcarReapuracao(eleicao: Eleicao, cargo: Cargo) {
-  alert('Forçando re-apuração... Verificando 1º e 2º escrutínios.');
+  async onForcarReapuracao(eleicao: Eleicao, cargo: Cargo) {
+    alert('Forçando re-apuração... Verificando 1º e 2º escrutínios.');
 
-  const novosCargos = cloneDeep(eleicao.cargos);
-  const cargoAtual = novosCargos.find(c => c.id === cargo.id)!;
+    const novosCargos = cloneDeep(eleicao.cargos);
+    const cargoAtual = novosCargos.find(c => c.id === cargo.id)!;
 
-  // Se o cargo já tem vencedor, não faz nada
-  if (cargoAtual.vencedor) {
-    alert('Este cargo já possui um vencedor registrado.');
-    return;
-  }
+    // Se o cargo já tem vencedor, não faz nada
+    if (cargoAtual.vencedor) {
+      alert('Este cargo já possui um vencedor registrado.');
+      return;
+    }
 
-  let vencedorEncontrado: Candidato | undefined = undefined;
+    let vencedorEncontrado: Candidato | undefined = undefined;
 
-  // Roda a lógica de verificação para o 1º Escrutínio (se estiver fechado)
-  const escrutinio1 = cargoAtual.escrutinios.find(e => e.numero === 1);
-  if (escrutinio1 && escrutinio1.status === 'fechado') {
-    const { apuracao, totalVotosValidos } = this._apurarVotos(escrutinio1);
-    if (totalVotosValidos > 0) {
-      const [vencedorId, _votos] =
-        [...apuracao.votosPorCandidato.entries()]
-        .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
-      if (vencedorId) {
-        vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+    // Roda a lógica de verificação para o 1º Escrutínio (se estiver fechado)
+    const escrutinio1 = cargoAtual.escrutinios.find(e => e.numero === 1);
+    if (escrutinio1 && escrutinio1.status === 'fechado') {
+      const { apuracao, totalVotosValidos } = this._apurarVotos(escrutinio1);
+      if (totalVotosValidos > 0) {
+        const [vencedorId, _votos] =
+          [...apuracao.votosPorCandidato.entries()]
+          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+        if (vencedorId) {
+          vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+        }
       }
     }
-  }
 
-  // Se NÃO encontrou vencedor no 1º, verifica o 2º (se estiver fechado)
-  const escrutinio2 = cargoAtual.escrutinios.find(e => e.numero === 2);
-  if (!vencedorEncontrado && escrutinio2 && escrutinio2.status === 'fechado') {
-    const { apuracao, totalVotosValidos } = this._apurarVotos(escrutinio2);
-    if (totalVotosValidos > 0) {
-      const [vencedorId, _votos] =
-        [...apuracao.votosPorCandidato.entries()]
-        .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
-      if (vencedorId) {
-        vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+    // Se NÃO encontrou vencedor no 1º, verifica o 2º (se estiver fechado)
+    const escrutinio2 = cargoAtual.escrutinios.find(e => e.numero === 2);
+    if (!vencedorEncontrado && escrutinio2 && escrutinio2.status === 'fechado') {
+      const { apuracao, totalVotosValidos } = this._apurarVotos(escrutinio2);
+      if (totalVotosValidos > 0) {
+        const [vencedorId, _votos] =
+          [...apuracao.votosPorCandidato.entries()]
+          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+        if (vencedorId) {
+          vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+        }
       }
     }
-  }
 
-  // Se, após tudo isso, encontramos um vencedor
-  if (vencedorEncontrado) {
-    cargoAtual.vencedor = vencedorEncontrado;
-    try {
-      await this.eleicaoAdminService.updateEleicao(eleicao.id, { cargos: novosCargos });
-      alert(`CORRIGIDO: Vencedor ${vencedorEncontrado.nome} foi definido para o cargo ${cargo.titulo}.`);
-    } catch (e) {
-      console.error('Erro ao forçar re-apuração:', e);
+    // Se, após tudo isso, encontramos um vencedor
+    if (vencedorEncontrado) {
+      cargoAtual.vencedor = vencedorEncontrado;
+      try {
+        await this.eleicaoAdminService.updateEleicao(eleicao.id, { cargos: novosCargos });
+        alert(`CORRIGIDO: Vencedor ${vencedorEncontrado.nome} foi definido para o cargo ${cargo.titulo}.`);
+      } catch (e) {
+        console.error('Erro ao forçar re-apuração:', e);
+      }
+    } else {
+      alert('Nenhum vencedor encontrado após re-apuração. A eleição continua para o 3º escrutínio.');
     }
-  } else {
-    alert('Nenhum vencedor encontrado após re-apuração. A eleição continua para o 3º escrutínio.');
   }
-}
 }

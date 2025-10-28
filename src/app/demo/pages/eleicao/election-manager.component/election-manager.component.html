@@ -1,6 +1,12 @@
 <div class="manage-container" *ngIf="eleicao$ | async as eleicao; else loading">
 
-  <h1>{{ eleicao.titulo }}</h1>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem;">
+    <h1>{{ eleicao.titulo }}</h1>
+
+    <button (click)="onCopiarLink(eleicao.id)" style="background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+      🔗 Copiar Link de Votação
+    </button>
+  </div>
   <p><strong>Status:</strong> {{ eleicao.status }}</p>
 
   <div *ngIf="eleicao.cargoAbertoParaVotacao as aberto" class="votacao-aberta-aviso">
@@ -15,9 +21,6 @@
     <div *ngFor="let cargo of eleicao.cargos" class="cargo-card">
       <h3>{{ cargo.titulo }}</h3>
 
-      <button *ngIf="!cargo.vencedor" (click)="onForcarReapuracao(eleicao, cargo)" style="background: #fbc02d; color: #333; margin: 0 2rem 1rem 2rem; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600;">
-        Forçar Re-apuração de Vencedor
-      </button>
       <div *ngIf="cargo.vencedor; else controlesEscrutinio" class="vencedor-bloco">
         <h4>Eleição Finalizada</h4>
         <p>Vencedor: <strong>{{ cargo.vencedor.nome }}</strong></p>
