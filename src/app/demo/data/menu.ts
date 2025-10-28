@@ -16,16 +16,16 @@ export const menus: Navigation[] = [
         icon: '#custom-status-up'
       },
         {
-        id: 'Registrar Eleicoes',
-        title: 'Registrar Eleicoes',
+        id: 'Registrar Eleições',
+        title: 'Registrar Eleições',
         type: 'item',
         classes: 'nav-item',
         url: '/eleicoes/registrar',
         icon: '#custom-status-up'
       },
         {
-        id: 'Gerenciar Eleicoes',
-        title: 'Gerenciar Eleicoes',
+        id: 'Gerenciar Eleicões',
+        title: 'Gerenciar Eleicões',
         type: 'item',
         classes: 'nav-item',
         url: '/eleicoes/lista',

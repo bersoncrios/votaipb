@@ -1,310 +1,135 @@
-/* ==============================================
-   Variáveis de Cor (Tema do Admin)
-   ============================================== */
-:host {
-  --primary-color: #004a98;     // Azul principal
-  --primary-dark: #003366;      // Azul (hover)
-  --bg-color: #f4f7f6;          // Fundo da página
-  --card-bg-color: #ffffff;     // Fundo do card
-  --border-color: #e0e0e0;      // Borda padrão
-  --text-color: #333333;        // Cor principal do texto
-  --text-muted: #6c757d;      // Texto (status, etc)
-  --danger-color: #D32F2F;       // Vermelho (Remover/Erro)
-  --secondary-bg: #f1f3f4;
-  --secondary-text: #5f6368;
-  --secondary-border: #dadce0;
-}
+// Importa funções e mixins do Material para usar o tema
+@use '@angular/material' as mat;
 
-/* ==============================================
-   Container Principal (O Card do Wizard)
-   ============================================== */
+// Estilos gerais do container
 :host {
   display: block;
-  background-color: var(--bg-color);
-  min-height: 100vh;
   padding: 2rem 1rem;
-  box-sizing: border-box;
 }
 
 .eleicao-wizard-container {
   max-width: 900px;
   margin: 0 auto;
-  background-color: var(--card-bg-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-
-  h1 {
-    font-size: 1.75rem;
-    color: var(--primary-dark);
-    margin: 0;
-    padding: 1.5rem 2.5rem;
-    border-bottom: 1px solid var(--border-color);
-  }
 }
 
-/* ==============================================
-   Indicador de Passos
-   ============================================== */
-.steps-indicator {
-  display: flex;
+h1 {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+// Ajustes dentro dos passos do Stepper
+.mat-step-form {
+  padding-top: 1.5rem;
+}
+
+// Campo de formulário de largura total
+.full-width {
   width: 100%;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid var(--border-color);
-
-  div {
-    flex: 1;
-    text-align: center;
-    padding: 1rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    border-bottom: 3px solid transparent;
-    transition: all 0.2s ease;
-    white-space: nowrap; // Impede quebra de linha em telas menores
-  }
-
-  div.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-  }
 }
 
-/* ==============================================
-   Estilos Comuns (Formulários)
-   ============================================== */
-form {
-  h2 {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    color: var(--primary-dark);
-    font-weight: 600;
-  }
-
-  // Inputs e Selects
-  input[type="text"],
-  select {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box; // Garante que o padding não quebre o layout
-    margin-bottom: 0.5rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-    &:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px rgba(0, 74, 152, 0.2);
-    }
-  }
-
-  // Botão Primário (Avançar, Salvar)
-  button {
-    padding: 0.8rem 1.2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: white;
-    transition: background-color 0.2s ease;
-
-    &:hover:not(:disabled) {
-      background-color: var(--primary-dark);
-    }
-
-    &:disabled {
-      background-color: #bdc3c7;
-      cursor: not-allowed;
-    }
-  }
-
-  // Botões Secundários (Adicionar, Voltar)
-  button[type="button"] {
-    background-color: var(--secondary-bg);
-    color: var(--secondary-text);
-    border: 1px solid var(--secondary-border);
-
-    &:hover:not(:disabled) {
-      background-color: #e8eaed;
-    }
-  }
-
-  // Mensagem de Erro
-  .error {
-    color: var(--danger-color);
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
-  }
+// Botões de navegação do Stepper
+.step-nav-buttons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
 }
 
-/* ==============================================
-   Conteúdo de cada Passo
-   ============================================== */
-.wizard-step {
-  padding: 2.5rem;
-}
-
-/* Passo 1: Título */
-.form-field {
-  max-width: 500px;
-  margin-bottom: 1.5rem;
-
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-}
-
-/* Passo 2: Membros */
-.form-inline {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
+// Layout para adicionar membros (Passo 2)
+.add-membro-form {
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  align-items: flex-end;
+  align-items: flex-start;
   margin-bottom: 1.5rem;
 
+  .membro-input {
+    flex: 1 1 200px;
+  }
+
   button {
-    width: auto; // Botão "Adicionar" não ocupa 100%
+    margin-top: 8px;
+    flex-shrink: 0;
   }
 }
 
-.lista-membros,
-.lista-cargos {
+// Lista de membros/candidatos
+.mat-mdc-list-item {
+  height: auto !important;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+// Botão Adicionar Cargo (Passo 3)
+.add-cargo-button {
+  margin-bottom: 1.5rem;
+}
+
+// Lista de Cards de Cargos
+.lista-cargos-material {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.5rem;
 }
 
-.membro-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-
-  span {
-    font-weight: 500;
+.cargo-card-material {
+  .mat-mdc-card-header {
+    padding-bottom: 0;
+    justify-content: space-between;
   }
 
-  // Botão de Remover
-  button {
-    background: transparent;
-    color: var(--danger-color);
-    border: none;
-    width: auto;
-    padding: 0.25rem;
-    font-weight: 700;
+  .cargo-title-select {
+    width: 70%;
 
-    &:hover {
-      background: #ffebee; // Fundo vermelho claro no hover
-    }
+  .remove-cargo-button {
+    margin-top: -8px;
+  }
+
+  .mat-mdc-card-content {
+    padding-top: 1rem;
   }
 }
 
-/* Passo 3: Cargos */
-.lista-cargos > button {
-  // Botão "Adicionar Novo Cargo"
-  width: auto;
-  align-self: flex-start;
-  margin-bottom: 1rem;
-}
-
-.cargo-bloco {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  overflow: hidden; // Para o header
-}
-
-.cargo-header {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid var(--border-color);
-  align-items: center;
-
-  select {
-    flex: 1; // Ocupa a maior parte do espaço
-    margin-bottom: 0;
-  }
-
-  // Botão "Remover Cargo"
-  button {
-    width: auto;
-    background-color: var(--danger-color);
-    color: white;
-    border: none;
-
-    &:hover {
-      background-color: #b71c1c; // Vermelho escuro
-    }
-  }
-}
-
-.candidatos-container {
-  padding: 1.5rem;
-
+.review-section {
   h3 {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    margin-top: 0;
-    margin-bottom: 1rem;
-    border-bottom: 1px dotted #ccc;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--primary-color, #004a98);
+    border-bottom: 1px solid #eee;
     padding-bottom: 0.5rem;
   }
-
-  select {
-    margin-bottom: 1.5rem;
+  p {
+    margin-bottom: 1rem;
   }
-}
-
-// Reutiliza o estilo de .membro-item
-.candidato-item {
-  @extend .membro-item; // Herda todo o estilo de .membro-item
-}
-
-/* Passo 4: Revisão */
-.wizard-step[ngIf*="step === 4"] {
-  h3, h4 {
-    color: var(--primary-dark);
-    margin-bottom: 0.5rem;
-  }
-  h4 {
-    margin-top: 1.5rem;
-  }
-
-  ul {
-    list-style-type: disc;
-    padding-left: 1.5rem;
-  }
-
-  li {
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
-  }
-
-  strong { // Título do cargo
-    font-size: 1.1rem;
-    color: var(--text-color);
+  strong {
+    display: block;
+    margin-top: 1rem;
     font-weight: 600;
   }
+  .mat-mdc-list-base {
+    padding-top: 0;
+  }
 }
 
+:host .cargo-card-material {
 
-/* Navegação Voltar/Avançar */
-.wizard-nav {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color);
+  .cargo-card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 16px 0 16px;
+
+    .cargo-title-select-header {
+      width: calc(100% - 60px);
+      margin-right: 10px;
+      padding-bottom: 0;
+      .mat-mdc-form-field-subscript-wrapper {
+         display: none;
+      }
+       &.mat-form-field-invalid .mat-mdc-form-field-subscript-wrapper {
+         display: block;
+      }
+    }
+  }
+}
 }
