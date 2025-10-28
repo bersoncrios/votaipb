@@ -50,18 +50,6 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         loadComponent: () =>
           import('./demo/pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
-        path: 'component',
-        canActivate: [AuthGuard],
-        loadChildren: () =>
-          import('./demo/pages/components/component.routes').then(m => m.routes)
-      },
-      {
-        path: 'sample-page',
-        canActivate: [AuthGuard],
-        loadComponent: () =>
-          import('./demo/pages/other/sample-page/sample-page.component').then(m => m.SamplePageComponent)
       }
     ]
   }
