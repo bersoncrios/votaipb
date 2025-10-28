@@ -4,17 +4,4 @@
       <i class="ti ti-menu-2"></i>
     </a>
   </button>
-
-  <button mat-button [matMenuTriggerFor]="menu" class="header-item" aria-label="search">
-    <a class="pc-head-link">
-      <svg class="pc-icon">
-        <use xlink:href="assets/fonts/custom-icon.svg#custom-search-normal-1"></use>
-      </svg>
-    </a>
-  </button>
-  <mat-menu #menu="matMenu" class="dropdown-item-search">
-    <mat-form-field class="w-100">
-      <input matInput (click)="$event.stopPropagation()" placeholder="Search here. . ." />
-    </mat-form-field>
-  </mat-menu>
 </div>

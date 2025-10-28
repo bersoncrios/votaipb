@@ -1,126 +1,251 @@
 /* Variáveis (Combine com seu tema) */
 :host {
   --primary-color: #004a98;
-  --bg-color: #f4f7f6;
+  --primary-dark: #003366;
+  --bg-color: #f8f9fa; // Fundo um pouco mais claro
   --card-bg-color: #ffffff;
-  --border-color: #e0e0e0;
-  --text-color: #333333;
+  --border-color: #dee2e6; // Borda mais suave
+  --text-color: #212529; // Texto principal mais escuro
   --text-muted: #6c757d;
-  --status-agendada: #fbc02d;    // Amarelo
-  --status-em_andamento: #4CAF50; // Verde
-  --status-finalizada: #757575;  // Cinza
+  --link-color: var(--primary-color);
+  --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); // Sombra mais pronunciada no hover
+  --border-radius: 8px; // Raio de borda padrão
+
+  // Cores de Status
+  --status-agendada-bg: #fff3cd; // Amarelo claro
+  --status-agendada-text: #664d03; // Amarelo escuro
+  --status-agendada-border: #ffecb5;
+
+  --status-em_andamento-bg: #d1e7dd; // Verde claro
+  --status-em_andamento-text: #0f5132; // Verde escuro
+  --status-em_andamento-border: #badbcc;
+
+  --status-finalizada-bg: #e2e3e5; // Cinza claro
+  --status-finalizada-text: #41464b; // Cinza escuro
+  --status-finalizada-border: #d3d6d8;
 }
 
 .list-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 2rem; // Aumenta padding
   font-family: inherit;
   color: var(--text-color);
 
-  h1 {
-    color: var(--primary-color);
-    margin-top: 0;
+  // Cabeçalho
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; // Quebra linha em telas menores
+    gap: 1rem; // Espaço entre título e botão
+    margin-bottom: 1.5rem;
+
+    h1 {
+      color: var(--primary-dark); // Cor mais escura para o título
+      margin: 0;
+      font-size: 1.8rem; // Tamanho ligeiramente maior
+    }
   }
 
+  // Botão Criar Nova Eleição
   .btn-criar-nova {
-    display: inline-block;
+    display: inline-flex; // Para alinhar ícone e texto
+    align-items: center;
+    gap: 0.5rem; // Espaço entre ícone e texto
     background-color: var(--primary-color);
     color: white;
-    padding: 0.8rem 1.2rem;
-    border-radius: 6px;
+    padding: 0.75rem 1.5rem; // Padding ajustado
+    border-radius: var(--border-radius);
     text-decoration: none;
     font-weight: 600;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    border: none; // Remove borda se for link estilizado como botão
+    cursor: pointer;
+
+    // Ícone (pseudo-elemento, idealmente usar <mat-icon> ou <i>)
+    &::before {
+      content: '+'; // Simples sinal de mais
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
     &:hover {
-      background-color: #003366;
+      background-color: var(--primary-dark);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
   }
 
   hr {
     border: 0;
     border-top: 1px solid var(--border-color);
-    margin: 2rem 0;
+    margin: 2.5rem 0; // Aumenta margem
   }
 }
 
+// Estados (Carregando, Erro, Vazio)
 .loading-message,
 .error-message,
 .empty-state {
   text-align: center;
-  padding: 3rem;
+  padding: 4rem 2rem;
   color: var(--text-muted);
   font-size: 1.1rem;
+  background-color: var(--card-bg-color); // Fundo branco
+  border: 1px dashed var(--border-color); // Borda tracejada
+  border-radius: var(--border-radius);
+  margin-top: 2rem;
+
+  p {
+    margin-bottom: 1rem;
+  }
 }
 .error-message {
-  color: #D32F2F;
+  color: #842029; // Vermelho mais escuro (Bootstrap danger text)
+  background-color: #f8d7da; // Fundo vermelho claro
+  border-color: #f5c2c7; // Borda vermelha
+}
+.empty-state {
+  // Adiciona um ícone simples via pseudo-elemento
+  &::before {
+    content: '📄'; // Ícone de documento
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+  // Estiliza o link/botão dentro do empty state
+  a {
+    // Reutiliza estilo do .btn-criar-nova, mas talvez com cor secundária
+    @extend .btn-criar-nova;
+    margin-top: 1rem;
+  }
 }
 
+// Grid de Eleições
 .eleicoes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  // Colunas responsivas, mínimo de 320px
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem; // Aumenta espaçamento entre cards
 }
 
+// Card Individual
 .eleicao-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background-color: var(--card-bg-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); // Sombra sutil
   border: 1px solid var(--border-color);
   overflow: hidden;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; // Transição suave
+
+  &:hover {
+    transform: translateY(-5px); // Efeito de levantar
+    box-shadow: var(--hover-shadow); // Sombra mais forte
+  }
 
   .card-body {
-    padding: 1.5rem;
+    padding: 1.5rem 1.75rem; // Padding ajustado
+    flex-grow: 1; // Faz o corpo ocupar o espaço antes do footer
   }
 
   .card-title {
-    font-size: 1.5rem;
+    font-size: 1.4rem; // Ligeiramente menor
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--primary-dark);
     margin-top: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem; // Menos espaço abaixo do título
   }
 
+  // Novo Estilo para Status (mais visual)
   .card-status {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
+    display: inline-flex; // Para alinhar ícone/ponto e texto
+    align-items: center;
+    gap: 0.5rem; // Espaço entre ponto e texto
+    padding: 0.3rem 0.8rem;
     border-radius: 12px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: white;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem; // Mais espaço abaixo do status
+    border: 1px solid transparent; // Borda base
 
-    &.agendada { background-color: var(--status-agendada); color: #333; }
-    &.em_andamento { background-color: var(--status-em_andamento); }
-    &.finalizada { background-color: var(--status-finalizada); }
+    // Ponto colorido antes do texto
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: currentColor; // Usa a cor do texto do status
+    }
+
+    // Aplica cores de fundo, texto e borda por classe
+    &.agendada {
+      background-color: var(--status-agendada-bg);
+      color: var(--status-agendada-text);
+      border-color: var(--status-agendada-border);
+    }
+    &.em_andamento {
+      background-color: var(--status-em_andamento-bg);
+      color: var(--status-em_andamento-text);
+      border-color: var(--status-em_andamento-border);
+    }
+    &.finalizada {
+      background-color: var(--status-finalizada-bg);
+      color: var(--status-finalizada-text);
+      border-color: var(--status-finalizada-border);
+    }
   }
 
+  // Informações (Cargos, Membros) com Ícones
   .card-info {
-    font-size: 1rem;
+    font-size: 0.95rem; // Ligeiramente menor
     color: var(--text-muted);
-    margin: 0.25rem 0;
+    margin: 0.5rem 0; // Mais espaço vertical
+    display: flex; // Para alinhar ícone e texto
+    align-items: center;
+    gap: 0.6rem; // Espaço entre ícone e texto
+
+    // Ícone (idealmente usar <mat-icon> ou <i>)
+    &.info-cargos::before {
+      content: '🗳️'; // Ícone urna (exemplo)
+      opacity: 0.7;
+    }
+    &.info-membros::before {
+      content: '👥'; // Ícone pessoas (exemplo)
+      opacity: 0.7;
+    }
   }
 
+  // Footer do Card
   .card-footer {
-    background-color: #f8f9fa;
+    background-color: #f9fafb; // Fundo ligeiramente diferente
     border-top: 1px solid var(--border-color);
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.75rem;
     text-align: right;
   }
 
+  // Botão Gerenciar
   .btn-gerenciar {
     background-color: var(--primary-color);
     color: white;
     padding: 0.6rem 1.2rem;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     text-decoration: none;
     font-weight: 600;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-block; // Garante que transform funcione
+
     &:hover {
-      background-color: #003366;
+      background-color: var(--primary-dark);
+      transform: scale(1.03); // Leve aumento no hover
+    }
+    &:active {
+       transform: scale(0.98); // Efeito de clique
     }
   }
 }
