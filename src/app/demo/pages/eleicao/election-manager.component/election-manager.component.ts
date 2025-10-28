@@ -9,20 +9,25 @@ import { Candidato } from '../../../../models/Candidato';
 
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { CommonModule } from '@angular/common'; // Necessário para AsyncPipe, *ngIf, *ngFor
-import { cloneDeep } from 'lodash-es'; // (npm install lodash-es @types/lodash-es)
+import { CommonModule } from '@angular/common';
+import { cloneDeep } from 'lodash-es';
 
-// Tipo para os resultados da apuração
 type ApuracaoResultado = {
   votosPorCandidato: Map<string, number>;
   totalBrancos: number;
   totalNulos: number;
 };
 
+type ApuracaoOrdenadaItem = {
+  userId: string;
+  nome: string;
+  votos: number;
+};
+
 @Component({
   selector: 'app-eleicao-manage',
-  standalone: true, // Vamos fazer este standalone
-  imports: [CommonModule], // Importa CommonModule para *ngIf, *ngFor, AsyncPipe
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './election-manager.component.html',
   styleUrls: ['./election-manager.component.scss']
 })
@@ -33,14 +38,13 @@ export class EleicaoManageComponent implements OnInit {
 
   public eleicao$!: Observable<Eleicao>;
   public apuracaoCache = new Map<string, ApuracaoResultado>(); // Cache para resultados
+  public apuracaoOrdenadaCache = new Map<string, ApuracaoOrdenadaItem[]>();
 
   ngOnInit(): void {
-    // Pega o 'id' da URL e usa-o para buscar a eleição
     this.eleicao$ = this.route.paramMap.pipe(
       switchMap(params => {
         const id = params.get('id');
         if (!id) {
-          // Lidar com erro (ex: redirecionar)
           throw new Error('ID da eleição não fornecido');
         }
         return this.eleicaoAdminService.getEleicaoObservable(id);
@@ -106,6 +110,16 @@ export class EleicaoManageComponent implements OnInit {
     // 3. Salva no cache para o template
     const cacheKey = `${cargo.id}-${escrutinio.numero}`;
     this.apuracaoCache.set(cacheKey, apuracao);
+    const apuracaoOrdenada: ApuracaoOrdenadaItem[] =
+      Array.from(apuracao.votosPorCandidato.entries()) // Converte Map para [userId, votos][]
+      .map(([userId, votos]) => ({ // Converte para o novo tipo
+        userId: userId,
+        nome: this.getCandidatoNome(cargo, userId), // Pega o nome
+        votos: votos
+      }))
+      .sort((a, b) => b.votos - a.votos); // Ordena (maior para o menor)
+
+    this.apuracaoOrdenadaCache.set(cacheKey, apuracaoOrdenada);
 
     let vencedorEncontrado: Candidato | undefined = undefined;
 
@@ -218,6 +232,16 @@ export class EleicaoManageComponent implements OnInit {
     // 2. Salva no cache para exibição no template
     const cacheKey = `${cargo.id}-${escrutinio.numero}`;
     this.apuracaoCache.set(cacheKey, apuracao);
+    const apuracaoOrdenada: ApuracaoOrdenadaItem[] =
+      Array.from(apuracao.votosPorCandidato.entries())
+      .map(([userId, votos]) => ({
+        userId: userId,
+        nome: this.getCandidatoNome(cargo, userId),
+        votos: votos
+      }))
+      .sort((a, b) => b.votos - a.votos);
+
+    this.apuracaoOrdenadaCache.set(cacheKey, apuracaoOrdenada);
   }
 
   /**

@@ -295,3 +295,73 @@
     color: #1B5E20; // Verde mais escuro
   }
 }
+
+/* ==============================================
+Estilos para a Nova Lista de Apuração Ordenada
+==============================================
+*/
+.apuracao-resultados {
+
+  .lista-resultados-apuracao {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 1rem 0;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+
+      .nome-candidato {
+        font-size: 0.95rem;
+        font-weight: 500;
+
+        .id-candidato {
+          font-size: 0.8rem;
+          color: var(--text-muted, #6c757d);
+          display: block; // Coloca o ID abaixo do nome
+        }
+      }
+
+      .votos-candidato {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Destaque do Vencedor */
+    li.vencedor-item {
+      background-color: #e8f5e9; // Verde claro
+      border-left: 4px solid #4CAF50; // Verde
+
+      .nome-candidato {
+        color: #1B5E20; // Verde escuro
+      }
+      .votos-candidato {
+        color: #1B5E20;
+        font-weight: 700;
+      }
+    }
+
+    /* Outros candidatos */
+    li.outros-item {
+      background-color: #fafafa;
+      border-left: 4px solid #eee;
+    }
+  }
+
+  .brancos-nulos {
+    border-top: 1px dashed #ccc;
+    padding-top: 0.75rem;
+    margin-top: 1rem;
+
+    p {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0.25rem 0;
+      color: var(--text-muted, #6c757d);
+    }
+  }
+}

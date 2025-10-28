@@ -2,11 +2,11 @@
 
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem;">
     <h1>{{ eleicao.titulo }}</h1>
-
     <button (click)="onCopiarLink(eleicao.id)" style="background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
       🔗 Copiar Link de Votação
     </button>
   </div>
+
   <p><strong>Status:</strong> {{ eleicao.status }}</p>
 
   <div *ngIf="eleicao.cargoAbertoParaVotacao as aberto" class="votacao-aberta-aviso">
@@ -21,68 +21,70 @@
     <div *ngFor="let cargo of eleicao.cargos" class="cargo-card">
       <h3>{{ cargo.titulo }}</h3>
 
-      <div *ngIf="cargo.vencedor; else controlesEscrutinio" class="vencedor-bloco">
+      <div *ngIf="cargo.vencedor" class="vencedor-bloco">
         <h4>Eleição Finalizada</h4>
         <p>Vencedor: <strong>{{ cargo.vencedor.nome }}</strong></p>
         <p>(ID: {{ cargo.vencedor.userId }})</p>
       </div>
 
-      <ng-template #controlesEscrutinio>
-        <div class="escrutinios-lista">
+      <div class="escrutinios-lista">
 
-          <div *ngFor="let escrutinio of cargo.escrutinios" class="escrutinio-card">
-            <h4>{{ escrutinio.numero }}º Escrutínio</h4>
-            <p><strong>Status:</strong> {{ escrutinio.status }}</p>
+        <div *ngFor="let escrutinio of cargo.escrutinios" class="escrutinio-card">
+          <h4>{{ escrutinio.numero }}º Escrutínio</h4>
+          <p><strong>Status:</strong> {{ escrutinio.status }}</p>
 
-            <div class="controles">
+          <div *ngIf="!cargo.vencedor" class="controles">
 
-              <ng-container *ngIf="escrutinio.status === 'nao_iniciado'">
-
-                <button
-                  *ngIf="escrutinio.numero === 3 && escrutinio.candidatos.length === 0"
-                  (click)="onPreparar3Escrutinio(eleicao, cargo)"
-                  [disabled]="cargo.escrutinios[1].status !== 'fechado'">
-                  Preparar 3º Escrutínio (Top 2)
-                </button>
-
-                <button
-                  (click)="onAbrirEscrutinio(eleicao, cargo, escrutinio)"
-                  [disabled]="eleicao.cargoAbertoParaVotacao !== null || (escrutinio.numero === 3 && escrutinio.candidatos.length === 0)">
-                  Abrir Votação
-                </button>
-              </ng-container>
-
-              <button *ngIf="escrutinio.status === 'aberto'"
-                      (click)="onFecharEscrutinio(eleicao, cargo, escrutinio)">
-                Fechar Votação e Apurar
+            <ng-container *ngIf="escrutinio.status === 'nao_iniciado'">
+              <button
+                *ngIf="escrutinio.numero === 3 && escrutinio.candidatos.length === 0"
+                (click)="onPreparar3Escrutinio(eleicao, cargo)"
+                [disabled]="cargo.escrutinios[1].status !== 'fechado'">
+                Preparar 3º Escrutínio (Top 2)
               </button>
+              <button
+                (click)="onAbrirEscrutinio(eleicao, cargo, escrutinio)"
+                [disabled]="eleicao.cargoAbertoParaVotacao !== null || (escrutinio.numero === 3 && escrutinio.candidatos.length === 0)">
+                Abrir Votação
+              </button>
+            </ng-container>
 
-              <div *ngIf="escrutinio.status === 'fechado'" class="apuracao-resultados">
-                <strong>Resultados ({{ escrutinio.votos.length }} votos)</strong>
-
-                <button *ngIf="!apuracaoCache.has(cargo.id + '-' + escrutinio.numero)"
-                        (click)="onApurar(cargo, escrutinio)">
-                  Ver Apuração
-                </button>
-
-                <ng-container *ngIf="apuracaoCache.has(cargo.id + '-' + escrutinio.numero)">
-                  <ul *ngFor="let item of apuracaoCache.get(cargo.id + '-' + escrutinio.numero)?.votosPorCandidato | keyvalue">
-                    <li>
-                      {{ getCandidatoNome(cargo, item.key) }}: <strong>{{ item.value }} votos</strong>
-                    </li>
-                  </ul>
-                  <p>Brancos: {{ apuracaoCache.get(cargo.id + '-' + escrutinio.numero)?.totalBrancos }}</p>
-                  <p>Nulos: {{ apuracaoCache.get(cargo.id + '-' + escrutinio.numero)?.totalNulos }}</p>
-                </ng-container>
-              </div>
-
-            </div>
+            <button *ngIf="escrutinio.status === 'aberto'"
+                    (click)="onFecharEscrutinio(eleicao, cargo, escrutinio)">
+              Fechar Votação e Apurar
+            </button>
           </div>
-        </div>
-      </ng-template>
-    </div>
-  </div>
-</div>
+
+          <div *ngIf="escrutinio.status === 'fechado'" class="apuracao-resultados">
+            <strong>Resultados ({{ escrutinio.votos.length }} votos)</strong>
+
+            <button *ngIf="!apuracaoOrdenadaCache.has(cargo.id + '-' + escrutinio.numero)"
+                    (click)="onApurar(cargo, escrutinio)">
+              Ver Apuração
+            </button>
+
+            <ng-container *ngIf="apuracaoOrdenadaCache.has(cargo.id + '-' + escrutinio.numero)">
+              <ul class="lista-resultados-apuracao">
+                <li *ngFor="let item of apuracaoOrdenadaCache.get(cargo.id + '-' + escrutinio.numero); let i = index"
+                    [class.vencedor-item]="i === 0 && item.votos > 0"
+                    [class.outros-item]="i > 0 || item.votos === 0">
+
+                  <span class="nome-candidato">
+                    {{ i + 1 }}. {{ item.nome }}
+                    <span class="id-candidato">(ID: {{ item.userId }})</span>
+                  </span>
+
+                  <strong class="votos-candidato">{{ item.votos }} votos</strong>
+                </li>
+              </ul>
+
+              <div class="brancos-nulos">
+                <p>Brancos: {{ apuracaoCache.get(cargo.id + '-' + escrutinio.numero)?.totalBrancos }}</p>
+                <p>Nulos: {{ apuracaoCache.get(cargo.id + '-' + escrutinio.numero)?.totalNulos }}</p>
+              </div>
+            </ng-container>
+
+          </div> </div> </div> </div> </div> </div>
 
 <ng-template #loading>
   <p>Carregando dados da eleição...</p>
