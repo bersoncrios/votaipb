@@ -1,6 +1,6 @@
 <div class="header-button">
   <button mat-button [matMenuTriggerFor]="Notification" aria-label="Notificações" class="header-item">
-    <a href="javascript:" class="pc-head-link badge-on-button" matBadge="4" matBadgeColor="primary" matBadgeOverlap="false">
+    <a href="javascript:" class="pc-head-link badge-on-button" matBadge="0" matBadgeColor="primary" matBadgeOverlap="false">
       <svg class="pc-icon">
         <use xlink:href="assets/fonts/custom-icon.svg#custom-notification"></use>
       </svg>
@@ -22,31 +22,7 @@
     </div>
     <ng-scrollbar style="height: calc(100vh - 215px)" visibility="hover">
       <div class="dropdown-body">
-        @for (list of mainCards; track list) {
-          <h6 class="m-b-10 text-muted">{{ list.day }}</h6>
-          @for (card of list.cards; track card) {
-            <app-card [showHeader]="false" cardClass="notification-card m-b-10" [padding]="16">
-              <div class="flex">
-                <div class="topic-icon flex-shrink-0">
-                  <svg class="pc-icon text-primary-500">
-                    <use attr.xlink:href="assets/fonts/custom-icon.svg#{{ card.icon }}"></use>
-                  </svg>
-                </div>
-                <div class="topic-description flex-grow-1 m-l-15">
-                  <span class="mat-small float-end text-muted">{{ card.time }}</span>
-                  <h5 class="m-b-10">{{ card.position }}</h5>
-                  <p class="m-b-0 mat-body">{{ card.description }}</p>
-                  @if (card.status === true) {
-                    <div class="m-t-10">
-                      <button mat-stroked-button color="warn" class="m-r-10">Recusar</button>
-                      <button mat-flat-button color="primary">Aceitar</button>
-                    </div>
-                  }
-                </div>
-              </div>
-            </app-card>
-          }
-        }
+
       </div>
     </ng-scrollbar>
     <div class="dropdown-footer text-center">
@@ -69,22 +45,6 @@
             <!-- <p class="mat-body text-muted">{{ authService|| 'email@exemplo.com' }}</p> -->
           </div>
         </div>
-        <mat-divider class="m-b-15 m-t-15"></mat-divider>
-
-        <a href="javascript:" class="dropdown-item text-muted">
-          <svg class="pc-icon m-r-10">
-            <use xlink:href="assets/fonts/custom-icon.svg#custom-setting-outline"></use>
-          </svg>
-          <h6 class="m-b-0">Configurações</h6>
-        </a>
-        <a href="javascript:" class="dropdown-item text-muted">
-          <svg class="pc-icon m-r-10">
-            <use xlink:href="assets/fonts/custom-icon.svg#custom-lock-outline"></use>
-          </svg>
-          <h6 class="m-b-0">Mudar Senha</h6>
-        </a>
-        <mat-divider class="m-b-15 m-t-15"></mat-divider>
-
         <div class="grid m-b-15">
           <button mat-stroked-button color="warn" class="user-logout" (click)="authService.logout()">
             <div class="flex-inline align-item-center">
