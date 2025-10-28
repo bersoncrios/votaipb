@@ -10,6 +10,11 @@ import { MenuCollapseComponent } from './menu-collapse/menu-collapse.component';
 import { MenuGroupVerticalComponent } from './menu-group/menu-group.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
+// ===========================================
+// 1. IMPORTE O AUTHSERVICE
+// ===========================================
+import { AuthService } from 'src/app/services/auth.service';
+
 @Component({
   selector: 'app-vertical-menu',
   imports: [SharedModule, MenuItemComponent, MenuCollapseComponent, MenuGroupVerticalComponent, CommonModule, NgScrollbarModule],
@@ -19,6 +24,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 export class VerticalMenuComponent {
   private location = inject(Location);
   private locationStrategy = inject(LocationStrategy);
+
+  public authService = inject(AuthService);
 
   // public props
   menus = input.required<NavigationItem[]>();
@@ -51,20 +58,40 @@ export class VerticalMenuComponent {
 
   accountList = [
     {
-      icon: 'ti ti-user',
-      title: 'My Account'
-    },
-    {
-      icon: 'ti ti-settings',
-      title: 'Settings'
-    },
-    {
-      icon: 'ti ti-lock',
-      title: 'Lock Screen'
-    },
-    {
       icon: 'ti ti-power',
-      title: 'Logout'
+      title: 'Logout',
+      click: () => this.onLogout()
     }
   ];
+
+  onLogout(): void {
+    this.authService.logout();
+  }
+
+  // ===========================================
+  // NOVA FUNÇÃO: GERA AS INICIAIS
+  // ===========================================
+  /**
+   * Retorna as duas primeiras iniciais de um nome.
+   * Ex: "Jonh Smith" -> "JS"
+   * Ex: "Ana" -> "A"
+   */
+  getUserInitials(): string {
+    const name = this.authService.nome;
+    if (!name) {
+      return '?'; // Ou um fallback se o nome não estiver disponível
+    }
+
+    const parts = name.split(' ').filter(p => p.length > 0);
+    if (parts.length === 0) {
+      return '?';
+    }
+
+    let initials = parts[0].charAt(0);
+    if (parts.length > 1) {
+      initials += parts[1].charAt(0);
+    }
+
+    return initials.toUpperCase();
+  }
 }

@@ -1,12 +1,15 @@
 <ng-scrollbar style="height: calc(100vh - 88px)" visibility="hover" orientation="vertical">
+
   <app-card [showHeader]="false" cardClass="user-card" [padding]="20">
     <div class="flex align-items-center">
       <div class="flex-shrink-0">
-        <img src="assets/images/user/avatar-1.jpg" alt="user-image" class="user-avatar" />
-      </div>
+        <div class="user-initials-avatar">
+          <span>{{ getUserInitials() }}</span>
+        </div>
+        </div>
       <div class="flex-grow-1 user-details">
-        <h6>Jonh Smith</h6>
-        <small>Administrator</small>
+
+        <h6>{{ authService.nome || 'UNKNOWN' }}</h6>
       </div>
       <div class="user-setting">
         <a href="javascript:" [matMenuTriggerFor]="menu" class="text-muted">
@@ -15,9 +18,9 @@
           </svg>
         </a>
         <mat-menu #menu="matMenu" [overlapTrigger]="false" yPosition="below" xPosition="after">
+
           @for (list of accountList; track $index) {
-            <button mat-menu-item>
-              <a href="javascript:" class="text-muted">
+            <button mat-menu-item (click)="list.click()"> <a href="javascript:" class="text-muted">
                 <i class="{{ list.icon }} f-18 m-r-10"></i>
                 <span class="mat-body">{{ list.title }}</span>
               </a>
@@ -27,6 +30,7 @@
       </div>
     </div>
   </app-card>
+
   <div class="navbar-content">
     <ul class="nav coded-inner-navbar" (click)="fireOutClick()" aria-hidden="true">
       @for (item of menus(); track item) {

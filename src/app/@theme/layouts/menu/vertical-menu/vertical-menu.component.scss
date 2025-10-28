@@ -3,3 +3,29 @@
 .w-50 {
   width: 50%;
 }
+/* =========================================== */
+/* Estilos para o Avatar de Iniciais */
+/* =========================================== */
+.user-initials-avatar {
+  width: 40px; /* Mesma largura da imagem original */
+  height: 40px; /* Mesma altura da imagem original */
+  border-radius: 50%; /* Faz a bola */
+  background-color: #4CAF50; /* Verde */
+  color: white; /* Cor do texto */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.1rem; /* Tamanho da fonte das iniciais */
+  flex-shrink: 0; /* Evita que ocupe muito espaço */
+  margin-right: 15px; // Espaçamento com o texto
+}
+
+/* Opcional: Remova o estilo do user-avatar original se não for mais usar */
+/* Se a classe .user-avatar não for usada em mais nenhum lugar, pode apagar este bloco */
+.user-avatar {
+  display: none; // Esconde a imagem de avatar padrão
+  // width: 40px;
+  // height: 40px;
+  // border-radius: 50%;
+}
