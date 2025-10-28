@@ -1,0 +1,123 @@
+<div class="eleicao-wizard-container">
+  <h1>Cadastrar Nova Eleição</h1>
+
+  <div class="steps-indicator">
+    <div [class.active]="step === 1">Passo 1: Título</div>
+    <div [class.active]="step === 2">Passo 2: Membros</div>
+    <div [class.active]="step === 3">Passo 3: Cargos</div>
+    <div [class.active]="step === 4">Passo 4: Revisar</div>
+  </div>
+
+  <form [formGroup]="eleicaoForm" (ngSubmit)="onSubmit()">
+
+    <div *ngIf="step === 1" class="wizard-step">
+      <h2>Detalhes da Eleição</h2>
+      <div class="form-field">
+        <label for="titulo">Título da Eleição</label>
+        <input id="titulo" formControlName="titulo" placeholder="Ex: Eleição Sociedade 2025">
+        <div *ngIf="eleicaoForm.get('titulo')?.touched && eleicaoForm.get('titulo')?.invalid" class="error">
+          Título é obrigatório.
+        </div>
+      </div>
+      <button type="button" (click)="nextStep()" [disabled]="eleicaoForm.get('titulo')?.invalid">
+        Avançar para Membros
+      </button>
+    </div>
+
+    <div *ngIf="step === 2" class="wizard-step">
+      <h2>Membros Elegíveis (Total: {{ membrosElegiveisArr.length }})</h2>
+      <p>Adicione os membros que poderão votar e ser votados.</p>
+
+      <div class="form-inline">
+        <input #idInput placeholder="ID do Membro (ou CPF)">
+        <input #nomeInput placeholder="Nome Completo do Membro">
+        <button type="button" (click)="addMembro(idInput, nomeInput)">Adicionar Membro</button>
+      </div>
+
+      <div formArrayName="membrosElegiveis" class="lista-membros">
+        <div *ngFor="let membro of membrosElegiveisArr.controls; let i = index" [formGroupName]="i" class="membro-item">
+          <span>({{ membro.value.id }}) - {{ membro.value.nome }}</span>
+          <button type="button" (click)="removeMembro(i)">Remover</button>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button type="button" (click)="prevStep()">Voltar</button>
+        <button type="button" (click)="nextStep()" [disabled]="membrosElegiveisArr.length === 0">
+          Avançar para Cargos
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="step === 3" class="wizard-step">
+      <h2>Cargos da Eleição</h2>
+      <button type="button" (click)="addCargo()">Adicionar Novo Cargo</button>
+
+      <div formArrayName="cargos" class="lista-cargos">
+        <div *ngFor="let cargo of cargosArr.controls; let i = index" [formGroupName]="i" class="cargo-bloco">
+
+          <div class="cargo-header">
+            <select formControlName="titulo">
+              <option value="" disabled>Selecione um Cargo</option>
+              <option *ngFor="let c of cargosDisponiveis" [value]="c">{{ c }}</option>
+            </select>
+            <button type="button" (click)="removeCargo(i)">Remover Cargo</button>
+          </div>
+
+          <div class="candidatos-container">
+            <h3>Candidatos para {{ cargo.value.titulo || '...' }}</h3>
+
+            <select #membroSelect (change)="addCandidatoAoCargo(i, membrosElegiveisArr.value[membroSelect.value])">
+              <option value="" disabled selected>Adicionar candidato (da lista de membros)</option>
+              <option *ngFor="let membro of membrosElegiveisArr.value; let mIdx = index" [value]="mIdx">
+                {{ membro.nome }}
+              </option>
+            </select>
+
+            <div [formArrayName]="'candidatosIniciais'">
+              <div *ngFor="let cand of getCandidatosIniciais(i).controls; let cIdx = index" [formGroupName]="cIdx" class="candidato-item">
+                <span>{{ cand.value.nome }}</span>
+                <button type="button" (click)="removeCandidatoDoCargo(i, cIdx)">Remover</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button type="button" (click)="prevStep()">Voltar</button>
+        <button type="button" (click)="nextStep()" [disabled]="cargosArr.invalid">
+          Revisar Eleição
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="step === 4" class="wizard-step">
+      <h2>Revisão</h2>
+      <p>Por favor, revise os dados antes de salvar.</p>
+
+      <h3>Título: {{ eleicaoForm.get('titulo')?.value }}</h3>
+
+      <h4>Membros Elegíveis ({{ membrosElegiveisArr.length }})</h4>
+      <ul>
+        <li *ngFor="let m of membrosElegiveisArr.value">{{ m.nome }}</li>
+      </ul>
+
+      <h4>Cargos ({{ cargosArr.length }})</h4>
+      <div *ngFor="let c of cargosArr.value">
+        <strong>{{ c.titulo }}</strong>
+        <ul>
+          <li *ngFor="let cand of c.candidatosIniciais">{{ cand.nome }}</li>
+        </ul>
+      </div>
+
+      <div class="wizard-nav">
+        <button type="button" (click)="prevStep()">Voltar e Editar</button>
+        <button type="submit" [disabled]="eleicaoForm.invalid">
+          Salvar e Criar Eleição
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

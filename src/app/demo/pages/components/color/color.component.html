@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-md-6">
+    <app-card cardTitle="Primary Color">
+      @for (list of primaryColor; track list) {
+        <div class="{{ list.value }}">
+          <div class="color-block">
+            <div class="color-code">
+              <div class="color-code-inner">
+                <p class="m-b-0 mat-caption">{{ list.title }}</p>
+                <p class="m-b-0 f-w-600 mat-body">{{ list.hexCode }}</p>
+              </div>
+            </div>
+            <div class="color-name">
+              <div class="color-code-inner">
+                <p class="m-b-0 f-w-600">{{ list.colorName }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </app-card>
+  </div>
+  <div class="col-md-6">
+    <app-card cardTitle="Secondary Color">
+      @for (list of secondaryColor; track list) {
+        <div class="{{ list.value }}">
+          <div class="color-block">
+            <div class="color-code">
+              <div class="color-code-inner">
+                <p class="m-b-0 mat-caption">{{ list.title }}</p>
+                <p class="m-b-0 f-w-600 mat-body">{{ list.hexCode }}</p>
+              </div>
+            </div>
+            <div class="color-name">
+              <div class="color-code-inner">
+                <p class="m-b-0 f-w-600">{{ list.colorName }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </app-card>
+  </div>
+  <div class="col-md-4">
+    <app-card cardTitle="Success Color">
+      @for (list of successColor; track list) {
+        <div class="{{ list.value }}">
+          <div class="color-block">
+            <div class="color-code">
+              <div class="color-code-inner">
+                <p class="m-b-0 mat-caption">{{ list.title }}</p>
+                <p class="m-b-0 f-w-600 mat-body">{{ list.hexCode }}</p>
+              </div>
+            </div>
+            <div class="color-name">
+              <div class="color-code-inner">
+                <p class="m-b-0 f-w-600">{{ list.colorName }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </app-card>
+  </div>
+  <div class="col-md-4">
+    <app-card cardTitle="Error Color">
+      @for (list of errorColor; track list) {
+        <div class="{{ list.value }}">
+          <div class="color-block">
+            <div class="color-code">
+              <div class="color-code-inner">
+                <p class="m-b-0 mat-caption">{{ list.title }}</p>
+                <p class="m-b-0 f-w-600 mat-body">{{ list.hexCode }}</p>
+              </div>
+            </div>
+            <div class="color-name">
+              <div class="color-code-inner">
+                <p class="m-b-0 f-w-600">{{ list.colorName }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </app-card>
+  </div>
+  <div class="col-md-4">
+    <app-card cardTitle="Warning Color">
+      @for (list of warningColor; track list) {
+        <div class="{{ list.value }}">
+          <div class="color-block">
+            <div class="color-code">
+              <div class="color-code-inner">
+                <p class="m-b-0 mat-caption">{{ list.title }}</p>
+                <p class="m-b-0 f-w-600 mat-body">{{ list.hexCode }}</p>
+              </div>
+            </div>
+            <div class="color-name">
+              <div class="color-code-inner">
+                <p class="m-b-0 f-w-600">{{ list.colorName }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </app-card>
+  </div>
+</div>

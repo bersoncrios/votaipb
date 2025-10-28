@@ -1,0 +1,72 @@
+<div class="votacao-container" *ngIf="cedula$ | async">
+
+  <div [ngSwitch]="step">
+
+    <div *ngSwitchCase="'identificacao'" class="wizard-step">
+      <h2>{{ cedulaAberta.eleicao.titulo }}</h2>
+      <p>Bem-vindo(a) à votação para <strong>{{ cedulaAberta.cargo.titulo }}</strong> ({{ cedulaAberta.escrutinio.numero }}º Escrutínio).</p>
+
+      <form [formGroup]="idForm" (ngSubmit)="onValidarEleitor()">
+        <label for="eleitorId">Por favor, identifique-se com seu ID de membro (ou CPF):</label>
+        <input id="eleitorId" formControlName="eleitorId" placeholder="Seu ID">
+        <button type="submit" [disabled]="idForm.invalid">Entrar</button>
+      </form>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'votacao'" class="wizard-step cedula">
+      <h3>{{ cedulaAberta.cargo.titulo }} ({{ cedulaAberta.escrutinio.numero }}º Escrutínio)</h3>
+      <p>Olá, {{ membroValidado.nome }}. Selecione seu voto:</p>
+
+      <div class="candidatos-grid">
+        <button *ngFor="let candidato of cedulaAberta.escrutinio.candidatos"
+                (click)="onSelecionarVoto(candidato)"
+                class="candidato-btn">
+          <span class="nome">{{ candidato.nome }}</span>
+          <span class="numero">{{ candidato.userId }}</span>
+        </button>
+      </div>
+
+      <div class="outros-votos">
+        <button (click)="onSelecionarVoto('BRANCO')" class="btn-branco">BRANCO</button>
+        <button (click)="onSelecionarVoto('NULO')" class="btn-nulo">NULO</button>
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'confirmacao'" class="wizard-step confirmacao">
+      <h3>Confirme seu voto</h3>
+      <p>Votando para: <strong>{{ cedulaAberta.cargo.titulo }}</strong></p>
+
+      <div class="voto-selecionado">
+        <span class="nome">{{ votoSelecionado?.nome }}</span>
+        <span class="numero" *ngIf="votoSelecionado?.id !== 'BRANCO' && votoSelecionado?.id !== 'NULO'">
+          {{ votoSelecionado?.id }}
+        </span>
+      </div>
+
+      <div class="botoes-confirmacao">
+        <button (click)="corrigirVoto()" class="btn-corrige">CORRIGIR</button>
+        <button (click)="onConfirmarVoto()" class="btn-confirma">CONFIRMAR</button>
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'concluido'" class="wizard-step">
+      <h2>Obrigado!</h2>
+      <p>Seu voto para <strong>{{ cedulaAberta.cargo.titulo }}</strong> foi registrado com sucesso.</p>
+    </div>
+
+    <div *ngSwitchCase="'carregando'">
+      <p>Processando...</p>
+      </div>
+
+    <div *ngSwitchCase="'erro'" class="wizard-step">
+      <h2>Ocorreu um Erro</h2>
+      <p class="error-message">{{ errorMessage }}</p>
+      <p>Por favor, tente recarregar a página ou contate o administrador.</p>
+    </div>
+
+  </div>
+</div>

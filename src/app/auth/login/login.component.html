@@ -1,0 +1,67 @@
+<form [formGroup]="loginForm" class="auth-main">
+  <div class="auth-wrapper version-1">
+    <div class="auth-form">
+      <div class="auth-background">
+        <div class="yellow-circle"></div>
+        <div class="red-circle"></div>
+      </div>
+      <div class="main-form">
+        <app-card [showHeader]="false" class="auth-form-card" [padding]="40">
+          <!-- Logo -->
+          <div class="text-center">
+            <a href="javascript:">
+              <img src="assets/images/logo-dark.svg" alt="logo" />
+            </a>
+          </div>
+
+          <!-- Email -->
+          <div class="text-start">
+            <label for="email" class="f-w-500">Email</label>
+            <mat-form-field appearance="outline" class="w-100 m-t-5">
+              <input matInput formControlName="email" placeholder="Digite seu email" required />
+            </mat-form-field>
+
+            <!-- Senha -->
+            <label for="password" class="f-w-500">Senha</label>
+            <mat-form-field appearance="outline" class="w-100 m-t-5">
+              <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" placeholder="Digite sua senha" />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide">
+                <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <!-- Check e esqueci a senha -->
+          <div class="check-me">
+            <mat-checkbox class="float-start" color="primary">Lembre-se de mim?</mat-checkbox>
+            <a class="f-w-400 f-14 text-primary-500 m-b-0" href="javascript:">Esqueceu a senha?</a>
+          </div>
+
+          <!-- Botão de login -->
+          <div class="grid">
+            <button
+              mat-flat-button
+              color="primary"
+              class="b-rad-20 m-t-15"
+              (click)="login()"
+              [disabled]="loginForm.invalid"
+            >
+              Entrar
+            </button>
+          </div>
+
+          <!-- Registro -->
+          <div class="check-me m-t-20">
+            <h6 class="f-w-400 text-muted m-b-0">Não tem uma conta ?</h6>
+            <a [routerLink]="['/auth/register']" class="text-primary-500">Registre-se</a>
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </div>
+</form>

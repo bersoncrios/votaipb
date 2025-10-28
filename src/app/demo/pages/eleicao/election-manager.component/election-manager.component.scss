@@ -1,0 +1,297 @@
+/* ==============================================
+   Variáveis de Cor (Tema do Admin)
+   ============================================== */
+:host {
+  --primary-color: #004a98;     // Azul principal
+  --primary-dark: #003366;      // Azul (hover)
+  --bg-color: #f4f7f6;          // Fundo da página
+  --card-bg-color: #ffffff;     // Fundo do card principal
+  --nested-card-bg: #fdfdfd;   // Fundo do card de escrutínio
+  --border-color: #e0e0e0;      // Borda padrão
+  --text-color: #333333;        // Cor principal do texto
+  --text-muted: #6c757d;      // Texto (status, etc)
+
+  // Cores de Ação
+  --action-open: var(--primary-color);
+  --action-close: #D32F2F;      // Vermelho (Perigoso)
+  --action-prepare: #fbc02d;    // Laranja/Amarelo (Atenção)
+  --action-secondary: #6c757d; // Cinza (Ver apuração)
+
+  // Cores de Status
+  --status-aberto: #4CAF50;     // Verde
+  --status-fechado: #757575;    // Cinza
+}
+
+/* ==============================================
+   Container Principal (Admin)
+   ============================================== */
+:host {
+  display: block;
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+.manage-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: inherit;
+  color: var(--text-color);
+
+  h1 {
+    color: var(--primary-dark);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+  }
+
+  p {
+    font-size: 1.1rem;
+    strong {
+      color: var(--text-muted);
+    }
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+  }
+}
+
+/* ==============================================
+   Aviso de Votação Aberta
+   ============================================== */
+.votacao-aberta-aviso {
+  background-color: #fff3e0; // Laranja claro
+  border: 1px solid #ffb74d; // Laranja
+  border-left: 5px solid #f57c00; // Laranja escuro
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #c85a00;
+  margin-bottom: 1.5rem;
+}
+
+/* ==============================================
+   Lista de Cargos (Card Principal)
+   ============================================== */
+.cargos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.cargo-card {
+  background-color: var(--card-bg-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+
+  h3 {
+    font-size: 1.75rem;
+    color: var(--primary-dark);
+    margin: 0;
+    padding: 1.5rem 2rem;
+    background-color: rgba(0, 74, 152, 0.03); // Azul bem clarinho
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+/* ==============================================
+   Lista de Escrutínios (Cards Aninhados)
+   ============================================== */
+.escrutinios-lista {
+  display: grid;
+  // 1 coluna em telas pequenas, 3 colunas em telas grandes
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.escrutinio-card {
+  background-color: var(--nested-card-bg);
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+
+  h4 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+  }
+
+  p {
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+    font-weight: 600;
+
+    // Destaque de Status
+    strong {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      color: white;
+      background-color: var(--text-muted);
+    }
+  }
+
+  // --- Feedback Visual de Status ---
+  // Pinta o status "fechado"
+  & [ngIf*="fechado"] + p strong {
+    background-color: var(--status-fechado);
+  }
+  // Pinta o status "aberto" e destaca o card
+  & [ngIf*="aberto"] + p strong {
+    background-color: var(--status-aberto);
+  }
+  & [ngIf*="aberto"] {
+    border-left: 5px solid var(--status-aberto);
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+  }
+}
+
+/* ==============================================
+   Botões de Controle
+   ============================================== */
+.controles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: auto; // Empurra os botões para baixo
+
+  button {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    // Estilo Padrão (Abrir)
+    background-color: var(--action-open);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &:disabled {
+      background-color: #bdc3c7; // Cinza desabilitado
+      cursor: not-allowed;
+    }
+  }
+
+  // Botão "Preparar 3º Escrutínio" (Laranja)
+  // [ngIf*="numero === 3"] é um seletor de atributo que pega o botão "Preparar"
+  button[ngIf*="numero === 3"] {
+    background-color: var(--action-prepare);
+    color: #333;
+    &:hover:not(:disabled) {
+      background-color: #fdd835; // Amarelo mais forte
+    }
+  }
+
+  // Botão "Fechar Votação" (Vermelho)
+  // [ngIf*="aberto"] pega o botão "Fechar"
+  button[ngIf*="aberto"] {
+    background-color: var(--action-close);
+    &:hover:not(:disabled) {
+      background-color: #b71c1c; // Vermelho escuro
+    }
+  }
+}
+
+/* ==============================================
+   Resultados da Apuração
+   ============================================== */
+.apuracao-resultados {
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+
+  strong {
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+  }
+
+  // Botão "Ver Apuração"
+  button {
+    background-color: var(--action-secondary);
+    width: 100%;
+    margin-bottom: 1rem;
+    &:hover:not(:disabled) {
+      background-color: #5a6268;
+    }
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0 0 0.5rem 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px dotted #ccc;
+    font-size: 0.95rem;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  p { // Votos Brancos/Nulos
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0.25rem 0;
+    color: var(--text-muted);
+  }
+}
+
+/* ==============================================
+   Estado de Carregamento
+   ============================================== */
+.vencedor-bloco {
+  padding: 2rem 2.5rem;
+  background-color: #f6fef6; // Verde bem claro
+  border-top: 1px solid #dff0d8; // Borda superior
+  text-align: center;
+
+  h4 {
+    font-size: 1.5rem;
+    color: #2E7D32; // Verde escuro
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  strong {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1B5E20; // Verde mais escuro
+  }
+}

@@ -1,0 +1,58 @@
+<div class="list-container">
+  <h1>Gerenciar Eleições</h1>
+  <p>Aqui estão as eleições que você cadastrou.</p>
+
+  <a [routerLink]="['/eleicoes/registrar']" class="btn-criar-nova">
+    + Cadastrar Nova Eleição
+  </a>
+
+  <hr>
+
+  <div *ngIf="isLoading" class="loading-message">
+    <p>Carregando eleições...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="eleicoes$ | async as eleicoes; else loading">
+
+    <div *ngIf="eleicoes.length === 0 && !isLoading" class="empty-state">
+      <p>Nenhuma eleição encontrada.</p>
+      <p>Clique em "Cadastrar Nova Eleição" para começar.</p>
+    </div>
+
+    <div class="eleicoes-grid">
+      <div *ngFor="let eleicao of eleicoes" class="eleicao-card">
+        <div class_="card-body">
+          <h3 class="card-title">{{ eleicao.titulo }}</h3>
+
+          <div class="card-status" [ngClass]="eleicao.status">
+            {{ eleicao.status | titlecase }}
+          </div>
+
+          <p class="card-info">
+            {{ eleicao.cargos.length }} cargos
+          </p>
+          <p class="card-info">
+            {{ eleicao.membrosElegiveis.length }} membros elegíveis
+          </p>
+        </div>
+
+        <div class="card-footer">
+          <a [routerLink]="['/eleicoes/gerenciar', eleicao.id]" class="btn-gerenciar">
+            Gerenciar
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-message">
+    <p>Carregando eleições...</p>
+  </div>
+</ng-template>
