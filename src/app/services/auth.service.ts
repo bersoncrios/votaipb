@@ -32,35 +32,27 @@ export class AuthService {
   private router: Router = inject(Router);
   public nome: string | undefined;
 
-  // --- MUDANÇA 1: Gerenciamento de Estado Reativo ---
-  // Armazena o usuário atual do Firebase Auth (User)
+
   private currentUserSubject = new BehaviorSubject<User | null>(null);
 
   constructor() {
-    // Ouve as mudanças de login/logout/refresh
     onAuthStateChanged(this.auth, (user) => {
-      this.currentUserSubject.next(user); // Atualiza o Subject
+      this.currentUserSubject.next(user);
       if (user) {
-        // Se logou, busca o nome (como seu 'findData' fazia)
         this.findData(user.uid);
       } else {
-        // Se deslogou, limpa o nome
         this.nome = undefined;
       }
     });
   }
 
-  // --- MUDANÇA 2: Método síncrono para o EleicaoAdminService ---
   /**
    * Obtém o UID do usuário logado de forma síncrona.
    * Isto é o que o EleicaoAdminService usará.
    */
   public getCurrentUserUid(): string | null {
-    // Pega o valor ATUAL do BehaviorSubject (confiável graças ao onAuthStateChanged)
     return this.currentUserSubject.value?.uid || null;
   }
-
-  // --- SEU CÓDIGO EXISTENTE (Adaptado) ---
 
   signin(params: SignIn): Observable<any> {
     return from(
@@ -86,7 +78,7 @@ export class AuthService {
 
   logout(): void {
     sessionStorage.removeItem('token');
-    this.auth.signOut(); // <<< ADICIONADO: Garante que o Firebase deslogue
+    this.auth.signOut();
     this.router.navigate(['/auth/login']);
   }
 
@@ -98,13 +90,12 @@ export class AuthService {
     const userRef = await addDoc(collection(this.firestore, 'users'), {
       name: params.name,
       email: params.email,
-      userId: params.userId || '', // Assumindo que params.userId é o UID do Auth
+      userId: params.userId || '',
       role: params.role || ''
     });
     await updateDoc(doc(this.firestore, 'users', userRef.id), { id: userRef.id });
   }
 
-  // --- MUDANÇA 3: 'findData' adaptado ---
   /**
    * Busca os dados do usuário e atualiza a propriedade 'nome'.
    * Agora é chamado pelo 'onAuthStateChanged' no constructor.

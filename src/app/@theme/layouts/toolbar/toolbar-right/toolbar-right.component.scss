@@ -1,7 +1,46 @@
+// Importa paleta de cores (se existir)
 @import '../../../styles/theme-palette-colors.scss';
 
+// ===========================================
+// Estilos para o Avatar de Iniciais (NOVO)
+// ===========================================
+.user-initials-avatar {
+  width: 35px; // Tamanho padrão para o header
+  height: 35px;
+  border-radius: 50%;
+  background-color: #4CAF50; // Verde (pode usar variável se tiver: var(--success-color, #4CAF50))
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600; // Um pouco mais forte
+  font-size: 0.9rem; // Ajuste o tamanho da fonte
+  flex-shrink: 0;
+  line-height: 1;
+  text-transform: uppercase; // Garante maiúsculas
+
+  // Tamanho ligeiramente maior para o avatar dentro do dropdown
+  &.dropdown-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
+
+// Garante que a imagem original não apareça mais
+.user-avatar {
+  display: none;
+}
+
+// ===========================================
+// Seus Estilos Existentes (Adaptados)
+// ===========================================
+
+// Estilos para dropdowns (geralmente globais, mas aqui para contexto)
+// Use ::ng-deep com cuidado ou mova para styles.scss global
 ::ng-deep.dropdown-notification {
-  min-width: 450px !important;
+  min-width: 380px !important; // Ajustado
+  max-width: 90vw !important; // Limite em telas pequenas
 
   .topic-icon {
     .pc-icon {
@@ -11,99 +50,135 @@
   }
 
   .topic-description {
-    .mdc-button {
-      border-radius: 20px;
+    .mdc-button { // Se estiver usando MDC (Material v15+)
+      border-radius: 20px !important;
+    }
+    .mat-mdc-button-base { // Se estiver usando MDC
+       border-radius: 20px !important;
     }
   }
 
   .notification-card {
+    &.mat-mdc-card { // Se estiver usando MDC
+      padding: 16px !important; // Garante padding
+    }
     &:hover {
-      background: var(--accent-200);
+      background: var(--accent-200, #f0f0f0); // Cor de hover mais suave
       cursor: pointer;
     }
+  }
+
+  .dropdown-footer {
+     padding: 12px 20px;
+     border-top: 1px solid var(--border-color, #dee2e6);
+     background-color: #f8f9fa;
   }
 }
 
 ::ng-deep.dropdown-user-profile {
-  min-width: 352px !important;
+  min-width: 320px !important; // Ligeiramente menor
   max-width: 100% !important;
 
   .user-title {
-    font-size: 16px !important;
+    font-size: 1rem !important; // Ajustado
     font-weight: 600 !important;
     margin: 0px !important;
+    color: var(--text-color, #212529);
   }
 
   .user-name {
     font-weight: 600 !important;
-    margin: 0px !important;
+    margin: 0 0 2px 0 !important; // Espaço abaixo
+    color: var(--text-color, #212529);
+    font-size: 1rem;
   }
+
+  // Email do usuário
+  .mat-body {
+    font-size: 0.85rem;
+    color: var(--text-muted, #6c757d);
+  }
+
 
   .dropdown-item {
     display: flex;
     padding: 10px 15px;
     align-items: center;
-    border-radius: 8px;
+    border-radius: 6px; // Raio menor
+    text-decoration: none; // Garante sem sublinhado
+    transition: background-color 0.15s ease;
 
     &:hover,
     &:focus {
-      color: var(--accent-900);
-      background: var(--accent-300);
-      border-color: var(--accent-300);
+      // Cor de hover mais suave, ajustada ao tema
+      background: var(--secondary-bg, #f1f3f4);
+      // Não mudar a cor do texto no hover para manter consistência
     }
 
     .pc-icon {
       width: 18px;
       height: 18px;
+      color: var(--text-muted, #6c757d); // Ícone cinza
+    }
+
+    h6 { // Texto do item
+        color: var(--text-color, #333); // Cor padrão do texto
+        font-weight: 500; // Peso normal
     }
   }
 
-  .user-group {
-    .avatar {
-      width: 30px;
-      height: 30px;
-      font-size: 14px;
-    }
-  }
-
+  // Botão de Logout
   .user-logout {
-    &.mdc-button {
-      border-radius: 20px;
+    width: 100%; // Ocupa largura total
+    &.mat-mdc-stroked-button { // Estilo específico para botão 'stroked'
+        border-radius: 6px !important; // Raio menor
+        // Cor da borda e texto já vêm do color="warn"
+    }
+    .flex-inline { // Garante alinhamento interno
+        justify-content: center;
     }
   }
 
-  .user-followers {
-    margin: 16px 0px;
-    color: map-get($grey-theme, contrast, 500);
-  }
-
-  .upgrade-button {
-    background: map-get($yellow-theme, 500) !important;
-    color: map-get($grey-theme, contrast, 800) !important;
-
-    &.mdc-button {
-      border-radius: 20px;
-    }
-  }
-}
-::ng-deep.user-account-card {
-  background-image: url('../../../../../assets/images/layout/img-profile-card.jpg');
+  // Remove estilos não utilizados ou redundantes
+  // .user-group, .user-followers, .upgrade-button
 }
 
+// Remover se não usar mais card com imagem de fundo
+// ::ng-deep.user-account-card {
+//   background-image: url('../../../../../assets/images/layout/img-profile-card.jpg');
+// }
+
+// Padding comum para header e body dos dropdowns
 .dropdown-header,
 .dropdown-body {
   padding: 16px 20px;
 }
 
-@media only screen and (max-width: 1024px) {
-  .pc-header {
-    left: 0px;
-    top: 0px;
+// Estilos específicos para o header-button (se necessário)
+.header-button {
+  display: flex;
+  align-items: center;
+
+  .header-item {
+    // Estilos para os botões que abrem os menus
+    // Ex: remover padding extra se houver
+    padding: 0 8px; // Ajuste conforme necessário
+    min-width: auto; // Remove largura mínima padrão
+  }
+
+  .pc-head-link {
+    display: flex; // Para centralizar o avatar
+    align-items: center;
   }
 }
 
+// --- Media Queries (Seus estilos existentes) ---
+@media only screen and (max-width: 1024px) {
+  // .pc-header { ... } // Mantenha se aplicável
+}
+
 @media (max-width: 575.98px) {
-  .pc-header {
+  .pc-header { // Assumindo que .pc-header é um container superior
     .header-wrapper {
       padding: 10px;
     }
@@ -113,26 +188,18 @@
     }
 
     .header-item {
-      &.mdc-button {
-        min-width: 50px;
-        padding: 0;
+      // Seus estilos para botões em telas pequenas
+       &.mat-mdc-button-base, &.mdc-button { // Cobrir ambos Material
+        min-width: 40px !important; // Reduzido
+        padding: 0 !important;
       }
     }
 
-    .mdc-button {
-      min-width: 0px !important;
-    }
-
-    .mat-drawer-content {
-      .app-container {
-        padding: 15px;
-      }
-    }
   }
 
   ::ng-deep {
-    .dropdown-notification {
-      min-width: 350px !important;
+    .dropdown-notification, .dropdown-user-profile {
+      min-width: calc(100vw - 40px) !important; // Quase largura total
     }
   }
 }
