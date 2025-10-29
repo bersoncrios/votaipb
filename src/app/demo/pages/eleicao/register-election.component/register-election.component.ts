@@ -1,17 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormArray,
-  AbstractControl,
-  ReactiveFormsModule
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 // Ajuste os caminhos para seus serviços e modelos
 import { EleicaoAdminService } from '../../../../services/eleicao-admin.service'; // Ajuste o caminho
-import { Membro} from '../../../../models/Membro'; // Ajuste o caminho
+import { Membro } from '../../../../models/Membro'; // Ajuste o caminho
 import { Candidato } from '../../../../models/Candidato'; // Ajuste o caminho
 import { Cargo } from '../../../../models/Cargo'; // Ajuste o caminho
 import { nanoid } from 'nanoid';
@@ -26,9 +19,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { OnlyNumbersDirective } from "src/app/directives/OnlyNumbersDirective";
 
 const CARGOS_PERMITIDOS: Cargo['titulo'][] = [
-  'Presidente', 'Vice-Presidente', 'Secretário-Executivo', '1º Secretário', '2º Secretário', 'Tesoureiro'
+  'Presidente',
+  'Vice-Presidente',
+  'Secretário-Executivo',
+  '1º Secretário',
+  '2º Secretário',
+  'Tesoureiro'
 ];
 
 @Component({
@@ -45,14 +44,13 @@ const CARGOS_PERMITIDOS: Cargo['titulo'][] = [
     MatIconModule,
     MatCardModule,
     MatSelectModule,
-    MatSnackBarModule
-  ],
+    MatSnackBarModule,
+    OnlyNumbersDirective
+],
   templateUrl: './register-election.component.html',
   styleUrls: ['./register-election.component.scss']
 })
-
 export class RegisterElectionComponent implements OnInit {
-
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private eleicaoAdminService = inject(EleicaoAdminService);
@@ -65,7 +63,7 @@ export class RegisterElectionComponent implements OnInit {
   constructor() {
     this.eleicaoForm = this.fb.group({
       passoTitulo: this.fb.group({
-         titulo: ['', Validators.required]
+        titulo: ['', Validators.required]
       }),
       passoMembros: this.fb.group({
         membrosElegiveis: this.fb.array([], [Validators.required, Validators.minLength(1)])
@@ -76,7 +74,7 @@ export class RegisterElectionComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   get formPassoTitulo(): FormGroup {
     return this.eleicaoForm.get('passoTitulo') as FormGroup;
@@ -116,8 +114,8 @@ export class RegisterElectionComponent implements OnInit {
     if (id && nome) {
       const jaExiste = this.membrosElegiveisArr.value.some((m: Membro) => m.id === id);
       if (jaExiste) {
-         this.snackBar.open(`Membro com ID ${id} já foi adicionado.`, 'Fechar', { duration: 3000 });
-         return;
+        this.snackBar.open(`Membro com ID ${id} já foi adicionado.`, 'Fechar', { duration: 3000 });
+        return;
       }
       const novoMembro: Membro = { id, nome };
       this.membrosElegiveisArr.push(this.createMembroGroup(novoMembro));
@@ -170,28 +168,28 @@ export class RegisterElectionComponent implements OnInit {
     }
 
     if (membroIndex >= this.membrosElegiveisArr.length) {
-        console.error(`Índice ${membroIndex} fora dos limites do array de membros.`);
-        this.snackBar.open(`Erro: Membro selecionado não encontrado.`, 'Fechar', { duration: 3000 });
-        return;
+      console.error(`Índice ${membroIndex} fora dos limites do array de membros.`);
+      this.snackBar.open(`Erro: Membro selecionado não encontrado.`, 'Fechar', { duration: 3000 });
+      return;
     }
 
-     const membroSelecionado = this.membrosElegiveisArr.at(membroIndex).value as Membro;
-     const candidatosArr = this.getCandidatosIniciais(cargoIndex);
+    const membroSelecionado = this.membrosElegiveisArr.at(membroIndex).value as Membro;
+    const candidatosArr = this.getCandidatosIniciais(cargoIndex);
 
-     const jaExiste = candidatosArr.value.some((c: Candidato) => c.userId === membroSelecionado.id);
-     if (jaExiste) {
-       this.snackBar.open(`${membroSelecionado.nome} já é candidato para este cargo.`, 'Fechar', { duration: 3000 });
-       return;
-     }
+    const jaExiste = candidatosArr.value.some((c: Candidato) => c.userId === membroSelecionado.id);
+    if (jaExiste) {
+      this.snackBar.open(`${membroSelecionado.nome} já é candidato para este cargo.`, 'Fechar', { duration: 3000 });
+      return;
+    }
 
-     const candidato: Candidato = {
-       userId: membroSelecionado.id,
-       nome: membroSelecionado.nome
-     };
+    const candidato: Candidato = {
+      userId: membroSelecionado.id,
+      nome: membroSelecionado.nome
+    };
 
-     candidatosArr.push(this.fb.group(candidato));
-     console.log('Array de candidatos APÓS push:', candidatosArr.value);
-     this.snackBar.open(`${candidato.nome} adicionado como candidato.`, 'OK', { duration: 2000 });
+    candidatosArr.push(this.fb.group(candidato));
+    console.log('Array de candidatos APÓS push:', candidatosArr.value);
+    this.snackBar.open(`${candidato.nome} adicionado como candidato.`, 'OK', { duration: 2000 });
   }
 
   removeCandidatoDoCargo(cargoIndex: number, candidatoIndex: number) {
@@ -208,30 +206,31 @@ export class RegisterElectionComponent implements OnInit {
     console.log(`Status do FormGroup do Cargo:`, cargoCtrl.status);
   }
 
-  // --- Submissão ---
   async onSubmit() {
     this.cargosArr.controls.forEach((cargoCtrl, index) => {
       const cargoGroup = cargoCtrl as FormGroup;
       const candidatosArray = cargoGroup.get('candidatosIniciais') as FormArray;
-      console.log(`Cargo ${index} (${cargoGroup.get('titulo')?.value || 'N/A'}): Titulo(${cargoGroup.get('titulo')?.status}), Candidatos(${candidatosArray.status})`);
-      if(candidatosArray.invalid) console.log(`  Erros Candidatos Array:`, candidatosArray.errors);
-      if(cargoGroup.get('titulo')?.invalid) console.log(`  Erros Titulo:`, cargoGroup.get('titulo')?.errors);
+      console.log(
+        `Cargo ${index} (${cargoGroup.get('titulo')?.value || 'N/A'}): Titulo(${cargoGroup.get('titulo')?.status}), Candidatos(${candidatosArray.status})`
+      );
+      if (candidatosArray.invalid) console.log(`  Erros Candidatos Array:`, candidatosArray.errors);
+      if (cargoGroup.get('titulo')?.invalid) console.log(`  Erros Titulo:`, cargoGroup.get('titulo')?.errors);
     });
 
     this.eleicaoForm.markAllAsTouched();
 
     if (this.eleicaoForm.invalid) {
-       this.snackBar.open('Formulário inválido. Verifique os passos e campos marcados.', 'Fechar', { duration: 4000 });
-       return;
+      this.snackBar.open('Formulário inválido. Verifique os passos e campos marcados.', 'Fechar', { duration: 4000 });
+      return;
     }
 
     this.isSaving = true;
 
     try {
       const formData = {
-         titulo: this.formPassoTitulo.value.titulo,
-         membrosElegiveis: this.formPassoMembros.value.membrosElegiveis,
-         cargos: this.formPassoCargos.value.cargos
+        titulo: this.formPassoTitulo.value.titulo,
+        membrosElegiveis: this.formPassoMembros.value.membrosElegiveis,
+        cargos: this.formPassoCargos.value.cargos
       };
 
       console.log('Enviando para o service:', formData);
@@ -239,12 +238,11 @@ export class RegisterElectionComponent implements OnInit {
 
       this.snackBar.open(`Eleição "${formData.titulo}" criada com sucesso! Redirecionando...`, 'OK', { duration: 4000 });
       this.router.navigate(['/eleicoes/lista']);
-
     } catch (e: any) {
       console.error('Erro ao salvar eleição:', e);
       this.snackBar.open(`Ocorreu um erro ao salvar: ${e.message || 'Erro desconhecido'}`, 'Fechar', { duration: 5000 });
     } finally {
-       this.isSaving = false;
+      this.isSaving = false;
     }
   }
 }
