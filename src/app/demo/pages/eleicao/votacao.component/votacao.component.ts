@@ -1,17 +1,17 @@
-// src/app/votacao/votacao.component.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VotacaoService, CedulaAberta } from '../../../../services/votacao.service'; // Ajuste o caminho
 import { Membro } from '../../../../models/Membro'; // Ajuste o caminho
 import { Candidato } from '../../../../models/Candidato'; // Ajuste o caminho
-import { Observable, of } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { switchMap, tap, catchError } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 
-// Para o formulário de identificação (Passo 1)
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { SharedModule } from "src/app/shared/shared.module";
 
-type VotacaoStep = 'carregando' | 'identificacao' | 'votacao' | 'confirmacao' | 'concluido' | 'erro';
+type VotacaoStep = 'carregando' | 'identificacao' | 'votacao' | 'confirmacao' | 'concluido' | 'naoIniciado' | 'erro';
 
 @Component({
   selector: 'app-votacao',
@@ -19,7 +19,10 @@ type VotacaoStep = 'carregando' | 'identificacao' | 'votacao' | 'confirmacao' | 
   imports: [
     CommonModule,
     ReactiveFormsModule // Necessário para o formulário de ID
-  ],
+    ,
+    MatProgressSpinner,
+    SharedModule
+],
   templateUrl: './votacao.component.html',
   styleUrls: ['./votacao.component.scss']
 })
@@ -52,30 +55,47 @@ export class VotacaoComponent implements OnInit {
   public errorMessage: string | null = null;
 
   ngOnInit(): void {
-    // 1. Pega o ID da eleição da URL e busca a cédula aberta
+    this.carregarCedula();
+  }
+
+  // Separado para permitir recarregamento manual, se necessário
+  carregarCedula(): void {
+    this.step = 'carregando'; // Garante o estado inicial ao carregar/recarregar
+    this.errorMessage = null; // Limpa erros anteriores
+
     this.cedula$ = this.route.paramMap.pipe(
       switchMap(params => {
         const id = params.get('id');
         if (!id) {
-          this.handleError('Link de votação inválido (sem ID).');
-          return of(null);
+          // Usa um erro específico para link inválido
+          throw new Error('LINK_INVALIDO');
         }
         this.eleicaoId = id;
-        return this.votacaoService.getCedulaAberta(id); // Busca a cédula
+        // Retorna a Promise como Observable para compatibilidade com o pipe
+        return from(this.votacaoService.getCedulaAberta(id));
       }),
       tap(cedula => {
         if (cedula) {
-          // 2. Cédula encontrada! Guarda os dados e avança para identificação
+          // Cédula encontrada! Guarda os dados e avança para identificação
           this.cedulaAberta = cedula;
           this.step = 'identificacao';
         } else {
-          // 3. Nenhuma cédula aberta (eleição fechada, agendada ou ID errado)
-          this.handleError('Nenhuma votação aberta no momento.');
+          // Cédula é NULL, mas não houve erro na busca. Significa que a eleição existe
+          // mas o escrutínio não está aberto.
+          this.handleError('Esta votação ainda não foi iniciada pelo administrador.', 'naoIniciado');
         }
       }),
       catchError(err => {
-        this.handleError(err.message);
-        return of(null);
+        // Trata erros específicos lançados pelo serviço ou pelo switchMap
+        if (err.message === 'LINK_INVALIDO') {
+          this.handleError('Link de votação inválido.');
+        } else if (err.message === 'ELEICAO_NAO_ENCONTRADA') { // Supondo que o serviço lance este erro
+           this.handleError('Votação não encontrada ou link inválido.');
+        } else {
+          // Erro genérico (problema de rede, permissão, etc.)
+          this.handleError('Ocorreu um erro ao carregar a votação. Tente novamente.');
+        }
+        return of(null); // Retorna um observable nulo para completar o pipe
       })
     );
   }
@@ -85,6 +105,7 @@ export class VotacaoComponent implements OnInit {
    */
   async onValidarEleitor() {
     if (this.idForm.invalid) {
+       this.idForm.markAllAsTouched(); // Mostra os erros se o campo estiver vazio
       return;
     }
     this.step = 'carregando'; // Mostra "carregando"
@@ -94,17 +115,18 @@ export class VotacaoComponent implements OnInit {
       // Usa o service para validar
       const validacao = this.votacaoService.validarVotante(
         this.cedulaAberta,
-        eleitorId!
+        eleitorId! // Usa o non-null assertion pois o form é inválido se for nulo
       );
 
       if (validacao.valido) {
         this.membroValidado = validacao.membro!;
         this.step = 'votacao'; // Sucesso! Avança para a cédula
+        this.errorMessage = null; // Limpa qualquer erro anterior
       } else {
         this.handleError(validacao.mensagem, 'identificacao'); // Mostra erro e volta p/ ID
       }
     } catch (e: any) {
-      this.handleError(e.message, 'identificacao');
+      this.handleError(e.message || 'Erro ao validar eleitor.', 'identificacao');
     }
   }
 
@@ -117,6 +139,7 @@ export class VotacaoComponent implements OnInit {
     } else if (candidato === 'NULO') {
       this.votoSelecionado = { id: 'NULO', nome: 'Voto Nulo' };
     } else {
+      // Garante que 'candidato' é do tipo Candidato aqui
       this.votoSelecionado = { id: candidato.userId, nome: candidato.nome };
     }
     this.step = 'confirmacao'; // Avança para confirmação
@@ -135,28 +158,33 @@ export class VotacaoComponent implements OnInit {
         this.eleicaoId,
         this.cedulaAberta.cargo.id,
         this.cedulaAberta.escrutinio.numero,
-        this.membroValidado.id,
-        this.votoSelecionado.id
+        this.membroValidado.id, // ID do membro validado
+        this.votoSelecionado.id // ID do voto (userId do candidato, BRANCO ou NULO)
       );
       this.step = 'concluido'; // SUCESSO!
 
     } catch (e: any) {
-      // O erro mais comum aqui é "Seu voto já foi registrado" (double-click)
-      // ou "O escrutínio foi fechado" (admin fechou durante a votação)
-      this.handleError(e.message);
+      // Trata erros comuns do lado do serviço
+      this.handleError(e.message || 'Erro ao registrar o voto.');
     }
   }
 
-  // Volta para a etapa de votação (botão "Corrigir")
+  /**
+   * Volta para a etapa de votação (botão "Corrigir")
+   */
   corrigirVoto() {
     this.votoSelecionado = null;
     this.step = 'votacao';
   }
 
-  // Helpers
+  /**
+   * Helper para centralizar o tratamento de erros e mudança de estado.
+   * @param message Mensagem de erro a ser exibida.
+   * @param returnStep Estado para o qual o wizard deve ir (padrão 'erro').
+   */
   private handleError(message: string, returnStep: VotacaoStep = 'erro') {
     this.errorMessage = message;
     this.step = returnStep;
-    console.error(message);
+    console.error(`Erro na Votação: ${message}`); // Log para debugging
   }
 }

@@ -1,72 +1,110 @@
-<div class="votacao-container" *ngIf="cedula$ | async">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<div class="votacao-container" *ngIf="cedula$ | async as cedulaData; else loadingOrError">
 
   <div [ngSwitch]="step">
 
-    <div *ngSwitchCase="'identificacao'" class="wizard-step">
-      <h2>{{ cedulaAberta.eleicao.titulo }}</h2>
-      <p>Bem-vindo(a) à votação para <strong>{{ cedulaAberta.cargo.titulo }}</strong> ({{ cedulaAberta.escrutinio.numero }}º Escrutínio).</p>
+    <div *ngSwitchCase="'identificacao'" class="wizard-step step-identificacao">
+      <h2 class="step-title">{{ cedulaAberta.eleicao.titulo }}</h2>
+      <p class="step-description">Bem-vindo(a) à votação para <strong>{{ cedulaAberta.cargo.titulo }}</strong>.<br> ({{ cedulaAberta.escrutinio.numero }}º Escrutínio)</p>
 
-      <form [formGroup]="idForm" (ngSubmit)="onValidarEleitor()">
-        <label for="eleitorId">Por favor, identifique-se com seu ID de membro (ou CPF):</label>
-        <input id="eleitorId" formControlName="eleitorId" placeholder="Seu ID">
-        <button type="submit" [disabled]="idForm.invalid">Entrar</button>
+      <form [formGroup]="idForm" (ngSubmit)="onValidarEleitor()" class="id-form">
+        <label for="eleitorId" class="form-label">Identifique-se com seu ID de membro:</label>
+        <input id="eleitorId" formControlName="eleitorId" placeholder="Digite seu ID" class="form-input">
+        <button type="submit" [disabled]="idForm.invalid || step === 'carregando'" class="btn btn-primary btn-submit">
+          <span *ngIf="step !== 'carregando'">Entrar na Votação</span>
+          <span *ngIf="step === 'carregando'">Validando...</span>
+        </button>
       </form>
 
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
+      <!-- Mensagem de erro específica para ID -->
+       <div *ngIf="errorMessage && step === 'identificacao'" class="error-message">
+         <mat-icon>warning</mat-icon> {{ errorMessage }}
+       </div>
     </div>
 
-    <div *ngSwitchCase="'votacao'" class="wizard-step cedula">
-      <h3>{{ cedulaAberta.cargo.titulo }} ({{ cedulaAberta.escrutinio.numero }}º Escrutínio)</h3>
-      <p>Olá, {{ membroValidado.nome }}. Selecione seu voto:</p>
+    <!-- PASSO 2: VOTAÇÃO (CÉDULA) -->
+    <div *ngSwitchCase="'votacao'" class="wizard-step step-votacao">
+      <h3 class="step-title">{{ cedulaAberta.cargo.titulo }} ({{ cedulaAberta.escrutinio.numero }}º Escrutínio)</h3>
+      <p class="step-description">Olá, <strong>{{ membroValidado.nome }}</strong>. Selecione seu voto:</p>
 
       <div class="candidatos-grid">
         <button *ngFor="let candidato of cedulaAberta.escrutinio.candidatos"
                 (click)="onSelecionarVoto(candidato)"
                 class="candidato-btn">
           <span class="nome">{{ candidato.nome }}</span>
-          <span class="numero">{{ candidato.userId }}</span>
+          <span class="numero">{{ candidato.userId }}</span> <!-- Ou outro identificador -->
         </button>
       </div>
 
       <div class="outros-votos">
-        <button (click)="onSelecionarVoto('BRANCO')" class="btn-branco">BRANCO</button>
-        <button (click)="onSelecionarVoto('NULO')" class="btn-nulo">NULO</button>
+        <button (click)="onSelecionarVoto('BRANCO')" class="btn btn-secondary btn-branco">BRANCO</button>
+        <button (click)="onSelecionarVoto('NULO')" class="btn btn-secondary btn-nulo">NULO</button>
       </div>
     </div>
 
-    <div *ngSwitchCase="'confirmacao'" class="wizard-step confirmacao">
-      <h3>Confirme seu voto</h3>
-      <p>Votando para: <strong>{{ cedulaAberta.cargo.titulo }}</strong></p>
+    <!-- PASSO 3: CONFIRMAÇÃO -->
+    <div *ngSwitchCase="'confirmacao'" class="wizard-step step-confirmacao">
+      <h3 class="step-title">Confirme seu Voto</h3>
+      <p class="step-description">Votando para: <strong>{{ cedulaAberta.cargo.titulo }}</strong></p>
 
-      <div class="voto-selecionado">
+      <div class="voto-selecionado-card">
         <span class="nome">{{ votoSelecionado?.nome }}</span>
         <span class="numero" *ngIf="votoSelecionado?.id !== 'BRANCO' && votoSelecionado?.id !== 'NULO'">
-          {{ votoSelecionado?.id }}
+           ({{ votoSelecionado?.id }}) <!-- ID entre parênteses -->
         </span>
       </div>
 
       <div class="botoes-confirmacao">
-        <button (click)="corrigirVoto()" class="btn-corrige">CORRIGIR</button>
-        <button (click)="onConfirmarVoto()" class="btn-confirma">CONFIRMAR</button>
+        <button (click)="corrigirVoto()" class="btn btn-secondary btn-corrige">
+          <mat-icon>edit</mat-icon> CORRIGIR
+        </button>
+        <button (click)="onConfirmarVoto()" class="btn btn-success btn-confirma">
+          <mat-icon>check_circle</mat-icon> CONFIRMAR
+        </button>
       </div>
     </div>
 
-    <div *ngSwitchCase="'concluido'" class="wizard-step">
-      <h2>Obrigado!</h2>
-      <p>Seu voto para <strong>{{ cedulaAberta.cargo.titulo }}</strong> foi registrado com sucesso.</p>
+    <!-- PASSO 4: CONCLUÍDO -->
+    <div *ngSwitchCase="'concluido'" class="wizard-step step-concluido">
+      <mat-icon class="feedback-icon success">check_circle_outline</mat-icon>
+      <h2 class="step-title">Obrigado!</h2>
+      <p class="step-description">Seu voto para <strong>{{ cedulaAberta.cargo.titulo }}</strong> foi registrado com sucesso.</p>
+       <!-- Pode adicionar um link para sair ou voltar -->
     </div>
 
-    <div *ngSwitchCase="'carregando'">
-      <p>Processando...</p>
-      </div>
+    <!-- ESTADO: NÃO INICIADO -->
+    <div *ngSwitchCase="'naoIniciado'" class="wizard-step step-info">
+      <mat-icon class="feedback-icon info">info_outline</mat-icon>
+      <h2 class="step-title">Votação Indisponível</h2>
+      <p class="step-description">{{ errorMessage }}</p>
+      <p>Por favor, aguarde a liberação pelo administrador.</p>
+      <!-- Botão para tentar recarregar -->
+       <button (click)="carregarCedula()" class="btn btn-secondary">
+         <mat-icon>refresh</mat-icon> Tentar Novamente
+       </button>
+    </div>
 
-    <div *ngSwitchCase="'erro'" class="wizard-step">
-      <h2>Ocorreu um Erro</h2>
+     <!-- ESTADO DE ERRO GERAL -->
+    <div *ngSwitchCase="'erro'" class="wizard-step step-erro">
+       <mat-icon class="feedback-icon error">error_outline</mat-icon>
+      <h2 class="step-title">Ocorreu um Erro</h2>
       <p class="error-message">{{ errorMessage }}</p>
       <p>Por favor, tente recarregar a página ou contate o administrador.</p>
+       <button (click)="carregarCedula()" class="btn btn-secondary">
+         <mat-icon>refresh</mat-icon> Recarregar
+       </button>
     </div>
 
   </div>
 </div>
+
+<!-- Template para estado de carregamento inicial ou erro fatal -->
+<ng-template #loadingOrError>
+  <div class="loading-container" *ngIf="step === 'carregando'">
+     <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    <p>Carregando dados da votação...</p>
+  </div>
+   <!-- O estado 'erro' já é tratado dentro do ngSwitch, mas podemos ter um fallback aqui se necessário -->
+</ng-template>
+

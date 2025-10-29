@@ -1,131 +1,197 @@
+@use '@angular/material' as mat; // Para usar funções de paleta do Material (opcional)
+
 /* ==============================================
-   Variáveis de Cor (Sinta-se à vontade para ajustar)
+   Variáveis de Cor e Layout
    ============================================== */
 :host {
-  --primary-color: #004a98;     // Azul principal (IPB)
-  --primary-dark: #003366;      // Azul mais escuro (para hover)
-  --bg-color: #f4f7f6;          // Fundo da página (cinza bem claro)
+  --primary-color: #0d47a1;     // Azul mais escuro e sóbrio
+  --primary-light: #42a5f5;    // Azul claro para detalhes
+  --bg-color: #f8f9fa;          // Fundo da página (cinza muito claro)
   --card-bg-color: #ffffff;     // Fundo do card
-  --text-color: #333333;        // Cor principal do texto
-  --border-color: #e0e0e0;      // Cor da borda
-  --success-color: #2E7D32;     // Verde (Confirmar)
-  --warning-color: #fbc02d;     // Laranja/Amarelo (Corrigir)
-  --error-color: #D32F2F;       // Vermelho (Erro)
-  --nulo-color: #424242;        // Cinza escuro (Nulo)
-  --branco-color: #f5f5f5;      // Cinza claro (Branco)
+  --text-color: #495057;        // Cor principal do texto (cinza escuro)
+  --text-light: #6c757d;       // Texto secundário (cinza claro)
+  --border-color: #dee2e6;      // Cor da borda
+  --success-color: #198754;     // Verde (Confirmar)
+  --warning-color: #ffc107;     // Amarelo (Corrigir)
+  --error-color: #dc3545;       // Vermelho (Erro)
+  --info-color: #0dcaf0;        // Azul claro (Info)
+  --nulo-color: #6c757d;        // Cinza (Nulo)
+  --branco-color: #f8f9fa;      // Cinza claro (Branco)
+
+  --border-radius: 8px;
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); // Sombra mais suave
 }
 
 /* ==============================================
-   Container Principal (O Card de Votação)
+   Base e Container
    ============================================== */
-// :host é usado para garantir que o estilo se aplique ao componente
-// e possamos definir um fundo para a página inteira.
 :host {
   display: block;
   width: 100%;
   min-height: 100vh;
   background-color: var(--bg-color);
-  padding: 2rem 1rem;
+  padding: 3rem 1rem;
   box-sizing: border-box;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif; // Fonte padrão do Material
 }
 
 .votacao-container {
-  max-width: 800px;
+  max-width: 700px; // Um pouco mais estreito
   margin: 0 auto;
   background-color: var(--card-bg-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   border: 1px solid var(--border-color);
   overflow: hidden;
 }
 
 /* ==============================================
-   Estilo Base dos Passos (Wizard)
+   Estilo dos Passos (Wizard)
    ============================================== */
 .wizard-step {
-  padding: 2rem 2.5rem;
+  padding: 2.5rem 3rem; // Mais padding
   text-align: center;
   color: var(--text-color);
 
-  h2, h3 {
+  .step-title {
+    font-size: 1.8rem; // Título maior
+    font-weight: 500;
     margin-top: 0;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     color: var(--primary-color);
   }
 
-  p {
+  .step-description {
     font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 2rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    color: var(--text-light);
+
+    strong {
+      color: var(--primary-color);
+      font-weight: 500;
+    }
   }
 }
 
 /* ==============================================
    Estilo Base de Botões e Formulários
    ============================================== */
-button,
-input[type="text"],
-input[type="password"] {
-  font-family: inherit;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  padding: 0.8rem 1rem;
-  box-sizing: border-box;
-  width: 100%;
-  margin-bottom: 1rem;
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  color: var(--text-color);
 }
 
-button {
+.form-input {
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  padding: 0.9rem 1.1rem;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 1.5rem; // Mais espaço
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(var(--primary-light), 0.2);
+  }
+}
+
+.btn {
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: var(--border-radius);
+  padding: 0.9rem 1.5rem;
+  box-sizing: border-box;
   cursor: pointer;
-  background-color: var(--primary-color);
-  color: white;
-  font-weight: 600;
   border: none;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  font-weight: 500;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+  display: inline-flex; // Para alinhar ícones
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; // Espaço entre ícone e texto
+
+  mat-icon {
+    font-size: 1.2em; // Ícone um pouco maior
+  }
 
   &:hover:not(:disabled) {
-    background-color: var(--primary-dark);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+     transform: translateY(0px);
+     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   &:disabled {
-    background-color: #b0bec5; // Cinza para desabilitado
+    background-color: #adb5bd; // Cinza mais claro para desabilitado
+    color: #f8f9fa;
     cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  &:hover:not(:disabled) {
+    // background-color: darken(var(--primary-color), 8%);
+  }
+}
+
+.btn-secondary {
+  background-color: #e9ecef; // Cinza claro
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  &:hover:not(:disabled) {
+    background-color: #dee2e6;
+  }
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+   &:hover:not(:disabled) {
+    // background-color: darken(var(--success-color), 8%);
   }
 }
 
 /* ==============================================
    Passo 1: Identificação
    ============================================== */
-[ngSwitchCase="'identificacao'"] {
-  form {
-    max-width: 400px;
+.step-identificacao {
+  .id-form {
+    max-width: 450px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch; // Ocupa largura total
   }
 
-  label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    text-align: left;
+  .btn-submit {
+     width: 100%; // Botão ocupa largura total
+     margin-top: 1rem;
   }
 }
 
 /* ==============================================
    Passo 2: Cédula de Votação
    ============================================== */
-.cedula {
+.step-votacao {
   .candidatos-grid {
     display: grid;
-    // Cria colunas responsivas:
-    // - Mínimo de 160px
-    // - Máximo de 1fr (ocupa o espaço disponível)
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Botões um pouco maiores
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
   }
 
   .candidato-btn {
@@ -138,55 +204,59 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 120px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    min-height: 140px; // Mais alto
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
 
     .nome {
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 1.15rem;
+      font-weight: 500;
       margin-bottom: 0.5rem;
+      word-break: break-word; // Quebra nomes longos
     }
 
     .numero {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
       color: var(--primary-color);
     }
 
     &:hover {
-      border-color: var(--primary-color);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
+      border-color: var(--primary-light);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-3px);
     }
   }
 
   .outros-votos {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin-top: 2.5rem;
+    gap: 2rem;
+    margin-top: 3rem;
     border-top: 1px solid var(--border-color);
-    padding-top: 2rem;
+    padding-top: 2.5rem;
 
     button {
-      width: auto; // Não ocupa 100%
-      min-width: 140px;
+      width: auto;
+      min-width: 150px;
+      font-weight: 500;
     }
 
     .btn-branco {
       background-color: var(--branco-color);
       color: var(--text-color);
-      border: 1px solid #ccc;
-      &:hover {
-        background-color: #e0e0e0;
+       &:hover:not(:disabled) {
+        background-color: #e9ecef;
       }
     }
     .btn-nulo {
       background-color: var(--nulo-color);
       color: white;
       border: 1px solid var(--nulo-color);
-      &:hover {
-        background-color: #212121;
+       &:hover:not(:disabled) {
+        // background-color: darken(var(--nulo-color), 8%);
       }
     }
   }
@@ -195,20 +265,21 @@ button {
 /* ==============================================
    Passo 3: Confirmação
    ============================================== */
-.confirmacao {
-  .voto-selecionado {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 2rem;
-    margin: 2rem auto;
-    max-width: 400px;
+.step-confirmacao {
+  .voto-selecionado-card {
+    background-color: #e3f2fd; // Fundo azul claro para destaque
+    border: 1px solid var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    margin: 2.5rem auto;
+    max-width: 450px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 
     .nome {
       display: block;
-      font-size: 2rem;
+      font-size: 2.2rem; // Maior
       font-weight: 700;
-      color: var(--text-color);
     }
 
     .numero {
@@ -216,61 +287,122 @@ button {
       font-size: 1.5rem;
       color: var(--primary-color);
       margin-top: 0.5rem;
+      font-weight: 500;
     }
   }
 
   .botoes-confirmacao {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; // Afasta os botões
     gap: 1.5rem;
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 450px;
+    margin: 2.5rem auto 0;
 
     button {
-      font-size: 1.2rem;
+      flex: 1; // Ocupa espaço igual
+      font-size: 1.1rem;
       padding: 1rem;
+      text-transform: uppercase; // CAIXA ALTA
     }
 
     .btn-corrige {
       background-color: var(--warning-color);
-      color: #333;
-      border: 1px solid #c79100;
-      &:hover {
-        background-color: #ffd600;
+      color: #333; // Texto escuro para contraste com amarelo
+       &:hover:not(:disabled) {
+        // background-color: darken(var(--warning-color), 10%);
       }
     }
 
     .btn-confirma {
-      background-color: var(--success-color);
-      border: 1px solid #1B5E20;
-      &:hover {
-        background-color: #388E3C;
-      }
+       // Estilo padrão .btn-success já aplicado
     }
   }
 }
 
 /* ==============================================
-   Passos 4 e 5: Feedback (Concluído, Erro, Carregando)
+   Passos de Feedback (Concluído, Erro, Info, Carregando)
    ============================================== */
-[ngSwitchCase="'concluido'"] {
-  h2 {
-    color: var(--success-color);
-  }
+.feedback-icon {
+  font-size: 4rem; // Ícone grande
+  margin-bottom: 1rem;
+  &.success { color: var(--success-color); }
+  &.error { color: var(--error-color); }
+  &.info { color: var(--info-color); }
 }
 
-[ngSwitchCase="'erro'"] {
-  h2 {
-    color: var(--error-color);
-  }
+.step-concluido {
+  .step-title { color: var(--success-color); }
 }
 
-.error-message {
+.step-erro {
+  .step-title { color: var(--error-color); }
+}
+
+.step-info { // Para 'naoIniciado'
+  .step-title { color: var(--info-color); }
+}
+
+.error-message { // Mensagem de erro reutilizável
   color: var(--error-color);
-  background-color: #ffebee;
-  border: 1px solid var(--error-color);
-  border-radius: 6px;
-  padding: 1rem;
+  // background-color: lighten(var(--error-color), 40%); // Fundo rosa claro
+  // border: 1px solid lighten(var(--error-color), 20%);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.5rem;
   margin-top: 1.5rem;
   text-align: center;
+  font-weight: 500;
+  display: flex; // Para alinhar ícone
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* ==============================================
+   Estado de Carregamento Inicial
+   ============================================== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  min-height: 300px; // Altura mínima
+  color: var(--text-light);
+
+  mat-progress-spinner {
+    margin-bottom: 1.5rem;
+    // Para usar a cor primária no spinner (requer importação do theme no TS ou SCSS global)
+    // stroke: var(--primary-color); // Não funciona diretamente, precisa de config
+  }
+
+  p {
+    font-size: 1.1rem;
+  }
+}
+
+/* ==============================================
+   Responsividade (Ajustes simples)
+   ============================================== */
+@media (max-width: 600px) {
+  .wizard-step {
+    padding: 2rem 1.5rem; // Menos padding em telas pequenas
+  }
+
+  .step-votacao .candidatos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); // Botões menores
+    gap: 1rem;
+  }
+
+  .step-confirmacao .botoes-confirmacao {
+    flex-direction: column; // Botões um abaixo do outro
+    gap: 1rem;
+  }
+
+  .step-title {
+    font-size: 1.6rem;
+  }
+
+  .step-description {
+    font-size: 1rem;
+  }
 }
