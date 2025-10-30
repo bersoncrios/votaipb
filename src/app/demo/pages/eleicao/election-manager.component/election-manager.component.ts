@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { cloneDeep } from 'lodash-es';
+import Swal from 'sweetalert2';
 
 type ApuracaoResultado = {
   votosPorCandidato: Map<string, number>;
@@ -56,7 +57,8 @@ export class EleicaoManageComponent implements OnInit {
    */
   async onAbrirEscrutinio(eleicao: Eleicao, cargo: Cargo, escrutinio: Escrutinio) {
     if (eleicao.cargoAbertoParaVotacao) {
-      alert('Já existe um escrutínio aberto. Feche-o antes de abrir outro.');
+      // alert('Já existe um escrutínio aberto. Feche-o antes de abrir outro.');
+      Swal.fire('Atenção', 'Já existe um escrutínio aberto. Feche-o antes de abrir outro.', 'warning');
       return;
     }
     const novosCargos = cloneDeep(eleicao.cargos);
@@ -82,7 +84,8 @@ export class EleicaoManageComponent implements OnInit {
       };
 
       await this.eleicaoAdminService.updateEleicao(eleicao.id, updates);
-      alert(`Escrutínio ${escrutinio.numero} para ${cargo.titulo} aberto!`);
+      // alert(`Escrutínio ${escrutinio.numero} para ${cargo.titulo} aberto!`);
+      Swal.fire('Sucesso!', `Escrutínio ${escrutinio.numero} para ${cargo.titulo} aberto!`, 'success');
     } catch (e) {
       console.error('Erro ao abrir escrutínio:', e);
     }
@@ -143,14 +146,17 @@ export class EleicaoManageComponent implements OnInit {
 
     if (vencedorEncontrado) {
       cargoAtual.vencedor = vencedorEncontrado;
-      alert(`Eleição para ${cargo.titulo} finalizada. Vencedor: ${vencedorEncontrado.nome}`);
+      // alert(`Eleição para ${cargo.titulo} finalizada. Vencedor: ${vencedorEncontrado.nome}`);
+      Swal.fire('Eleição Finalizada!', `Eleição para ${cargo.titulo} finalizada. Vencedor: ${vencedorEncontrado.nome}`, 'success');
       this._removerCandidatoDeOutrosCargos(novosCargos, vencedorEncontrado.userId, cargo.id);
 
     } else {
       if (escrutinio.numero < 3) {
-        alert(`Escrutínio ${escrutinio.numero} fechado. Nenhum candidato atingiu mais de 50%. Prossiga para o próximo escrutínio.`);
+        // alert(`Escrutínio ${escrutinio.numero} fechado. Nenhum candidato atingiu mais de 50%. Prossiga para o próximo escrutínio.`);
+        Swal.fire('Escrutínio Fechado', `Escrutínio ${escrutinio.numero} fechado. Nenhum candidato atingiu mais de 50%. Prossiga para o próximo escrutínio.`, 'info');
       } else {
-        alert(`Escrutínio 3 fechado.`);
+        // alert(`Escrutínio 3 fechado.`);
+        Swal.fire('Escrutínio Fechado', 'Escrutínio 3 fechado.', 'info');
       }
     }
 
@@ -159,7 +165,8 @@ export class EleicaoManageComponent implements OnInit {
 
     if (todosCargosFinalizados) {
       updates.status = 'finalizada';
-      alert(`Todos os cargos foram preenchidos. A eleição "${eleicao.titulo}" foi encerrada.`);
+      // alert(`Todos os cargos foram preenchidos. A eleição "${eleicao.titulo}" foi encerrada.`);
+      Swal.fire('Eleição Encerrada!', `Todos os cargos foram preenchidos. A eleição "${eleicao.titulo}" foi encerrada.`, 'success');
     }
 
     try {
@@ -230,7 +237,8 @@ export class EleicaoManageComponent implements OnInit {
   async onPreparar3Escrutinio(eleicao: Eleicao, cargo: Cargo) {
     const escrutinio2 = cargo.escrutinios.find(e => e.numero === 2);
     if (escrutinio2?.status !== 'fechado') {
-      alert('É preciso fechar o 2º Escrutínio antes de preparar o 3º.');
+      // alert('É preciso fechar o 2º Escrutínio antes de preparar o 3º.');
+      Swal.fire('Atenção', 'É preciso fechar o 2º Escrutínio antes de preparar o 3º.', 'warning');
       return;
     }
 
@@ -258,7 +266,8 @@ export class EleicaoManageComponent implements OnInit {
     );
 
     if (top2Candidatos.length === 0) {
-      alert('Não houve candidatos válidos (que já não sejam vencedores) para o 3º escrutínio.');
+      // alert('Não houve candidatos válidos (que já não sejam vencedores) para o 3º escrutínio.');
+      Swal.fire('Atenção', 'Não houve candidatos válidos (que já não sejam vencedores) para o 3º escrutínio.', 'info');
       return;
     }
 
@@ -273,7 +282,8 @@ export class EleicaoManageComponent implements OnInit {
       await this.eleicaoAdminService.updateEleicao(eleicao.id, { cargos: novosCargos });
 
       const nomes = top2Candidatos.map(c => c.nome).join(' e ');
-      alert(`3º Escrutínio preparado com ${top2Candidatos.length} candidato(s): ${nomes}.`);
+      // alert(`3º Escrutínio preparado com ${top2Candidatos.length} candidato(s): ${nomes}.`);
+      Swal.fire('Sucesso!', `3º Escrutínio preparado com ${top2Candidatos.length} candidato(s): ${nomes}.`, 'success');
 
     } catch (e) {
       console.error('Erro ao preparar 3º escrutínio:', e);
@@ -284,15 +294,26 @@ export class EleicaoManageComponent implements OnInit {
    * Copia o link público de votação
    */
   async onCopiarLink(eleicaoId: string) {
-    const origin = window.location.origin; // Pega 'http://localhost:4200' ou 'https://seu-dominio.com'
-    const link = `${origin}/votar/${eleicaoId}`; // Monta o link público
+    const origin = window.location.origin;
+    const link = `${origin}/votar/${eleicaoId}`;
 
     try {
       await navigator.clipboard.writeText(link);
-      alert(`Link de votação copiado!\n\n${link}`);
+      // alert(`Link de votação copiado!\n\n${link}`);
+      Swal.fire({
+        title: 'Link Copiado!',
+        text: link,
+        icon: 'success',
+        footer: 'O link está na sua área de transferência.'
+      });
     } catch (err) {
       console.error('Falha ao copiar link: ', err);
-      alert(`Falha ao copiar. Copie manually:\n\n${link}`);
+      // alert(`Falha ao copiar. Copie manually:\n\n${link}`);
+      Swal.fire({
+        title: 'Falha ao Copiar',
+        text: `Por favor, copie manualmente: ${link}`,
+        icon: 'error'
+      });
     }
   }
 
@@ -307,13 +328,15 @@ export class EleicaoManageComponent implements OnInit {
    * Força a re-apuração dos escrutínios 1 e 2 (para casos de bug)
    */
   async onForcarReapuracao(eleicao: Eleicao, cargo: Cargo) {
-    alert('Forçando re-apuração... Verificando 1º e 2º escrutínios.');
+    // alert('Forçando re-apuração... Verificando 1º e 2º escrutínios.');
+    Swal.fire('Iniciando...', 'Forçando re-apuração... Verificando 1º e 2º escrutínios.', 'info');
 
     const novosCargos = cloneDeep(eleicao.cargos);
     const cargoAtual = novosCargos.find(c => c.id === cargo.id)!;
 
     if (cargoAtual.vencedor) {
-      alert('Este cargo já possui um vencedor registrado.');
+      // alert('Este cargo já possui um vencedor registrado.');
+      Swal.fire('Atenção', 'Este cargo já possui um vencedor registrado.', 'info');
       return;
     }
 
@@ -350,12 +373,14 @@ export class EleicaoManageComponent implements OnInit {
       cargoAtual.vencedor = vencedorEncontrado;
       try {
         await this.eleicaoAdminService.updateEleicao(eleicao.id, { cargos: novosCargos });
-        alert(`CORRIGIDO: Vencedor ${vencedorEncontrado.nome} foi definido para o cargo ${cargo.titulo}.`);
+        // alert(`CORRIGIDO: Vencedor ${vencedorEncontrado.nome} foi definido para o cargo ${cargo.titulo}.`);
+        Swal.fire('Sucesso!', `CORRIGIDO: Vencedor ${vencedorEncontrado.nome} foi definido para o cargo ${cargo.titulo}.`, 'success');
       } catch (e) {
         console.error('Erro ao forçar re-apuração:', e);
       }
     } else {
-      alert('Nenhum vencedor encontrado após re-apuração. A eleição continua para o 3º escrutínio.');
+      // alert('Nenhum vencedor encontrado após re-apuração. A eleição continua para o 3º escrutínio.');
+      Swal.fire('Concluído', 'Nenhum vencedor encontrado após re-apuração. A eleição continua para o 3º escrutínio.', 'info');
     }
   }
 
