@@ -1,4 +1,3 @@
-// src/app/services/votacao.service.ts
 import { Injectable, inject } from '@angular/core';
 import {
   Firestore,
@@ -7,14 +6,12 @@ import {
   runTransaction
 } from '@angular/fire/firestore';
 
-// Importe seus tipos (ajuste os caminhos)
 import { Eleicao } from '../models/Eleicao';
 import {  Cargo} from '../models/Cargo';
 import { Escrutinio } from '../models/Escritineo';
 import {  Voto } from '../models/Voto';
 import { Membro } from '../models/Membro';
 
-// 1. CORREÇÃO: EXPORTANDO A INTERFACE QUE O COMPONENTE PRECISA
 export interface CedulaAberta {
   eleicao: Eleicao;
   cargo: Cargo;
@@ -33,7 +30,6 @@ export class VotacaoService {
    */
   async getCedulaAberta(eleicaoId: string): Promise<CedulaAberta | null> {
 
-    // Busca o ÚNICO documento da eleição
     const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
     const eleicaoSnap = await getDoc(eleicaoRef);
 

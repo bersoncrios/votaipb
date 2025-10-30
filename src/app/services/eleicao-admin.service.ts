@@ -13,38 +13,38 @@ import {
   DocumentData,
   where,
   collectionData,
-  query
+  query,
+  runTransaction // <-- ATUALIZADO: Importar runTransaction
 } from '@angular/fire/firestore';
-import {  Cargo } from '../models/Cargo';
-import { Escrutinio } from '../models/Escritineo'
+import { Cargo } from '../models/Cargo';
+import { Escrutinio } from '../models/Escritineo';
 import { Observable } from 'rxjs';
-import { nanoid } from 'nanoid'; // Ótimo para IDs únicos (npm install nanoid)
+import { nanoid } from 'nanoid';
 import { Candidato } from '../models/Candidato';
-import { AuthService } from '../services/auth.service'
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EleicaoAdminService {
-
   private db = inject(Firestore);
   private authService = inject(AuthService);
   private eleicoesCollection = collection(this.db, 'eleicoes');
 
-
   async createEleicao(
-    eleicaoData: Omit<Eleicao, 'id' | 'status' | 'cargoAbertoParaVotacao' | 'adminUid'>
+    eleicaoData: Omit<
+      Eleicao,
+      'id' | 'status' | 'cargoAbertoParaVotacao' | 'adminUid'
+    >
   ): Promise<string> {
-
     const adminUid = this.authService.getCurrentUserUid();
     if (!adminUid) {
-      throw new Error("Usuário não autenticado.");
+      throw new Error('Usuário não autenticado.');
     }
 
     const novoId = nanoid(10);
     const eleicaoRef = doc(this.db, 'eleicoes', novoId);
 
-    // ... (lógica de processar cargos e escrutínios)
     const cargosProcessados: Cargo[] = eleicaoData.cargos.map(cargo => ({
       ...cargo,
       id: cargo.id || nanoid(8),
@@ -57,20 +57,16 @@ export class EleicaoAdminService {
       cargos: cargosProcessados,
       status: 'agendada',
       cargoAbertoParaVotacao: null,
-      adminUid: adminUid // <-- SALVA O ID DO ADMIN
+      adminUid: adminUid
     };
 
     await setDoc(eleicaoRef, novaEleicao);
     return novoId;
   }
 
-
-  /**
-   * Helper para criar os 3 escrutínios iniciais para um cargo.
-   */
-  private gerarEscrutiniosIniciais(candidatosIniciais: Candidato[]): Escrutinio[] {
-
-    // Regra: "no primeiro todos participam, no segundo tambem"
+  private gerarEscrutiniosIniciais(
+    candidatosIniciais: Candidato[]
+  ): Escrutinio[] {
     const escrutinio1: Escrutinio = {
       numero: 1,
       candidatos: candidatosIniciais,
@@ -80,17 +76,14 @@ export class EleicaoAdminService {
 
     const escrutinio2: Escrutinio = {
       numero: 2,
-      candidatos: candidatosIniciais, // Regra: "no segundo tambem [todos]"
+      candidatos: candidatosIniciais,
       votos: [],
       status: 'nao_iniciado'
     };
 
-    // Regra: "no terceiro, somente os dois com mais votos seguem"
-    // No cadastro, deixamos os candidatos vazios. Serão preenchidos
-    // pelo admin após a apuração do 2º escrutínio.
     const escrutinio3: Escrutinio = {
       numero: 3,
-      candidatos: [], // Só será preenchido após apuração do 2º
+      candidatos: [],
       votos: [],
       status: 'nao_iniciado'
     };
@@ -98,37 +91,100 @@ export class EleicaoAdminService {
     return [escrutinio1, escrutinio2, escrutinio3];
   }
 
- /**
-   * Busca uma eleição pelo ID e retorna um Observable (atualiza em tempo real).
-   */
   getEleicaoObservable(id: string): Observable<Eleicao> {
     const eleicaoRef = doc(this.db, 'eleicoes', id);
-    // docData já faz o cast para o tipo <Eleicao>
     return docData(eleicaoRef) as Observable<Eleicao>;
   }
 
-  /**
-   * Atualiza partes de um documento de eleição.
-   * Usaremos isso para salvar TODAS as nossas alterações (abrir/fechar escrutínio, etc.)
-   */
   updateEleicao(id: string, updates: Partial<Eleicao>): Promise<void> {
     const eleicaoRef = doc(this.db, 'eleicoes', id);
     return updateDoc(eleicaoRef, updates);
   }
 
-  /**
-   * Busca todas as eleições criadas por um admin específico.
-   */
   getEleicoesDoAdmin(adminUid: string): Observable<Eleicao[]> {
     const q = query(
       this.eleicoesCollection,
       where('adminUid', '==', adminUid)
-      // você pode adicionar , orderBy('titulo') ou 'status' se criar índices
     );
-
-    // collectionData retorna um array em tempo real
     return collectionData(q) as Observable<Eleicao[]>;
   }
+
+  // ##################################################################
+  // ## NOVA FUNÇÃO ADICIONADA
+  // ##################################################################
+
+  /**
+   * Remove candidatos eleitos (ex: Presidente e Vice) dos outros cargos
+   * que ainda não começaram a ser votados.
+   *
+   * @param eleicaoId O ID da eleição
+   * @param candidatosIds Array de IDs dos candidatos que foram eleitos
+   * @param cargoIdOndeForamEleitos O ID do cargo onde eles acabaram de ser eleitos (para não removê-los deste)
+   */
+  async removerCandidatosEleitosDeOutrosCargos(
+    eleicaoId: string,
+    candidatosIds: string[],
+    cargoIdOndeForamEleitos: string
+  ): Promise<void> {
+
+    const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
+
+    try {
+      await runTransaction(this.db, async transaction => {
+        const eleicaoSnap = await transaction.get(eleicaoRef);
+        if (!eleicaoSnap.exists()) {
+          throw new Error('Eleição não encontrada para remover candidatos.');
+        }
+
+        const eleicaoData = eleicaoSnap.data() as Eleicao;
+
+        // Mapeia os cargos para criar um novo array atualizado
+        const cargosAtualizados = eleicaoData.cargos.map(cargo => {
+          // 1. Se for o cargo onde eles acabaram de ser eleitos, não faz nada
+          if (cargo.id === cargoIdOndeForamEleitos) {
+            return cargo;
+          }
+
+          // 2. Se for qualquer outro cargo, remove os IDs dos candidatos eleitos
+
+          // Remove da lista principal de candidatos iniciais do cargo
+          const novosCandidatosIniciais = cargo.candidatosIniciais.filter(
+            c => !candidatosIds.includes(c.userId)
+          );
+
+          // Remove dos escrutínios que ainda não iniciaram
+          const novosEscrutinios = cargo.escrutinios.map(esc => {
+            // Se o escrutínio já começou ou terminou, não mexe
+            if (esc.status !== 'nao_iniciado') {
+              return esc;
+            }
+
+            // Se não iniciou, filtra os candidatos
+            const novosCandidatosEscrutinio = esc.candidatos.filter(
+              c => !candidatosIds.includes(c.userId)
+            );
+
+            return {
+              ...esc,
+              candidatos: novosCandidatosEscrutinio
+            };
+          });
+
+          return {
+            ...cargo,
+            candidatosIniciais: novosCandidatosIniciais,
+            escrutinios: novosEscrutinios
+          };
+        });
+
+        // 3. Atualiza o documento inteiro com o novo array de cargos
+        transaction.update(eleicaoRef, {
+          cargos: cargosAtualizados
+        });
+      });
+    } catch (e) {
+      console.error('Erro ao remover candidatos eleitos de outros cargos:', e);
+      throw e;
+    }
+  }
 }
-
-

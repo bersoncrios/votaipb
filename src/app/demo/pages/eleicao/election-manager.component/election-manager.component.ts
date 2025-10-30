@@ -1,12 +1,10 @@
-// src/app/admin/eleicao-manage/eleicao-manage.component.ts
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { EleicaoAdminService } from '../../../../services/eleicao-admin.service';
 import { Eleicao } from '../../../../models/Eleicao';
 import { Cargo } from '../../../../models/Cargo';
 import { Escrutinio } from '../../../../models/Escritineo';
 import { Candidato } from '../../../../models/Candidato';
-
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
@@ -32,17 +30,16 @@ type ApuracaoOrdenadaItem = {
   styleUrls: ['./election-manager.component.scss']
 })
 export class EleicaoManageComponent implements OnInit {
-
   private route = inject(ActivatedRoute);
   private eleicaoAdminService = inject(EleicaoAdminService);
 
   public eleicao$!: Observable<Eleicao>;
-  public apuracaoCache = new Map<string, ApuracaoResultado>(); // Cache para resultados
+  public apuracaoCache = new Map<string, ApuracaoResultado>();
   public apuracaoOrdenadaCache = new Map<string, ApuracaoOrdenadaItem[]>();
 
   ngOnInit(): void {
     this.eleicao$ = this.route.paramMap.pipe(
-      switchMap(params => {
+      switchMap((params) => {
         const id = params.get('id');
         if (!id) {
           throw new Error('ID da eleição não fornecido');
@@ -65,8 +62,8 @@ export class EleicaoManageComponent implements OnInit {
     const novosCargos = cloneDeep(eleicao.cargos);
 
     // Encontra e atualiza o status no clone
-    const cargoAtual = novosCargos.find(c => c.id === cargo.id);
-    const escrutinioAtual = cargoAtual?.escrutinios.find(e => e.numero === escrutinio.numero);
+    const cargoAtual = novosCargos.find((c) => c.id === cargo.id);
+    const escrutinioAtual = cargoAtual?.escrutinios.find((e) => e.numero === escrutinio.numero);
 
     if (escrutinioAtual) {
       escrutinioAtual.status = 'aberto';
@@ -79,7 +76,7 @@ export class EleicaoManageComponent implements OnInit {
       // Prepara os dados da atualização
       const updates: Partial<Eleicao> = {
         cargos: novosCargos,
-        status: 'em_andamento', // Marca a eleição toda como 'em_andamento'
+        status: 'em_andamento',
         cargoAbertoParaVotacao: {
           cargoId: cargo.id,
           escrutinioNum: escrutinio.numero
@@ -98,23 +95,19 @@ export class EleicaoManageComponent implements OnInit {
    */
   async onFecharEscrutinio(eleicao: Eleicao, cargo: Cargo, escrutinio: Escrutinio) {
     const novosCargos = cloneDeep(eleicao.cargos);
-    const cargoAtual = novosCargos.find(c => c.id === cargo.id)!;
-    const escrutinioAtual = cargoAtual.escrutinios.find(e => e.numero === escrutinio.numero)!;
+    const cargoAtual = novosCargos.find((c) => c.id === cargo.id)!;
+    const escrutinioAtual = cargoAtual.escrutinios.find((e) => e.numero === escrutinio.numero)!;
 
-    // 1. Fecha o status
     escrutinioAtual.status = 'fechado';
 
-    // 2. Apura os votos (ANTES de salvar)
     const { apuracao, totalVotosValidos } = this._apurarVotos(escrutinioAtual);
 
-    // 3. Salva no cache para o template
     const cacheKey = `${cargo.id}-${escrutinio.numero}`;
     this.apuracaoCache.set(cacheKey, apuracao);
-    const apuracaoOrdenada: ApuracaoOrdenadaItem[] =
-      Array.from(apuracao.votosPorCandidato.entries()) // Converte Map para [userId, votos][]
-      .map(([userId, votos]) => ({ // Converte para o novo tipo
+    const apuracaoOrdenada: ApuracaoOrdenadaItem[] = Array.from(apuracao.votosPorCandidato.entries())
+      .map(([userId, votos]) => ({
         userId: userId,
-        nome: this.getCandidatoNome(cargo, userId), // Pega o nome
+        nome: this.getCandidatoNome(cargo, userId),
         votos: votos
       }))
       .sort((a, b) => b.votos - a.votos); // Ordena (maior para o menor)
@@ -123,44 +116,33 @@ export class EleicaoManageComponent implements OnInit {
 
     let vencedorEncontrado: Candidato | undefined = undefined;
 
-    // 4. APLICA A REGRA (50% + 1) para 1º e 2º escrutínios
     if (escrutinio.numero === 1 || escrutinio.numero === 2) {
       if (totalVotosValidos > 0) {
-
-        // Correção do linter (TS6133): _votosVencedor
         const [vencedorId, _votosVencedor] =
-          [...apuracao.votosPorCandidato.entries()]
-          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+          [...apuracao.votosPorCandidato.entries()].find(([id, contagem]) => contagem > totalVotosValidos / 2) || [];
 
         if (vencedorId) {
-          vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+          vencedorEncontrado = cargo.candidatosIniciais.find((c) => c.userId === vencedorId);
         }
       }
-    }
-    // 5. APLICA A REGRA (Maioria Simples) para 3º escrutínio
-    else if (escrutinio.numero === 3) {
+    } else if (escrutinio.numero === 3) {
       if (totalVotosValidos > 0) {
+        const [vencedorId, _votosVencedor] = [...apuracao.votosPorCandidato.entries()].sort((a, b) => b[1] - a[1])[0];
 
-        // Correção do linter (TS6133): _votosVencedor
-        const [vencedorId, _votosVencedor] =
-          [...apuracao.votosPorCandidato.entries()]
-          .sort((a, b) => b[1] - a[1])[0];
-
-        vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+        vencedorEncontrado = cargo.candidatosIniciais.find((c) => c.userId === vencedorId);
       }
     }
 
-    // 6. Prepara a atualização no Firestore
     const updates: Partial<Eleicao> = {
-      cargoAbertoParaVotacao: null // Fecha a votação
+      cargoAbertoParaVotacao: null
     };
 
     if (vencedorEncontrado) {
-      // REGRA: Se um vencedor foi encontrado, marca o cargo
       cargoAtual.vencedor = vencedorEncontrado;
       alert(`Eleição para ${cargo.titulo} finalizada. Vencedor: ${vencedorEncontrado.nome}`);
+
+      this._removerCandidatoDeOutrosCargos(novosCargos, vencedorEncontrado.userId, cargo.id);
     } else {
-      // REGRA: Se ninguém venceu...
       if (escrutinio.numero < 3) {
         alert(`Escrutínio ${escrutinio.numero} fechado. Nenhum candidato atingiu mais de 50%. Prossiga para o próximo escrutínio.`);
       } else {
@@ -168,7 +150,6 @@ export class EleicaoManageComponent implements OnInit {
       }
     }
 
-    // 7. Salva as mudanças (status fechado E o possível vencedor)
     updates.cargos = novosCargos;
 
     try {
@@ -178,39 +159,27 @@ export class EleicaoManageComponent implements OnInit {
     }
   }
 
-  /**
-   * Helper privado que APENAS conta os votos e retorna os resultados.
-   * (CORRIGIDO: usava 'candidato.userId' em vez de 'voto.candidatoId')
-   */
-  private _apurarVotos(escrutinio: Escrutinio): { apuracao: ApuracaoResultado, totalVotosValidos: number } {
+  private _apurarVotos(escrutinio: Escrutinio): { apuracao: ApuracaoResultado; totalVotosValidos: number } {
     const votos = escrutinio.votos || [];
     const resultados = new Map<string, number>();
     let totalBrancos = 0;
     let totalNulos = 0;
 
-    // Inicializa o mapa com todos os candidatos do escrutínio
     for (const candidato of escrutinio.candidatos) {
       resultados.set(candidato.userId, 0);
     }
 
-    // Processa os votos
     for (const voto of votos) {
       if (voto.candidatoId === 'BRANCO') {
         totalBrancos++;
       } else if (voto.candidatoId === 'NULO') {
         totalNulos++;
       } else if (resultados.has(voto.candidatoId)) {
-
-        // ****** ESTA É A CORREÇÃO DO BUG ******
         resultados.set(voto.candidatoId, resultados.get(voto.candidatoId)! + 1);
-        // *************************************
-
       }
     }
 
-    // Calcula o total de votos VÁLIDOS (exclui brancos e nulos)
-    const totalVotosValidos = Array.from(resultados.values())
-                                   .reduce((a, b) => a + b, 0);
+    const totalVotosValidos = Array.from(resultados.values()).reduce((a, b) => a + b, 0);
 
     const apuracao = {
       votosPorCandidato: resultados,
@@ -223,17 +192,13 @@ export class EleicaoManageComponent implements OnInit {
 
   /**
    * Apura os votos e SALVA NO CACHE para exibição.
-   * (CORRIGIDO: agora reutiliza _apurarVotos, sem lógica duplicada)
    */
   onApurar(cargo: Cargo, escrutinio: Escrutinio) {
-    // 1. Reutiliza a lógica de apuração
     const { apuracao } = this._apurarVotos(escrutinio);
 
-    // 2. Salva no cache para exibição no template
     const cacheKey = `${cargo.id}-${escrutinio.numero}`;
     this.apuracaoCache.set(cacheKey, apuracao);
-    const apuracaoOrdenada: ApuracaoOrdenadaItem[] =
-      Array.from(apuracao.votosPorCandidato.entries())
+    const apuracaoOrdenada: ApuracaoOrdenadaItem[] = Array.from(apuracao.votosPorCandidato.entries())
       .map(([userId, votos]) => ({
         userId: userId,
         nome: this.getCandidatoNome(cargo, userId),
@@ -248,81 +213,72 @@ export class EleicaoManageComponent implements OnInit {
    * Lógica (Regra de Negócio) para preparar o 3º Escrutínio
    */
   async onPreparar3Escrutinio(eleicao: Eleicao, cargo: Cargo) {
-    const escrutinio2 = cargo.escrutinios.find(e => e.numero === 2);
+    const escrutinio2 = cargo.escrutinios.find((e) => e.numero === 2);
     if (escrutinio2?.status !== 'fechado') {
       alert('É preciso fechar o 2º Escrutínio antes de preparar o 3º.');
       return;
     }
 
-    // Pega a apuração do 2º escrutínio
     const cacheKey = `${cargo.id}-2`;
     if (!this.apuracaoCache.has(cacheKey)) {
       this.onApurar(cargo, escrutinio2); // Apura se não estiver no cache
     }
     const resultados2 = this.apuracaoCache.get(cacheKey)!;
 
-    // Converte o Map para um array [userId, contagem] e ordena
-    const votosOrdenados = Array.from(resultados2.votosPorCandidato.entries())
-                                .sort((a, b) => b[1] - a[1]); // Ordena do maior para o menor
+    const votosOrdenados = Array.from(resultados2.votosPorCandidato.entries()).sort((a, b) => b[1] - a[1]);
 
-    // Pega os 2 mais votados (Top 2)
-    const top2Ids = votosOrdenados.slice(0, 2).map(entry => entry[0]);
+    const top2Ids = votosOrdenados.slice(0, 2).map((entry) => entry[0]);
 
-    // Busca os objetos 'Candidato' completos
-    const top2Candidatos: Candidato[] = cargo.candidatosIniciais.filter(
-      c => top2Ids.includes(c.userId)
-    );
+    const top2CandidatosIniciais: Candidato[] = cargo.candidatosIniciais.filter((c) => top2Ids.includes(c.userId));
 
-    if (top2Candidatos.length < 2) {
-      alert('Não houve votos suficientes para definir 2 finalistas.');
+    const vencedoresIds = eleicao.cargos.filter((c) => c.id !== cargo.id && c.vencedor).map((c) => c.vencedor!.userId);
+
+    const top2Candidatos = top2CandidatosIniciais.filter((c) => !vencedoresIds.includes(c.userId));
+
+    if (top2Candidatos.length === 0) {
+      alert('Não houve candidatos válidos (que já não sejam vencedores) para o 3º escrutínio.');
       return;
     }
 
-    // Atualiza o documento
     const novosCargos = cloneDeep(eleicao.cargos);
-    const cargoAtual = novosCargos.find(c => c.id === cargo.id)!;
-    const escrutinio3 = cargoAtual.escrutinios.find(e => e.numero === 3)!;
+    const cargoAtual = novosCargos.find((c) => c.id === cargo.id)!;
+    const escrutinio3 = cargoAtual.escrutinios.find((e) => e.numero === 3)!;
 
     escrutinio3.candidatos = top2Candidatos; // <- AQUI A REGRA DE NEGÓCIO
 
     try {
       await this.eleicaoAdminService.updateEleicao(eleicao.id, { cargos: novosCargos });
-      alert(`3º Escrutínio preparado com os candidatos: ${top2Candidatos[0].nome} e ${top2Candidatos[1].nome}.`);
+
+      const nomes = top2Candidatos.map((c) => c.nome).join(' e ');
+      alert(`3º Escrutínio preparado com ${top2Candidatos.length} candidato(s): ${nomes}.`);
     } catch (e) {
       console.error('Erro ao preparar 3º escrutínio:', e);
     }
   }
 
-  // =============================================
-  // NOVA FUNÇÃO: Copiar link de votação
-  // =============================================
   async onCopiarLink(eleicaoId: string) {
-    const origin = window.location.origin; // Pega 'http://localhost:4200' ou 'https://seu-dominio.com'
-    const link = `${origin}/votar/${eleicaoId}`; // Monta o link público
+    const origin = window.location.origin;
+    const link = `${origin}/votar/${eleicaoId}`;
 
     try {
-      // Tenta usar a API de Clipboard (moderna e segura)
       await navigator.clipboard.writeText(link);
       alert(`Link de votação copiado!\n\n${link}`);
     } catch (err) {
       console.error('Falha ao copiar link: ', err);
-      // Fallback para caso o clipboard falhe (ex: em http ou permissões)
       alert(`Falha ao copiar. Copie manualmente:\n\n${link}`);
     }
   }
 
   getCandidatoNome(cargo: Cargo, userId: string): string {
-    return cargo.candidatosIniciais.find(c => c.userId === userId)?.nome || 'Desconhecido';
+    return cargo.candidatosIniciais.find((c) => c.userId === userId)?.nome || 'Desconhecido';
   }
 
-  // Adicione esta função em qualquer lugar dentro da classe EleicaoManageComponent
   async onForcarReapuracao(eleicao: Eleicao, cargo: Cargo) {
     alert('Forçando re-apuração... Verificando 1º e 2º escrutínios.');
 
     const novosCargos = cloneDeep(eleicao.cargos);
-    const cargoAtual = novosCargos.find(c => c.id === cargo.id)!;
+    const cargoAtual = novosCargos.find((c) => c.id === cargo.id)!;
 
-    // Se o cargo já tem vencedor, não faz nada
     if (cargoAtual.vencedor) {
       alert('Este cargo já possui um vencedor registrado.');
       return;
@@ -330,35 +286,30 @@ export class EleicaoManageComponent implements OnInit {
 
     let vencedorEncontrado: Candidato | undefined = undefined;
 
-    // Roda a lógica de verificação para o 1º Escrutínio (se estiver fechado)
-    const escrutinio1 = cargoAtual.escrutinios.find(e => e.numero === 1);
+    const escrutinio1 = cargoAtual.escrutinios.find((e) => e.numero === 1);
     if (escrutinio1 && escrutinio1.status === 'fechado') {
       const { apuracao, totalVotosValidos } = this._apurarVotos(escrutinio1);
       if (totalVotosValidos > 0) {
         const [vencedorId, _votos] =
-          [...apuracao.votosPorCandidato.entries()]
-          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+          [...apuracao.votosPorCandidato.entries()].find(([id, contagem]) => contagem > totalVotosValidos / 2) || [];
         if (vencedorId) {
-          vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+          vencedorEncontrado = cargo.candidatosIniciais.find((c) => c.userId === vencedorId);
         }
       }
     }
 
-    // Se NÃO encontrou vencedor no 1º, verifica o 2º (se estiver fechado)
-    const escrutinio2 = cargoAtual.escrutinios.find(e => e.numero === 2);
+    const escrutinio2 = cargoAtual.escrutinios.find((e) => e.numero === 2);
     if (!vencedorEncontrado && escrutinio2 && escrutinio2.status === 'fechado') {
       const { apuracao, totalVotosValidos } = this._apurarVotos(escrutinio2);
       if (totalVotosValidos > 0) {
         const [vencedorId, _votos] =
-          [...apuracao.votosPorCandidato.entries()]
-          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+          [...apuracao.votosPorCandidato.entries()].find(([id, contagem]) => contagem > totalVotosValidos / 2) || [];
         if (vencedorId) {
-          vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+          vencedorEncontrado = cargo.candidatosIniciais.find((c) => c.userId === vencedorId);
         }
       }
     }
 
-    // Se, após tudo isso, encontramos um vencedor
     if (vencedorEncontrado) {
       cargoAtual.vencedor = vencedorEncontrado;
       try {
@@ -369,6 +320,28 @@ export class EleicaoManageComponent implements OnInit {
       }
     } else {
       alert('Nenhum vencedor encontrado após re-apuração. A eleição continua para o 3º escrutínio.');
+    }
+  }
+
+  private _removerCandidatoDeOutrosCargos(cargos: Cargo[], userIdParaRemover: string, cargoIdDoVencedor: string) {
+    for (const cargo of cargos) {
+      if (cargo.id === cargoIdDoVencedor) {
+        continue;
+      }
+
+      if (cargo.vencedor) {
+        continue;
+      }
+
+      for (const escrutinio of cargo.escrutinios) {
+        if (escrutinio.status === 'nao_iniciado') {
+          const index = escrutinio.candidatos.findIndex((c) => c.userId === userIdParaRemover);
+          if (index > -1) {
+            console.log(`REMOVIDO ${userIdParaRemover} do escrutínio ${escrutinio.numero} do cargo ${cargo.titulo}`);
+            escrutinio.candidatos.splice(index, 1);
+          }
+        }
+      }
     }
   }
 }
