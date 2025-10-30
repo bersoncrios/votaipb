@@ -77,8 +77,10 @@ h1 {
     justify-content: space-between;
   }
 
+  // Estilo antigo - parece que faltava um '}' aqui, corrigi
   .cargo-title-select {
     width: 70%;
+  }
 
   .remove-cargo-button {
     margin-top: -8px;
@@ -89,30 +91,99 @@ h1 {
   }
 }
 
-.review-section {
-  h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-    color: var(--primary-color, #004a98);
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.5rem;
+//
+// ===============================================
+// NOVOS ESTILOS PARA O PASSO DE REVISÃO
+// ===============================================
+//
+.review-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // Espaçamento entre os cards
+  margin-top: 1.5rem;
+
+  .mat-mdc-card {
+    // Usamos o 'outlined' para um look mais limpo
+    &.mat-mdc-card-outlined {
+      border-color: rgba(0, 0, 0, 0.12);
+    }
   }
-  p {
-    margin-bottom: 1rem;
+
+  .mat-mdc-card-header {
+    .mat-mdc-card-avatar {
+      // Estiliza o ícone do cabeçalho
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #5d5d5d
+    }
   }
-  strong {
-    display: block;
-    margin-top: 1rem;
-    font-weight: 600;
-  }
-  .mat-mdc-list-base {
-    padding-top: 0;
+
+  .mat-mdc-card-content {
+    h4 {
+      // Títulos H4 dentro do card (Ex: "Título" ou o nome do cargo)
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0 0 0.5rem 0;
+    }
+
+    // Parágrafo simples (usado para o título da eleição)
+    p {
+      font-size: 1rem;
+      color: #5d5d5d
+    }
+
+    .mat-mdc-list-base {
+      padding-top: 0;
+    }
+
+    // Título de cada cargo na lista de revisão
+    .cargo-review-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      // Cor de destaque para o título do cargo
+      color: #5d5d5d
+    }
+
+    // Ícones da lista (pessoa, candidato)
+    .mat-mdc-list-item-icon {
+      color: #5d5d5d
+    }
+
+    // Espaçamento para o divisor entre os cargos
+    .mat-divider {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    // Mensagem de "Nenhum membro/cargo"
+    .empty-list-message {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #5d5d5d;
+      font-style: italic;
+      margin: 1rem 0;
+
+      .mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      // Versão menor para a lista de candidatos
+      &.small {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+      }
+    }
   }
 }
 
+// Estilos de ajuste do :host (do seu código original)
 :host .cargo-card-material {
-
   .cargo-card-header-flex {
     display: flex;
     justify-content: space-between;
@@ -124,12 +195,11 @@ h1 {
       margin-right: 10px;
       padding-bottom: 0;
       .mat-mdc-form-field-subscript-wrapper {
-         display: none;
+        display: none;
       }
-       &.mat-form-field-invalid .mat-mdc-form-field-subscript-wrapper {
-         display: block;
+      &.mat-form-field-invalid .mat-mdc-form-field-subscript-wrapper {
+        display: block;
       }
     }
   }
-}
 }
