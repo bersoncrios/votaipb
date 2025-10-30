@@ -1,6 +1,6 @@
 # 🗳️ Vota IPB - Sistema de Eleição
 
-![Status](https://img.shields.io/website?url=https://votaiptb.com.br/&label=Status&style=for-the-badge)
+![Status](https://img.shields.io/website?url=https://votaipb.com.br/&label=Status&style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-0.2.0--beta-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/licen%C3%A7a-Propriet%C3%A1ria-red?style=for-the-badge)
 
@@ -35,7 +35,7 @@
 
 O sistema **Vota IPB** está em fase de desenvolvimento e testes, sendo preparado para os processos eleitorais da IPB.
 
-👉 [**Acessar a plataforma (Admin)**](https://votaiptb.com.br)
+👉 [**Acessar a plataforma (Admin)**](https://votaipb.com.br)
 
 ---
 
