@@ -1,19 +1,8 @@
 <div class="manage-container" *ngIf="eleicao$ | async as eleicao; else loading">
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem;">
     <h1>{{ eleicao.titulo }}</h1>
-    <button
-      (click)="onCopiarLink(eleicao.id)"
-      style="
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.9rem;
-      "
-    >
+    <button (click)="onCopiarLink(eleicao.id)" style="background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
       🔗 Copiar Link de Votação
     </button>
   </div>
@@ -24,44 +13,62 @@
     ⚠️ VOTAÇÃO ABERTA: Cargo ID {{ aberto.cargoId }}, Escrutínio Nº {{ aberto.escrutinioNum }}
   </div>
 
-  <hr />
+  <hr>
 
   <h2>Cargos</h2>
   <div class="cargos-lista">
+
     <div *ngFor="let cargo of eleicao.cargos" class="cargo-card">
       <h3>{{ cargo.titulo }}</h3>
 
       <div *ngIf="cargo.vencedor" class="vencedor-bloco">
         <h4>Eleição Finalizada</h4>
-        <p
-          >Vencedor: <strong>{{ cargo.vencedor.nome }}</strong></p
-        >
+        <p>Vencedor: <strong>{{ cargo.vencedor.nome }}</strong></p>
         <p>(ID: {{ cargo.vencedor.userId }})</p>
       </div>
 
       <div class="escrutinios-lista">
+
         <div *ngFor="let escrutinio of cargo.escrutinios" class="escrutinio-card">
           <h4>{{ escrutinio.numero }}º Escrutínio</h4>
           <p><strong>Status:</strong> {{ escrutinio.status }}</p>
 
+          <div class="contagem-votacao"
+               *ngIf="(escrutinio.status === 'aberto' || escrutinio.status === 'fechado') && eleicao.membrosElegiveis.length > 0">
+
+            <div class="contagem-item">
+              <strong>{{ escrutinio.votos.length }}</strong>
+              <span>Votaram</span>
+            </div>
+
+            <div class="contagem-item faltam">
+              <strong>{{ eleicao.membrosElegiveis.length - escrutinio.votos.length }}</strong>
+              <span>Faltam</span>
+            </div>
+
+            <div class="contagem-item total">
+              <strong>{{ eleicao.membrosElegiveis.length }}</strong>
+              <span>Total</span>
+            </div>
+          </div>
           <div *ngIf="!cargo.vencedor" class="controles">
+
             <ng-container *ngIf="escrutinio.status === 'nao_iniciado'">
               <button
                 *ngIf="escrutinio.numero === 3 && escrutinio.candidatos.length === 0"
                 (click)="onPreparar3Escrutinio(eleicao, cargo)"
-                [disabled]="cargo.escrutinios[1].status !== 'fechado'"
-              >
+                [disabled]="cargo.escrutinios[1].status !== 'fechado'">
                 Preparar 3º Escrutínio (Top 2)
               </button>
               <button
                 (click)="onAbrirEscrutinio(eleicao, cargo, escrutinio)"
-                [disabled]="eleicao.cargoAbertoParaVotacao !== null || (escrutinio.numero === 3 && escrutinio.candidatos.length === 0)"
-              >
+                [disabled]="eleicao.cargoAbertoParaVotacao !== null || (escrutinio.numero === 3 && escrutinio.candidatos.length === 0)">
                 Abrir Votação
               </button>
             </ng-container>
 
-            <button *ngIf="escrutinio.status === 'aberto'" (click)="onFecharEscrutinio(eleicao, cargo, escrutinio)">
+            <button *ngIf="escrutinio.status === 'aberto'"
+                    (click)="onFecharEscrutinio(eleicao, cargo, escrutinio)">
               Fechar Votação e Apurar
             </button>
           </div>
@@ -69,17 +76,17 @@
           <div *ngIf="escrutinio.status === 'fechado'" class="apuracao-resultados">
             <strong>Resultados ({{ escrutinio.votos.length }} votos)</strong>
 
-            <button *ngIf="!apuracaoOrdenadaCache.has(cargo.id + '-' + escrutinio.numero)" (click)="onApurar(cargo, escrutinio)">
+            <button *ngIf="!apuracaoOrdenadaCache.has(cargo.id + '-' + escrutinio.numero)"
+                    (click)="onApurar(cargo, escrutinio)">
               Ver Apuração
             </button>
 
             <ng-container *ngIf="apuracaoOrdenadaCache.has(cargo.id + '-' + escrutinio.numero)">
               <ul class="lista-resultados-apuracao">
-                <li
-                  *ngFor="let item of apuracaoOrdenadaCache.get(cargo.id + '-' + escrutinio.numero); let i = index"
-                  [class.vencedor-item]="i === 0 && item.votos > 0"
-                  [class.outros-item]="i > 0 || item.votos === 0"
-                >
+                <li *ngFor="let item of apuracaoOrdenadaCache.get(cargo.id + '-' + escrutinio.numero); let i = index"
+                    [class.vencedor-item]="i === 0 && item.votos > 0"
+                    [class.outros-item]="i > 0 || item.votos === 0">
+
                   <span class="nome-candidato">
                     {{ i + 1 }}. {{ item.nome }}
                     <span class="id-candidato">(ID: {{ item.userId }})</span>
@@ -94,6 +101,7 @@
                 <p>Nulos: {{ apuracaoCache.get(cargo.id + '-' + escrutinio.numero)?.totalNulos }}</p>
               </div>
             </ng-container>
+
           </div>
         </div>
       </div>

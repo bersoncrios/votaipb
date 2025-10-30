@@ -1,3 +1,6 @@
+/* ==============================================
+   Variáveis de Cor (Tema do Admin)
+   ============================================== */
 :host {
   --primary-color: #004a98;     // Azul principal
   --primary-dark: #003366;      // Azul (hover)
@@ -19,6 +22,9 @@
   --status-fechado: #757575;    // Cinza
 }
 
+/* ==============================================
+   Container Principal (Admin)
+   ============================================== */
 :host {
   display: block;
   background-color: var(--bg-color);
@@ -53,6 +59,9 @@
   }
 }
 
+/* ==============================================
+   Aviso de Votação Aberta
+   ============================================== */
 .votacao-aberta-aviso {
   background-color: #fff3e0; // Laranja claro
   border: 1px solid #ffb74d; // Laranja
@@ -65,6 +74,9 @@
   margin-bottom: 1.5rem;
 }
 
+/* ==============================================
+   Lista de Cargos (Card Principal)
+   ============================================== */
 .cargos-lista {
   display: flex;
   flex-direction: column;
@@ -88,8 +100,12 @@
   }
 }
 
+/* ==============================================
+   Lista de Escrutínios (Cards Aninhados)
+   ============================================== */
 .escrutinios-lista {
   display: grid;
+  // 1 coluna em telas pequenas, 3 colunas em telas grandes
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
   padding: 2rem;
@@ -119,6 +135,7 @@
     color: var(--text-muted);
     font-weight: 600;
 
+    // Destaque de Status
     strong {
       display: inline-block;
       padding: 0.25rem 0.5rem;
@@ -128,6 +145,7 @@
     }
   }
 
+  // --- Feedback Visual de Status ---
   // Pinta o status "fechado"
   & [ngIf*="fechado"] + p strong {
     background-color: var(--status-fechado);
@@ -345,5 +363,45 @@ Estilos para a Nova Lista de Apuração Ordenada
       margin: 0.25rem 0;
       color: var(--text-muted, #6c757d);
     }
+  }
+}
+
+/* ==============================================
+   [NOVOS ESTILOS] Bloco de Contagem de Votos
+   ============================================== */
+.contagem-votacao {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.5rem;
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 1.5rem; // Espaço antes dos botões
+  text-align: center;
+}
+
+.contagem-item {
+  margin: 0 !important; // Sobrescreve o 'p' padrão
+  padding: 0;
+  font-size: 0.9rem !important; // Sobrescreve o 'p' padrão
+  color: var(--text-muted, #6c757d) !important;
+  font-weight: 600 !important;
+
+  strong {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-color, #333);
+  }
+
+  // Destaque para o total
+  &.total strong {
+    color: var(--primary-color, #004a98);
+  }
+
+  // Destaque para quem falta
+  &.faltam strong {
+    color: var(--action-close, #D32F2F);
   }
 }
