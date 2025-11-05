@@ -21,6 +21,15 @@
         <h2>Adicionar Membros (Total: {{ membrosElegiveisArr.length }})</h2>
         <p>Membros que poderão votar e ser votados.</p>
 
+        <div class="add-membro-actions">
+          <button mat-stroked-button color="accent" type="button" (click)="fileInput.click()" [disabled]="isSaving" class="import-button">
+            <mat-icon>upload_file</mat-icon>
+            Importar de Planilha
+          </button>
+
+          <input hidden type="file" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls, .csv" />
+
+          </div>
         <div class="add-membro-form">
           <mat-form-field appearance="outline" class="membro-input">
             <mat-label>ID do Membro</mat-label>

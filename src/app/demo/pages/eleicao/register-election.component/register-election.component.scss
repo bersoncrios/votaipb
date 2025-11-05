@@ -203,3 +203,25 @@ h1 {
     }
   }
 }
+.add-membro-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.import-button {
+  /* Estilo para o botão de importação */
+}
+
+/* Opcional: Adicionar um divisor "ou" */
+.ou-divider {
+  color: rgba(0, 0, 0, 0.54);
+  font-style: italic;
+}
+
+/* Garante que o formulário manual fique abaixo */
+.add-membro-form {
+  width: 100%;
+}
