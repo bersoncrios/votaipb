@@ -20,6 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { OnlyNumbersDirective } from "src/app/directives/OnlyNumbersDirective";
+import * as XLSX from 'xlsx';
 
 const CARGOS_PERMITIDOS: Cargo['titulo'][] = [
   'Presidente',
@@ -244,5 +245,78 @@ export class RegisterElectionComponent implements OnInit {
     } finally {
       this.isSaving = false;
     }
+  }
+
+  /**
+   * Lida com o evento de seleção de arquivo da planilha.
+   */
+  async onFileChange(event: any) {
+    const target: DataTransfer = <DataTransfer>(event.target);
+    if (target.files.length !== 1) {
+      this.snackBar.open('Apenas um arquivo pode ser enviado.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    this.isSaving = true;
+    const file = target.files[0];
+    const fileReader = new FileReader();
+
+    fileReader.onload = (e: any) => {
+      try {
+        const bstr: string = e.target.result;
+        const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+
+        const wsname: string = wb.SheetNames[0];
+        const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+
+        const data: any[] = XLSX.utils.sheet_to_json(ws);
+
+        if (data.length === 0) {
+          throw new Error('A planilha está vazia ou em formato incorreto.');
+        }
+
+        const keys = Object.keys(data[0]);
+        const idKey = keys.find(k => k.trim().toLowerCase() === 'id' || k.trim().toLowerCase() === 'matricula');
+        const nomeKey = keys.find(k => k.trim().toLowerCase() === 'nome');
+
+        if (!idKey || !nomeKey) {
+          throw new Error("Planilha deve conter colunas 'ID' (ou 'Matricula') e 'Nome'. Verifique os cabeçalhos.");
+        }
+
+        let adicionados = 0;
+        let duplicados = 0;
+
+        for (const row of data) {
+          const id = String(row[idKey]).trim();
+          const nome = String(row[nomeKey]).trim();
+
+          if (!id || !nome) {
+            console.warn('Linha ignorada (dados faltando):', row);
+            continue;
+          }
+
+          const jaExiste = this.membrosElegiveisArr.value.some((m: Membro) => m.id === id);
+          if (jaExiste) {
+            duplicados++;
+          } else {
+            const novoMembro: Membro = { id, nome };
+            this.membrosElegiveisArr.push(this.createMembroGroup(novoMembro));
+            adicionados++;
+          }
+        }
+
+        this.snackBar.open(`Importação concluída: ${adicionados} membros adicionados, ${duplicados} duplicados ignorados.`, 'OK', { duration: 5000 });
+
+      } catch (err: any) {
+        console.error(err);
+        this.snackBar.open(`Erro ao ler planilha: ${err.message}`, 'Fechar', { duration: 5000 });
+      } finally {
+        this.isSaving = false;
+        event.target.value = '';
+      }
+    };
+
+    fileReader.readAsBinaryString(file);
   }
 }
