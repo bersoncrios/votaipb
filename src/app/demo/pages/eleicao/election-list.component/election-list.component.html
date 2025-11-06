@@ -1,62 +1,91 @@
 <div class="list-container">
-
   <div class="list-header">
     <h1>Gerenciar Eleições</h1>
     <a [routerLink]="['/eleicoes/registrar']" class="btn-criar-nova">
-       Cadastrar Nova Eleição
+      Cadastrar Nova Eleição
     </a>
   </div>
   <p>Aqui estão as eleições que você cadastrou.</p>
 
-  <hr>
+  <hr />
 
-  <div *ngIf="isLoading" class="loading-message">
+  <!--
+    Nova lógica de template usando @if / @else
+    Isso lida com todos os estados: Carregando, Erro, Vazio, e Dados.
+  -->
+  @if (isLoading()) {
+  <div class="loading-message">
+    <!-- Usando o spinner do Material para um visual melhor -->
+    <mat-progress-spinner
+      mode="indeterminate"
+      diameter="50"
+    ></mat-progress-spinner>
     <p>Carregando eleições...</p>
   </div>
-
-  <div *ngIf="error" class="error-message">
-    <p>{{ error }}</p>
+  } @else if (error()) {
+  <div class="error-message">
+    <p>{{ error() }}</p>
   </div>
+  } @else if (allEleicoes().length === 0) {
+  <!-- Estado Vazio -->
+  <div class="empty-state">
+    <p>Nenhuma eleição encontrada.</p>
+    <a [routerLink]="['/eleicoes/registrar']" class="btn-criar-nova">
+      Cadastrar Nova Eleição
+    </a>
+  </div>
+  } @else {
+  <!-- Grid de Eleições (Estado com Dados) -->
+  <div class="eleicoes-grid">
+    <!--
+      O @for agora itera sobre o signal COMPUTADO `paginatedEleicoes()`
+      em vez de `eleicoes$ | async`
+    -->
+    @for (eleicao of paginatedEleicoes(); track eleicao.id) {
+    <div class="eleicao-card">
+      <div class="card-body">
+        <h3 class="card-title">{{ eleicao.titulo }}</h3>
 
-  <div *ngIf="eleicoes$ | async as eleicoes; else loading">
-
-    <div *ngIf="eleicoes.length === 0 && !isLoading" class="empty-state">
-      <p>Nenhuma eleição encontrada.</p>
-      <a [routerLink]="['/eleicoes/registrar']" class="btn-criar-nova">
-         Cadastrar Nova Eleição
-      </a>
-    </div>
-
-    <div class="eleicoes-grid">
-      <div *ngFor="let eleicao of eleicoes" class="eleicao-card">
-        <div class="card-body">
-          <h3 class="card-title">{{ eleicao.titulo }}</h3>
-
-          <div class="card-status" [ngClass]="eleicao.status">
-            {{ eleicao.status | titlecase }}
-          </div>
-
-          <p class="card-info info-cargos">
-            {{ eleicao.cargos.length }} {{ eleicao.cargos.length === 1 ? 'cargo' : 'cargos' }}
-          </p>
-          <p class="card-info info-membros">
-            {{ eleicao.membrosElegiveis.length }} {{ eleicao.membrosElegiveis.length === 1 ? 'membro elegível' : 'membros elegíveis' }}
-          </p>
+        <div class="card-status" [ngClass]="eleicao.status">
+          {{ eleicao.status | titlecase }}
         </div>
 
-        <div class="card-footer">
-          <a [routerLink]="['/eleicoes/gerenciar', eleicao.id]" class="btn-gerenciar">
-            Gerenciar
-          </a>
-        </div>
+        <p class="card-info info-cargos">
+          {{ eleicao.cargos.length }}
+          {{ eleicao.cargos.length === 1 ? 'cargo' : 'cargos' }}
+        </p>
+        <p class="card-info info-membros">
+          {{ eleicao.membrosElegiveis.length }}
+          {{
+            eleicao.membrosElegiveis.length === 1
+              ? 'membro elegível'
+              : 'membros elegíveis'
+          }}
+        </p>
+      </div>
+
+      <div class="card-footer">
+        <a
+          [routerLink]="['/eleicoes/gerenciar', eleicao.id]"
+          class="btn-gerenciar"
+        >
+          Gerenciar
+        </a>
       </div>
     </div>
-
+    }
   </div>
+
+  <mat-paginator
+    class="eleicao-paginator"
+    [length]="allEleicoes().length"
+    [pageSize]="pageSize()"
+    [pageIndex]="pageIndex()"
+    [pageSizeOptions]="[4, 6, 9, 12, 24]"
+    (page)="onPageChange($event)"
+    aria-label="Selecionar página de eleições"
+    showFirstLastButtons
+  >
+  </mat-paginator>
+  }
 </div>
-
-<ng-template #loading>
-  <div class="loading-message">
-    <p>Carregando eleições...</p>
-  </div>
-</ng-template>

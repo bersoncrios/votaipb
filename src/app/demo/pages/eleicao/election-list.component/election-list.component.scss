@@ -23,229 +23,279 @@
   --status-finalizada-bg: #e2e3e5; // Cinza claro
   --status-finalizada-text: #41464b; // Cinza escuro
   --status-finalizada-border: #d3d6d8;
-}
 
-.list-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2.5rem 2rem; // Aumenta padding
-  font-family: inherit;
-  color: var(--text-color);
+  .list-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem; // Aumenta padding
+    font-family: inherit;
+    color: var(--text-color);
 
-  // Cabeçalho
-  .list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; // Quebra linha em telas menores
-    gap: 1rem; // Espaço entre título e botão
-    margin-bottom: 1.5rem;
+    // Cabeçalho
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap; // Quebra linha em telas menores
+      gap: 1rem; // Espaço entre título e botão
+      margin-bottom: 1.5rem;
 
-    h1 {
-      color: var(--primary-dark); // Cor mais escura para o título
-      margin: 0;
-      font-size: 1.8rem; // Tamanho ligeiramente maior
+      h1 {
+        color: var(--primary-dark); // Cor mais escura para o título
+        margin: 0;
+        font-size: 1.8rem; // Tamanho ligeiramente maior
+      }
+    }
+
+    // Botão Criar Nova Eleição
+    .btn-criar-nova {
+      display: inline-flex; // Para alinhar ícone e texto
+      align-items: center;
+      gap: 0.5rem; // Espaço entre ícone e texto
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem; // Padding ajustado
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      border: none; // Remove borda se for link estilizado como botão
+      cursor: pointer;
+
+      // Ícone (pseudo-elemento, idealmente usar <mat-icon> ou <i>)
+      &::before {
+        content: '+'; // Simples sinal de mais
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+
+      &:hover {
+        background-color: var(--primary-dark);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid var(--border-color);
+      margin: 2.5rem 0; // Aumenta margem
     }
   }
 
-  // Botão Criar Nova Eleição
-  .btn-criar-nova {
-    display: inline-flex; // Para alinhar ícone e texto
-    align-items: center;
-    gap: 0.5rem; // Espaço entre ícone e texto
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.75rem 1.5rem; // Padding ajustado
-    border-radius: var(--border-radius);
-    text-decoration: none;
-    font-weight: 600;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    border: none; // Remove borda se for link estilizado como botão
-    cursor: pointer;
-
-    // Ícone (pseudo-elemento, idealmente usar <mat-icon> ou <i>)
-    &::before {
-      content: '+'; // Simples sinal de mais
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-
-    &:hover {
-      background-color: var(--primary-dark);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px solid var(--border-color);
-    margin: 2.5rem 0; // Aumenta margem
-  }
-}
-
-// Estados (Carregando, Erro, Vazio)
-.loading-message,
-.error-message,
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  background-color: var(--card-bg-color); // Fundo branco
-  border: 1px dashed var(--border-color); // Borda tracejada
-  border-radius: var(--border-radius);
-  margin-top: 2rem;
-
-  p {
-    margin-bottom: 1rem;
-  }
-}
-.error-message {
-  color: #842029; // Vermelho mais escuro (Bootstrap danger text)
-  background-color: #f8d7da; // Fundo vermelho claro
-  border-color: #f5c2c7; // Borda vermelha
-}
-.empty-state {
-  // Adiciona um ícone simples via pseudo-elemento
-  &::before {
-    content: '📄'; // Ícone de documento
-    display: block;
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-  }
-  // Estiliza o link/botão dentro do empty state
-  a {
-    // Reutiliza estilo do .btn-criar-nova, mas talvez com cor secundária
-    @extend .btn-criar-nova;
-    margin-top: 1rem;
-  }
-}
-
-// Grid de Eleições
-.eleicoes-grid {
-  display: grid;
-  // Colunas responsivas, mínimo de 320px
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem; // Aumenta espaçamento entre cards
-}
-
-// Card Individual
-.eleicao-card {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--card-bg-color);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); // Sombra sutil
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; // Transição suave
-
-  &:hover {
-    transform: translateY(-5px); // Efeito de levantar
-    box-shadow: var(--hover-shadow); // Sombra mais forte
-  }
-
-  .card-body {
-    padding: 1.5rem 1.75rem; // Padding ajustado
-    flex-grow: 1; // Faz o corpo ocupar o espaço antes do footer
-  }
-
-  .card-title {
-    font-size: 1.4rem; // Ligeiramente menor
-    font-weight: 600;
-    color: var(--primary-dark);
-    margin-top: 0;
-    margin-bottom: 0.75rem; // Menos espaço abaixo do título
-  }
-
-  // Novo Estilo para Status (mais visual)
-  .card-status {
-    display: inline-flex; // Para alinhar ícone/ponto e texto
-    align-items: center;
-    gap: 0.5rem; // Espaço entre ponto e texto
-    padding: 0.3rem 0.8rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 1.25rem; // Mais espaço abaixo do status
-    border: 1px solid transparent; // Borda base
-
-    // Ponto colorido antes do texto
-    &::before {
-      content: '';
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: currentColor; // Usa a cor do texto do status
-    }
-
-    // Aplica cores de fundo, texto e borda por classe
-    &.agendada {
-      background-color: var(--status-agendada-bg);
-      color: var(--status-agendada-text);
-      border-color: var(--status-agendada-border);
-    }
-    &.em_andamento {
-      background-color: var(--status-em_andamento-bg);
-      color: var(--status-em_andamento-text);
-      border-color: var(--status-em_andamento-border);
-    }
-    &.finalizada {
-      background-color: var(--status-finalizada-bg);
-      color: var(--status-finalizada-text);
-      border-color: var(--status-finalizada-border);
-    }
-  }
-
-  // Informações (Cargos, Membros) com Ícones
-  .card-info {
-    font-size: 0.95rem; // Ligeiramente menor
+  // Estados (Carregando, Erro, Vazio)
+  .loading-message,
+  .error-message,
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
     color: var(--text-muted);
-    margin: 0.5rem 0; // Mais espaço vertical
-    display: flex; // Para alinhar ícone e texto
-    align-items: center;
-    gap: 0.6rem; // Espaço entre ícone e texto
-
-    // Ícone (idealmente usar <mat-icon> ou <i>)
-    &.info-cargos::before {
-      content: '🗳️'; // Ícone urna (exemplo)
-      opacity: 0.7;
-    }
-    &.info-membros::before {
-      content: '👥'; // Ícone pessoas (exemplo)
-      opacity: 0.7;
-    }
-  }
-
-  // Footer do Card
-  .card-footer {
-    background-color: #f9fafb; // Fundo ligeiramente diferente
-    border-top: 1px solid var(--border-color);
-    padding: 1rem 1.75rem;
-    text-align: right;
-  }
-
-  // Botão Gerenciar
-  .btn-gerenciar {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.6rem 1.2rem;
+    font-size: 1.1rem;
+    background-color: var(--card-bg-color); // Fundo branco
+    border: 1px dashed var(--border-color); // Borda tracejada
     border-radius: var(--border-radius);
-    text-decoration: none;
-    font-weight: 600;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    border: none;
-    cursor: pointer;
-    display: inline-block; // Garante que transform funcione
+    margin-top: 2rem;
+
+    p {
+      margin-bottom: 1rem;
+    }
+  }
+
+  // Ajuste no loading-message para centralizar o spinner
+  .loading-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem; // Espaço entre spinner e texto
+  }
+
+  .error-message {
+    color: #842029; // Vermelho mais escuro (Bootstrap danger text)
+    background-color: #f8d7da; // Fundo vermelho claro
+    border-color: #f5c2c7; // Borda vermelha
+  }
+  .empty-state {
+    // Adiciona um ícone simples via pseudo-elemento
+    &::before {
+      content: '📄'; // Ícone de documento
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    // Estiliza o link/botão dentro do empty state
+    a {
+      // Reutiliza estilo do .btn-criar-nova, mas talvez com cor secundária
+      @extend .btn-criar-nova;
+      margin-top: 1rem;
+    }
+  }
+
+  // Grid de Eleições
+  .eleicoes-grid {
+    display: grid;
+    // Colunas responsivas, mínimo de 320px
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem; // Aumenta espaçamento entre cards
+  }
+
+  // Card Individual
+  .eleicao-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--card-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); // Sombra sutil
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; // Transição suave
 
     &:hover {
-      background-color: var(--primary-dark);
-      transform: scale(1.03); // Leve aumento no hover
+      transform: translateY(-5px); // Efeito de levantar
+      box-shadow: var(--hover-shadow); // Sombra mais forte
     }
-    &:active {
-       transform: scale(0.98); // Efeito de clique
+
+    .card-body {
+      padding: 1.5rem 1.75rem; // Padding ajustado
+      flex-grow: 1; // Faz o corpo ocupar o espaço antes do footer
+    }
+
+    .card-title {
+      font-size: 1.4rem; // Ligeiramente menor
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-top: 0;
+      margin-bottom: 0.75rem; // Menos espaço abaixo do título
+    }
+
+    // Novo Estilo para Status (mais visual)
+    .card-status {
+      display: inline-flex; // Para alinhar ícone/ponto e texto
+      align-items: center;
+      gap: 0.5rem; // Espaço entre ponto e texto
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem; // Mais espaço abaixo do status
+      border: 1px solid transparent; // Borda base
+
+      // Ponto colorido antes do texto
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: currentColor; // Usa a cor do texto do status
+      }
+
+      // Aplica cores de fundo, texto e borda por classe
+      &.agendada {
+        background-color: var(--status-agendada-bg);
+        color: var(--status-agendada-text);
+        border-color: var(--status-agendada-border);
+      }
+      &.em_andamento {
+        background-color: var(--status-em_andamento-bg);
+        color: var(--status-em_andamento-text);
+        border-color: var(--status-em_andamento-border);
+      }
+      &.finalizada {
+        background-color: var(--status-finalizada-bg);
+        color: var(--status-finalizada-text);
+        border-color: var(--status-finalizada-border);
+      }
+    }
+
+    // Informações (Cargos, Membros) com Ícones
+    .card-info {
+      font-size: 0.95rem; // Ligeiramente menor
+      color: var(--text-muted);
+      margin: 0.5rem 0; // Mais espaço vertical
+      display: flex; // Para alinhar ícone e texto
+      align-items: center;
+      gap: 0.6rem; // Espaço entre ícone e texto
+
+      // Ícone (idealmente usar <mat-icon> ou <i>)
+      &.info-cargos::before {
+        content: '🗳️'; // Ícone urna (exemplo)
+        opacity: 0.7;
+      }
+      &.info-membros::before {
+        content: '👥'; // Ícone pessoas (exemplo)
+        opacity: 0.7;
+      }
+    }
+
+    // Footer do Card
+    .card-footer {
+      background-color: #f9fafb; // Fundo ligeiramente diferente
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 1.75rem;
+      text-align: right;
+    }
+
+    // Botão Gerenciar
+    .btn-gerenciar {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      font-weight: 600;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-block; // Garante que transform funcione
+
+      &:hover {
+        background-color: var(--primary-dark);
+        transform: scale(1.03); // Leve aumento no hover
+      }
+      &:active {
+        transform: scale(0.98); // Efeito de clique
+      }
+    }
+  }
+
+  // ##########################################
+  // ## ESTILOS DO PAGINADOR (ADICIONADOS) ##
+  // ##########################################
+  .eleicao-paginator {
+    background-color: var(--card-bg-color);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-top: 2rem; // Espaço acima
+    padding: 0 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+
+    // Ajusta a cor dos dropdowns e labels
+    .mat-mdc-form-field {
+      .mat-mdc-select-value,
+      .mat-mdc-select-arrow,
+      .mat-mdc-floating-label,
+      .mdc-line-ripple {
+        color: var(--primary-color) !important;
+      }
+      .mdc-line-ripple::after {
+        border-bottom-color: var(--primary-color) !important;
+      }
+    }
+
+    // Botões de ícone (setas)
+    .mat-mdc-icon-button {
+      color: var(--text-muted);
+      &:not(:disabled):hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    // Botões de "Primeira" e "Última" página
+    .mat-mdc-paginator-navigation-first,
+    .mat-mdc-paginator-navigation-last {
+      color: var(--primary-color); // Destaca os botões de ponta
     }
   }
 }
