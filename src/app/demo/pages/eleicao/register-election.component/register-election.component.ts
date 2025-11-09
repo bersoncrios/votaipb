@@ -96,7 +96,6 @@ export class RegisterElectionComponent implements OnInit {
     return this.formPassoCargos.get('cargos') as FormArray;
   }
 
-  // --- Métodos de Membros (sem mudanças) ---
   private createMembroGroup(membro: Membro): FormGroup {
     return this.fb.group({
       id: [membro.id, Validators.required],
