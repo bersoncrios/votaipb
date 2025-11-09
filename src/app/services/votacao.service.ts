@@ -39,28 +39,24 @@ export class VotacaoService {
 
     const eleicao = eleicaoSnap.data() as Eleicao;
 
-    // 1. Verifica se a eleição está em andamento E se o campo está preenchido
     if (eleicao.status !== 'em_andamento' || !eleicao.cargoAbertoParaVotacao) {
-      return null; // Nenhuma votação aberta
+      return null;
     }
 
     const { cargoId, escrutinioNum } = eleicao.cargoAbertoParaVotacao;
 
-    // 2. Encontra o cargo exato no array de cargos (DENTRO do documento)
     const cargo = eleicao.cargos.find(c => c.id === cargoId);
     if (!cargo) {
-      return null; // Inconsistência de dados
+      return null;
     }
 
-    // 3. Encontra o escrutínio exato no array de escrutínios
     const escrutinio = cargo.escrutinios.find(
       e => e.numero === escrutinioNum && e.status === 'aberto'
     );
     if (!escrutinio) {
-      return null; // Escrutínio não está aberto
+      return null;
     }
 
-    // 4. Retorna os dados prontos
     return { eleicao, cargo, escrutinio };
   }
 
@@ -73,13 +69,11 @@ export class VotacaoService {
     eleitorId: string
   ): { valido: boolean; mensagem: string; membro?: Membro } {
 
-    // 2a. Verifica se está na lista de elegíveis
     const membroElegivel = cedula.eleicao.membrosElegiveis.find(m => m.id === eleitorId);
     if (!membroElegivel) {
       return { valido: false, mensagem: 'Você não está na lista de votantes para esta eleição.' };
     }
 
-    // 2b. Verifica se já votou neste escrutínio (lendo o array de votos)
     const jaVotou = cedula.escrutinio.votos.some(v => v.eleitorId === eleitorId);
     if (jaVotou) {
       return { valido: false, mensagem: 'Você já votou neste escrutínio.' };
@@ -99,7 +93,6 @@ export class VotacaoService {
     candidatoId: string
   ): Promise<void> {
 
-    // Referência para o documento PRINCIPAL da eleição
     const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
 
     const novoVoto: Voto = {
@@ -117,7 +110,6 @@ export class VotacaoService {
 
         const eleicaoData = eleicaoSnap.data() as Eleicao;
 
-        // É crucial clonar os dados para a transação
         const novosCargos = eleicaoData.cargos.map(c => ({
           ...c,
           escrutinios: c.escrutinios.map(e => ({...e, votos: [...e.votos]}))
@@ -133,14 +125,11 @@ export class VotacaoService {
 
         const escrutinioAlvo = novosCargos[cargoIndex].escrutinios[escrutinioIndex];
 
-        // VERIFICAÇÃO DUPLA
         const jaVotou = escrutinioAlvo.votos.some(v => v.eleitorId === eleitorId);
         if (jaVotou) throw new Error("Seu voto já foi registrado anteriormente.");
 
-        // Adiciona o novo voto
         escrutinioAlvo.votos.push(novoVoto);
 
-        // Informa à transação para atualizar o campo 'cargos' no documento principal
         transaction.update(eleicaoRef, {
           cargos: novosCargos
         });

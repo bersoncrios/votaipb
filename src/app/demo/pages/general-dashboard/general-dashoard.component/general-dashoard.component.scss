@@ -1,0 +1,150 @@
+/* * 1. TEMA DE CORES
+ * Define as cores principais em um só lugar.
+ */
+:host {
+  // Cores de Acento (baseadas em semântica)
+  --color-primary: #007bff;     // Azul (Total)
+  --color-success: #28a745;     // Verde (Em Andamento)
+  --color-warning: #ffc107;     // Amarelo (Agendada)
+  --color-danger: #dc3545;      // Vermelho (Desconhecido)
+  --color-secondary: #6c757d;  // Cinza (Finalizada)
+
+  // Cores de UI
+  --color-text: #333;
+  --color-text-secondary: #777;
+  --color-text-light: #fff;
+  --color-bg-card: #fff;
+  --color-bg-page: #f4f7f6;
+  --color-icon-bg: #e9ecef;
+
+  // Métricas de UI
+  --card-padding: 20px;
+  --card-border-radius: 8px;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+/* * 2. LAYOUT GERAL
+ */
+.dashboard-container {
+  padding: 24px;
+  background-color: var(--color-bg-page);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: var(--color-text);
+  min-height: 100vh;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 32px;
+    color: var(--color-text);
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+
+/* * 3. O NOVO "STAT-CARD"
+ */
+.stat-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--card-padding);
+
+  // A linha colorida sutil que define o status
+  border-left: 5px solid;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.stat-content {
+  flex-grow: 1;
+
+  .stat-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+  }
+
+  .stat-number {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 12px 0;
+    line-height: 1;
+  }
+
+  .stat-link {
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.stat-icon {
+  font-size: 2.5rem; // Tamanho do ícone
+  color: var(--color-icon-bg); // Cor de fundo sutil
+  padding-left: 10px;
+  align-self: center;
+}
+
+
+/* * 4. MODIFICADORES DE COR
+ * Apenas mudam a cor da borda e, se quisermos, a cor do ícone.
+ */
+.stat-card--total {
+  border-color: var(--color-primary);
+  .stat-icon { color: var(--color-primary); opacity: 0.8; }
+  .stat-link { color: var(--color-primary); }
+}
+
+.stat-card--agendada {
+  border-color: var(--color-warning);
+  .stat-icon { color: var(--color-warning); opacity: 0.8; }
+  .stat-link { color: var(--color-warning); }
+}
+
+.stat-card--em-andamento {
+  border-color: var(--color-success);
+  .stat-icon { color: var(--color-success); opacity: 0.8; }
+  .stat-link { color: var(--color-success); }
+}
+
+.stat-card--finalizada {
+  border-color: var(--color-secondary);
+  .stat-icon { color: var(--color-secondary); opacity: 0.8; }
+  .stat-link { color: var(--color-secondary); }
+}
+
+.stat-card--desconhecido {
+  border-color: var(--color-danger);
+  .stat-icon { color: var(--color-danger); opacity: 0.8; }
+  .stat-link { color: var(--color-danger); }
+}
