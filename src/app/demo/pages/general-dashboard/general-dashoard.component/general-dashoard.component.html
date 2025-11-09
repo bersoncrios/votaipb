@@ -1,0 +1,63 @@
+<div class="dashboard-container">
+  <h2>Estatísticas das Eleições</h2>
+
+  <div *ngIf="isLoading; else loaded" class="loading-container">
+    <p>Carregando estatísticas...</p>
+  </div>
+
+  <ng-template #loaded>
+    <div *ngIf="stats" class="stats-grid">
+
+      <div class="stat-card stat-card--total">
+        <div class="stat-content">
+          <p class="stat-title">Total de Eleições</p>
+          <p class="stat-number">{{ stats.total }}</p>
+        </div>
+        <div class="stat-icon">
+          <fa-icon [icon]="faArchive"></fa-icon>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--agendada">
+        <div class="stat-content">
+          <p class="stat-title">Agendadas</p>
+          <p class="stat-number">{{ stats.agendada }}</p>
+        </div>
+        <div class="stat-icon">
+          <fa-icon [icon]="faCalendarAlt"></fa-icon>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--em-andamento">
+        <div class="stat-content">
+          <p class="stat-title">Em Andamento</p>
+          <p class="stat-number">{{ stats.emAndamento }}</p>
+        </div>
+        <div class="stat-icon">
+          <fa-icon [icon]="faSyncAlt"></fa-icon>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--finalizada">
+        <div class="stat-content">
+          <p class="stat-title">Finalizadas</p>
+          <p class="stat-number">{{ stats.finalizada }}</p>
+        </div>
+        <div class="stat-icon">
+          <fa-icon [icon]="faCheckCircle"></fa-icon>
+        </div>
+      </div>
+
+      <div *ngIf="stats.desconhecido > 0" class="stat-card stat-card--desconhecido">
+        <div class="stat-content">
+          <p class="stat-title">Status Desconhecido</p>
+          <p class="stat-number">{{ stats.desconhecido }}</p>
+        </div>
+        <div class="stat-icon">
+          <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+        </div>
+      </div>
+
+    </div>
+  </ng-template>
+</div>
