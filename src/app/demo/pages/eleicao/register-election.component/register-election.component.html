@@ -89,10 +89,10 @@
 
             <mat-card-content formArrayName="candidatosIniciais">
               <h3>Candidatos ({{ getCandidatosIniciais(i).length }})</h3>
+
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Adicionar Candidato (da lista de membros)</mat-label>
-                <mat-select #membroSelect (selectionChange)="addCandidatoAoCargo(i, membroSelect.value)">
-                  <mat-option *ngFor="let membro of membrosElegiveisArr.value; let mIdx = index" [value]="mIdx">
+                <mat-label>Selecionar candidatos (da lista de membros)</mat-label>
+                <mat-select #membroSelect multiple> <mat-option *ngFor="let membro of membrosElegiveisArr.value; let mIdx = index" [value]="mIdx">
                     {{ membro.nome }} ({{ membro.id }})
                   </mat-option>
                 </mat-select>
@@ -100,6 +100,28 @@
                   É obrigatório adicionar pelo menos 1 candidato para este cargo.
                 </mat-error>
               </mat-form-field>
+
+              <div class="candidato-actions-wrapper">
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  type="button"
+                  (click)="addCandidatosSelecionados(i, membroSelect.value, membroSelect)"
+                  [disabled]="!membroSelect.value || membroSelect.value.length === 0"
+                >
+                  <mat-icon>add</mat-icon>
+                  Adicionar Selecionados
+                </button>
+                <button
+                  mat-stroked-button
+                  color="accent"
+                  type="button"
+                  (click)="addAllMembrosAsCandidatos(i)"
+                >
+                  <mat-icon>group_add</mat-icon>
+                  Adicionar Todos ({{ membrosElegiveisArr.length }})
+                </button>
+              </div>
 
               <mat-list>
                 <mat-list-item *ngFor="let candCtrl of getCandidatosIniciais(i).controls; let cIdx = index" [formGroupName]="cIdx">

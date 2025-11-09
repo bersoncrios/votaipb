@@ -225,3 +225,22 @@ h1 {
 .add-membro-form {
   width: 100%;
 }
+
+/* Adicione estes estilos ao seu arquivo .scss */
+
+.candidato-actions-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px; // Espaçamento antes da lista de candidatos
+
+  button {
+    flex-grow: 1; // Faz os botões dividirem o espaço em telas pequenas
+  }
+
+  @media (min-width: 600px) {
+    button {
+      flex-grow: 0; // Em telas maiores, eles têm tamanho normal
+    }
+  }
+}
