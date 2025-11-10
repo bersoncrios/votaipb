@@ -67,6 +67,11 @@ export const routes: Routes = [
         path: 'inscricoes/lista',
         canActivate: [AuthGuard],
         loadComponent: () => import('./demo/pages/inscricao/admin-listas.component/admin-listas.component').then((m) => m.AdminListasComponent)
+      },
+      {
+        path: 'sobre',
+        canActivate: [AuthGuard],
+        loadComponent: () => import('./demo/pages/sobre/sobre.component/sobre.component').then((m) => m.SobreComponent)
       }
     ]
   }

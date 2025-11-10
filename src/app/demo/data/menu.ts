@@ -15,6 +15,14 @@ export const menus: Navigation[] = [
         url: '/dashboard',
         icon: 'ti ti-home'
       },
+      {
+        id: 'Sobre',
+        title: 'Sobre',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/sobre',
+        icon: 'ti ti-info-square-rounded'
+      },
         {
         id: 'Registrar Eleições',
         title: 'Registrar Eleições',

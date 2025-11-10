@@ -1,0 +1,104 @@
+<div class="instrucoes-container">
+  <header class="page-header">
+    <mat-icon class="header-icon">help_outline</mat-icon>
+    <div>
+      <h1>Guia do Administrador</h1>
+      <p class="subtitulo">Siga estes passos para criar uma eleição do zero.</p>
+    </div>
+  </header>
+
+  <mat-accordion class="instrucoes-acordeao" multi="false">
+
+    <!-- ETAPA 1: LISTA DE INSCRIÇÃO -->
+    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="step-number">1</span>
+          Etapa 1: Criar Lista de Inscrição
+        </mat-panel-title>
+        <mat-panel-description>
+          Recolher os dados dos eleitores
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="panel-content">
+        <p>
+          Antes de criar a eleição, precisa de uma lista oficial de quem pode votar. A forma mais simples é criar uma lista pública e deixar que os eleitores se inscrevam.
+        </p>
+        <ol class="step-list">
+          <li>
+            Clique no menu <strong><a routerLink="/inscricoes/lista">Gerênciar Inscrições</a></strong>.
+          </li>
+          <li>
+            Clique em <span class="destaque">Nova Lista</span> e dê um título (ex: "Eleição 2024") e uma descrição (opcional).
+          </li>
+          <li>
+            Após criar, clique no ícone <mat-icon class="inline-icon">link</mat-icon> <strong>(Copiar Link)</strong> no cartão da lista.
+          </li>
+          <li>
+            <strong>Compartilhe esse link</strong> com os seus eleitores/candidatos (via e-mail, WhatsApp, etc.). Eles irão usar esse link para registar o seu Nome e ID.
+          </li>
+          <li>
+            Quando o prazo de inscrição terminar, clique no ícone <mat-icon class="inline-icon">download</mat-icon> <strong>(Descarregar XLS)</strong>.
+          </li>
+        </ol>
+        <div class="alerta-info">
+          <mat-icon>info</mat-icon>
+          <span>Este ficheiro Excel (.xlsx) será necessário na próxima etapa.</span>
+        </div>
+      </div>
+
+      <mat-action-row>
+        <button mat-button color="primary" (click)="nextStep()">Próximo</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+
+    <!-- ETAPA 2: CRIAR ELEIÇÃO -->
+    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span class="step-number">2</span>
+          Etapa 2: Configurar a Eleição
+        </mat-panel-title>
+        <mat-panel-description>
+          Carregar eleitores e definir cargos
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="panel-content">
+        <p>
+          Com o arquivo Excel dos eleitores pronto, seguimos para configuração da votação.
+        </p>
+        <ol class="step-list">
+          <li>
+            Clique no menu <strong><a routerLink="/eleicoes/registrar">Registrar Eleição</a></strong>.
+          </li>
+          <li>
+            Preencha os dados básicos.
+          </li>
+          <li>
+            Na secção de Eleitores, faça o <strong>upload do ficheiro Excel</strong> que descarregou na Etapa 1.<br/>
+            Ou, preencha manualmente se preferir
+          </li>
+          <li>
+            Adicione os <strong>Cargos</strong> (ex: Presidente) e os respetivos <strong>Candidatos</strong>.
+
+          </li>
+          <li>
+            Clique em <strong>"Salvar Eleição"</strong> para finalizar.
+          </li>
+        </ol>
+        <div class="alerta-sucesso">
+          <mat-icon>check_circle</mat-icon>
+          <span>A eleição está pronta! Pode agora compartilhar o link de votação disponível no painel de gestão.</span>
+        </div>
+      </div>
+
+      <mat-action-row>
+        <button mat-button color="warn" (click)="prevStep()">Anterior</button>
+        <button mat-button color="primary" (click)="nextStep()">Finalizar</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+
+  </mat-accordion>
+</div>

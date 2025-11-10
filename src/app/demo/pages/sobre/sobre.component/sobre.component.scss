@@ -1,0 +1,163 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background-color: #f5f7fa; // Fundo cinza muito suave
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+}
+
+.instrucoes-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+
+  .header-icon {
+    font-size: 3.5rem;
+    height: 3.5rem;
+    width: 3.5rem;
+    color: #1a237e; // Azul primário forte
+    opacity: 0.9;
+  }
+
+  h1 {
+    margin: 0;
+    color: #1a237e;
+    font-size: 2rem;
+    font-weight: 500;
+  }
+
+  .subtitulo {
+    margin: 0.5rem 0 0 0;
+    color: #666;
+    font-size: 1.1rem;
+  }
+}
+
+/* --- Acordeão Personalizado --- */
+.instrucoes-acordeao {
+  mat-expansion-panel {
+    border-radius: 8px !important;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    overflow: hidden; // Para a borda arredondada funcionar bem
+
+    &.mat-expanded {
+      border: 1px solid #1a237e; // Destaque quando aberto
+    }
+  }
+
+  mat-expansion-panel-header {
+    height: auto;
+    padding: 1.5rem;
+
+    ::ng-deep .mat-content {
+      align-items: center;
+    }
+
+    mat-panel-title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-basis: 60%; // Dá mais espaço ao título
+    }
+
+    mat-panel-description {
+      font-size: 0.95rem;
+      color: #666;
+      @media (max-width: 600px) { display: none; } // Esconde em mobile se necessário
+    }
+  }
+}
+
+.step-number {
+  background: #e8eaf6;
+  color: #1a237e;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.panel-content {
+  padding: 0 1rem 1.5rem 3.5rem; // Alinhado com o texto do título
+  color: #444;
+  font-size: 1rem;
+  line-height: 1.6;
+
+  @media (max-width: 600px) { padding-left: 0; }
+}
+
+/* --- Lista de Passos --- */
+.step-list {
+  padding-left: 1.2rem;
+  margin: 1.5rem 0 2rem 0;
+
+  li {
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+
+    a {
+      color: #1565c0;
+      text-decoration: none;
+      font-weight: 600;
+      &:hover { text-decoration: underline; }
+    }
+  }
+}
+
+.destaque {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.inline-icon {
+  font-size: 1.3em;
+  height: 1.3em;
+  width: 1.3em;
+  vertical-align: middle;
+  margin: 0 2px;
+  color: #555;
+}
+
+/* --- Caixas de Alerta --- */
+.alerta-info, .alerta-sucesso {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+
+  mat-icon {
+    flex-shrink: 0; // Ícone não encolhe
+  }
+}
+
+.alerta-info {
+  background-color: #fff3e0; // Laranja muito claro
+  color: #e65100;
+  border-left: 4px solid #ff9800;
+}
+
+.alerta-sucesso {
+  background-color: #e8f5e9; // Verde muito claro
+  color: #2e7d32;
+  border-left: 4px solid #4caf50;
+}
