@@ -11,9 +11,9 @@ import {
   query,
   runTransaction
 } from '@angular/fire/firestore';
-import { Cargo } from '../models/Cargo';
+import { Cargo, CargoStatus } from '../models/Cargo'; // Importe o CargoStatus
 import { Escrutinio } from '../models/Escritineo';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs'; // Importe o 'map' do rxjs
 import { nanoid } from 'nanoid';
 import { Candidato } from '../models/Candidato';
 import { AuthService } from '../services/auth.service';
@@ -26,6 +26,31 @@ export class EleicaoAdminService {
   private db = inject(Firestore);
   private authService = inject(AuthService);
   private eleicoesCollection = collection(this.db, 'eleicoes');
+
+  /**
+   * Função helper para consertar dados antigos (sem status, sem vencedor=null)
+   */
+  private normalizarEleicao(eleicao: Eleicao): Eleicao {
+    if (!eleicao) return eleicao;
+
+    const cargosNormalizados = (eleicao.cargos || []).map(cargo => {
+      // Se o status não existir (dado antigo), define como 'aguardando'
+      const status: CargoStatus = cargo.status || 'aguardando';
+      // Se o vencedor for undefined (dado antigo), define como 'null'
+      const vencedor = cargo.vencedor === undefined ? null : cargo.vencedor;
+
+      return {
+        ...cargo,
+        status,
+        vencedor
+      };
+    });
+
+    return {
+      ...eleicao,
+      cargos: cargosNormalizados
+    };
+  }
 
   async createEleicao(
     eleicaoData: Omit<
@@ -44,7 +69,9 @@ export class EleicaoAdminService {
     const cargosProcessados: Cargo[] = eleicaoData.cargos.map(cargo => ({
       ...cargo,
       id: cargo.id || nanoid(8),
-      escrutinios: this.gerarEscrutiniosIniciais(cargo.candidatosIniciais)
+      escrutinios: this.gerarEscrutiniosIniciais(cargo.candidatosIniciais),
+      status: 'aguardando', // Status inicial correto
+      vencedor: null        // Vencedor inicial correto
     }));
 
     const novaEleicao: Eleicao = {
@@ -89,7 +116,10 @@ export class EleicaoAdminService {
 
   getEleicaoObservable(id: string): Observable<Eleicao> {
     const eleicaoRef = doc(this.db, 'eleicoes', id);
-    return docData(eleicaoRef) as Observable<Eleicao>;
+
+    // [CORRIGIDO] Usa docData com idField e o 'map' para normalizar dados antigos
+    return docData(eleicaoRef, { idField: 'id' }) as Observable<Eleicao>;
+    // A normalização será feita no component.ts para garantir
   }
 
   updateEleicao(id: string, updates: Partial<Eleicao>): Promise<void> {
@@ -102,7 +132,12 @@ export class EleicaoAdminService {
       this.eleicoesCollection,
       where('adminUid', '==', adminUid)
     );
-    return collectionData(q) as Observable<Eleicao[]>;
+
+    // [CORRIGIDO] Adiciona { idField: 'id' } para mapear o ID do documento
+    // e o 'map' para consertar os dados antigos na lista
+    return (collectionData(q, { idField: 'id' }) as Observable<Eleicao[]>).pipe(
+      map(eleicoes => eleicoes.map(this.normalizarEleicao))
+    );
   }
 
   /**
@@ -130,29 +165,24 @@ export class EleicaoAdminService {
             return cargo;
           }
 
+          // Só remove de cargos que ainda não começaram ou estão aguardando
+          // [CORRIGIDO] Verifica também status undefined (dados antigos)
+          if (cargo.status && cargo.status !== 'aguardando') {
+             return cargo;
+          }
+
           const novosCandidatosIniciais = cargo.candidatosIniciais.filter(
             c => !candidatosIds.includes(c.userId)
           );
 
-          const novosEscrutinios = cargo.escrutinios.map(esc => {
-            if (esc.status !== 'nao_iniciado') {
-              return esc;
-            }
-
-            const novosCandidatosEscrutinio = esc.candidatos.filter(
-              c => !candidatosIds.includes(c.userId)
-            );
-
-            return {
-              ...esc,
-              candidatos: novosCandidatosEscrutinio
-            };
-          });
+          // Recria os escrutínios SÓ se o cargo não foi iniciado
+          const novosEscrutinios = this.gerarEscrutiniosIniciais(novosCandidatosIniciais);
 
           return {
             ...cargo,
             candidatosIniciais: novosCandidatosIniciais,
-            escrutinios: novosEscrutinios
+            escrutinios: novosEscrutinios,
+            status: 'aguardando' // Garante o status
           };
         });
 
@@ -165,6 +195,52 @@ export class EleicaoAdminService {
       throw e;
     }
   }
+
+  /**
+   * [NOVO] Reinicia um cargo específico para o 1º escrutínio.
+   * Usado quando um vencedor declina.
+   */
+  async reiniciarCargo(eleicaoId: string, cargoId: string): Promise<void> {
+    const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
+
+    try {
+      await runTransaction(this.db, async (transaction) => {
+        const eleicaoSnap = await transaction.get(eleicaoRef);
+        if (!eleicaoSnap.exists()) {
+          throw new Error('Eleição não encontrada para reiniciar cargo.');
+        }
+
+        const eleicaoData = eleicaoSnap.data() as Eleicao;
+
+        const cargoIndex = eleicaoData.cargos.findIndex(c => c.id === cargoId);
+        if (cargoIndex === -1) {
+          throw new Error('Cargo não encontrado para reiniciar.');
+        }
+
+        const cargoParaResetar = eleicaoData.cargos[cargoIndex];
+
+        // Re-gera os escrutínios iniciais com a lista de candidatos original
+        const escrutiniosReiniciados = this.gerarEscrutiniosIniciais(
+          cargoParaResetar.candidatosIniciais
+        );
+
+        // Atualiza o cargo específico
+        eleicaoData.cargos[cargoIndex] = {
+          ...cargoParaResetar,
+          vencedor: null,
+          status: 'aguardando', // Retorna ao status inicial
+          escrutinios: escrutiniosReiniciados
+        };
+
+        // Atualiza a eleição
+        transaction.update(eleicaoRef, { cargos: eleicaoData.cargos });
+      });
+    } catch (e) {
+      console.error('Erro ao reiniciar cargo:', e);
+      throw e;
+    }
+  }
+
 
   /**
    * Função auxiliar para converter IDs de candidatos em objetos Candidato.
@@ -182,11 +258,6 @@ export class EleicaoAdminService {
 
   /**
    * Prepara o 3º escrutínio com base nos resultados do 2º.
-   * Pega os 2 mais votados, ou mais em caso de empate no 2º lugar.
-   * Esta função deve ser chamada pelo admin após fechar o 2º escrutínio.
-   *
-   * @param eleicaoId ID da Eleição
-   * @param cargoId ID do Cargo a ser processado
    */
   async prepararTerceiroEscrutinio(
     eleicaoId: string,
@@ -203,6 +274,7 @@ export class EleicaoAdminService {
 
         const eleicaoData = eleicaoSnap.data() as Eleicao;
 
+        // Deep copy manual para transação
         const cargosAtualizados = eleicaoData.cargos.map(c => ({
           ...c,
           escrutinios: c.escrutinios.map(e => ({ ...e, votos: [...e.votos] }))
@@ -228,25 +300,22 @@ export class EleicaoAdminService {
           throw new Error('Escrutínio 3 já foi iniciado ou não existe.');
         }
 
+        // ... (Lógica de contagem de votos permanece a mesma) ...
         const contagemVotos = new Map<string, number>();
-
         for (const candidato of escrutinio2.candidatos) {
           contagemVotos.set(candidato.userId, 0);
         }
-
         for (const voto of escrutinio2.votos) {
           if (contagemVotos.has(voto.candidatoId)) {
             const contagemAtual = contagemVotos.get(voto.candidatoId)!;
             contagemVotos.set(voto.candidatoId, contagemAtual + 1);
           }
         }
-
         const resultados = Array.from(contagemVotos.entries())
           .map(([candidatoId, totalVotos]) => ({ candidatoId, totalVotos }))
           .sort((a, b) => b.totalVotos - a.totalVotos);
 
         let candidatosIdsParaEscrutinio3: string[] = [];
-
         if (resultados.length <= 2) {
           candidatosIdsParaEscrutinio3 = resultados.map(r => r.candidatoId);
         } else {
@@ -276,6 +345,7 @@ export class EleicaoAdminService {
             ];
           }
         }
+        // ... (Fim da lógica de contagem) ...
 
         const candidatosParaEscrutinio3 = this.mapIdsToCandidatos(
           candidatosIdsParaEscrutinio3,
@@ -285,7 +355,6 @@ export class EleicaoAdminService {
         const escrutinio3Index = cargo.escrutinios.findIndex(
           e => e.numero === 3
         );
-
         cargo.escrutinios[escrutinio3Index].candidatos =
           candidatosParaEscrutinio3;
 

@@ -16,10 +16,15 @@
   --action-close: #D32F2F;      // Vermelho (Perigoso)
   --action-prepare: #fbc02d;    // Laranja/Amarelo (Atenção)
   --action-secondary: #6c757d; // Cinza (Ver apuração)
+  --action-confirm: #4CAF50;    // Verde (Aceitar)
 
   // Cores de Status
   --status-aberto: #4CAF50;     // Verde
   --status-fechado: #757575;    // Cinza
+  --status-pendente: #0097a7;   // Ciano
+  --status-nao-iniciado: #90a4ae; // Cinza azulado
+  --status-aguardando: var(--primary-color);
+  --status-em_votacao: var(--status-aberto);
 }
 
 /* ==============================================
@@ -63,9 +68,9 @@
    Aviso de Votação Aberta
    ============================================== */
 .votacao-aberta-aviso {
-  background-color: #fff3e0; // Laranja claro
-  border: 1px solid #ffb74d; // Laranja
-  border-left: 5px solid #f57c00; // Laranja escuro
+  background-color: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-left: 5px solid #f57c00;
   padding: 1rem 1.5rem;
   border-radius: 6px;
   font-size: 1.1rem;
@@ -94,9 +99,40 @@
     font-size: 1.75rem;
     color: var(--primary-dark);
     margin: 0;
-    padding: 1.5rem 2rem;
-    background-color: rgba(0, 74, 152, 0.03); // Azul bem clarinho
+    padding: 1.5rem 2rem 1rem 2rem;
+    background-color: rgba(0, 74, 152, 0.03);
     border-bottom: 1px solid var(--border-color);
+  }
+
+  .cargo-status {
+    padding: 0 2rem 1.5rem 2rem;
+    margin-top: -0.5rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border-color);
+
+    strong {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    [ngIf*="pendente_confirmacao"] + .cargo-status strong,
+    [ngIf*="status === 'pendente_confirmacao'"] strong {
+      color: var(--status-pendente);
+    }
+    [ngIf*="finalizado"] + .cargo-status strong,
+    [ngIf*="status === 'finalizado'"] strong {
+      color: var(--status-fechado);
+    }
+     [ngIf*="em_votacao"] + .cargo-status strong,
+     [ngIf*="status === 'em_votacao'"] strong {
+      color: var(--status-aberto);
+    }
+    [ngIf*="aguardando"] + .cargo-status strong,
+    [ngIf*="status === 'aguardando'"] strong {
+      color: var(--status-aguardando);
+    }
   }
 }
 
@@ -105,7 +141,6 @@
    ============================================== */
 .escrutinios-lista {
   display: grid;
-  // 1 coluna em telas pequenas, 3 colunas em telas grandes
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
   padding: 2rem;
@@ -135,7 +170,6 @@
     color: var(--text-muted);
     font-weight: 600;
 
-    // Destaque de Status
     strong {
       display: inline-block;
       padding: 0.25rem 0.5rem;
@@ -145,12 +179,9 @@
     }
   }
 
-  // --- Feedback Visual de Status ---
-  // Pinta o status "fechado"
   & [ngIf*="fechado"] + p strong {
     background-color: var(--status-fechado);
   }
-  // Pinta o status "aberto" e destaca o card
   & [ngIf*="aberto"] + p strong {
     background-color: var(--status-aberto);
   }
@@ -167,7 +198,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: auto; // Empurra os botões para baixo
+  margin-top: auto;
 
   button {
     width: 100%;
@@ -179,7 +210,6 @@
     cursor: pointer;
     transition: all 0.2s ease;
 
-    // Estilo Padrão (Abrir)
     background-color: var(--action-open);
     color: white;
 
@@ -190,33 +220,29 @@
     }
 
     &:disabled {
-      background-color: #bdc3c7; // Cinza desabilitado
+      background-color: #bdc3c7;
       cursor: not-allowed;
     }
   }
 
-  // Botão "Preparar 3º Escrutínio" (Laranja)
-  // [ngIf*="numero === 3"] é um seletor de atributo que pega o botão "Preparar"
   button[ngIf*="numero === 3"] {
     background-color: var(--action-prepare);
     color: #333;
     &:hover:not(:disabled) {
-      background-color: #fdd835; // Amarelo mais forte
+      background-color: #fdd835;
     }
   }
 
-  // Botão "Fechar Votação" (Vermelho)
-  // [ngIf*="aberto"] pega o botão "Fechar"
   button[ngIf*="aberto"] {
     background-color: var(--action-close);
     &:hover:not(:disabled) {
-      background-color: #b71c1c; // Vermelho escuro
+      background-color: #b71c1c;
     }
   }
 }
 
 /* ==============================================
-   Resultados da Apuração
+   Resultados da Apuração (Dentro do Escrutínio Card)
    ============================================== */
 .apuracao-resultados {
   background-color: #f8f9fa;
@@ -232,54 +258,35 @@
     color: var(--primary-dark);
   }
 
-  // Botão "Ver Apuração"
   button {
     background-color: var(--action-secondary);
+    color: white;
     width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
     margin-bottom: 1rem;
+
     &:hover:not(:disabled) {
       background-color: #5a6268;
     }
   }
-
-  ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 0 0 0.5rem 0;
-  }
-
-  li {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.4rem 0;
-    border-bottom: 1px dotted #ccc;
-    font-size: 0.95rem;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  p { // Votos Brancos/Nulos
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin: 0.25rem 0;
-    color: var(--text-muted);
-  }
 }
 
 /* ==============================================
-   Estado de Carregamento
+   Bloco Vencedor (Finalizado)
    ============================================== */
 .vencedor-bloco {
   padding: 2rem 2.5rem;
-  background-color: #f6fef6; // Verde bem claro
-  border-top: 1px solid #dff0d8; // Borda superior
+  background-color: #f6fef6;
   text-align: center;
 
   h4 {
     font-size: 1.5rem;
-    color: #2E7D32; // Verde escuro
+    color: #2E7D32;
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
@@ -292,82 +299,92 @@
   strong {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #1B5E20; // Verde mais escuro
+    color: #1B5E20;
   }
 }
 
-/* ==============================================
-Estilos para a Nova Lista de Apuração Ordenada
-==============================================
-*/
-.apuracao-resultados {
-
-  .lista-resultados-apuracao {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 1rem 0;
-
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.6rem 0.75rem;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-
-      .nome-candidato {
-        font-size: 0.95rem;
-        font-weight: 500;
-
-        .id-candidato {
-          font-size: 0.8rem;
-          color: var(--text-muted, #6c757d);
-          display: block; // Coloca o ID abaixo do nome
-        }
-      }
-
-      .votos-candidato {
-        font-size: 1.1rem;
-      }
-    }
-
-    /* Destaque do Vencedor */
-    li.vencedor-item {
-      background-color: #e8f5e9; // Verde claro
-      border-left: 4px solid #4CAF50; // Verde
-
-      .nome-candidato {
-        color: #1B5E20; // Verde escuro
-      }
-      .votos-candidato {
-        color: #1B5E20;
-        font-weight: 700;
-      }
-    }
-
-    /* Outros candidatos */
-    li.outros-item {
-      background-color: #fafafa;
-      border-left: 4px solid #eee;
+/* Bloco "Sem Vencedor" (Finalizado) */
+.sem-vencedor {
+  background-color: #fcf8e3;
+  h4 {
+    color: #8a6d3b;
+  }
+  p {
+    color: #8a6d3b;
+    strong {
+      color: #8a6d3b;
     }
   }
+}
 
-  .brancos-nulos {
-    border-top: 1px dashed #ccc;
-    padding-top: 0.75rem;
-    margin-top: 1rem;
 
-    p {
+/* ==============================================
+   [REFATORADO] Estilos para a Lista de Apuração
+   (GLOBAL - Usado por .apuracao-resultados e .apuracao-final-item)
+   ============================================== */
+.lista-resultados-apuracao {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 1rem 0;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+
+    .nome-candidato {
       font-size: 0.95rem;
-      font-weight: 600;
-      margin: 0.25rem 0;
-      color: var(--text-muted, #6c757d);
+      font-weight: 500;
+
+      .id-candidato {
+        font-size: 0.8rem;
+        color: var(--text-muted, #6c757d);
+        display: block;
+      }
     }
+
+    .votos-candidato {
+      font-size: 1.1rem;
+    }
+  }
+
+  li.vencedor-item {
+    background-color: #e8f5e9;
+    border-left: 4px solid var(--action-confirm);
+
+    .nome-candidato {
+      color: #1B5E20;
+    }
+    .votos-candidato {
+      color: #1B5E20;
+      font-weight: 700;
+    }
+  }
+
+  li.outros-item {
+    background-color: #fafafa;
+    border-left: 4px solid #eee;
+  }
+}
+
+.brancos-nulos {
+  border-top: 1px dashed #ccc;
+  padding-top: 0.75rem;
+  margin-top: 1rem;
+
+  p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0.25rem 0;
+    color: var(--text-muted, #6c757d);
   }
 }
 
 /* ==============================================
-   [NOVOS ESTILOS] Bloco de Contagem de Votos
+   Bloco de Contagem de Votos
    ============================================== */
 .contagem-votacao {
   display: flex;
@@ -377,14 +394,14 @@ Estilos para a Nova Lista de Apuração Ordenada
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 6px;
   padding: 0.75rem;
-  margin-bottom: 1.5rem; // Espaço antes dos botões
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
 .contagem-item {
-  margin: 0 !important; // Sobrescreve o 'p' padrão
+  margin: 0 !important;
   padding: 0;
-  font-size: 0.9rem !important; // Sobrescreve o 'p' padrão
+  font-size: 0.9rem !important;
   color: var(--text-muted, #6c757d) !important;
   font-weight: 600 !important;
 
@@ -395,13 +412,212 @@ Estilos para a Nova Lista de Apuração Ordenada
     color: var(--text-color, #333);
   }
 
-  // Destaque para o total
   &.total strong {
     color: var(--primary-color, #004a98);
   }
 
-  // Destaque para quem falta
   &.faltam strong {
     color: var(--action-close, #D32F2F);
+  }
+}
+
+/* ==============================================
+   Bloco de Confirmação Pendente
+   ============================================== */
+.vencedor-pendente-bloco {
+  padding: 2rem 2.5rem;
+  background-color: #e0f7fa;
+  text-align: center;
+
+  h4 {
+    font-size: 1.5rem;
+    color: #006064;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0.25rem 0;
+    color: #333;
+  }
+
+  strong {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #004d40;
+  }
+}
+
+.controles-confirmacao {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  button {
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .btn-aceitar {
+    background-color: var(--action-confirm);
+    color: white;
+    &:hover {
+      background-color: #388E3C;
+    }
+  }
+
+  .btn-declinar {
+    background-color: var(--action-close);
+    color: white;
+    &:hover {
+      background-color: #b71c1c;
+    }
+  }
+}
+
+/* ==============================================
+   Bloco de Apuração Final (em Finalizado/Pendente)
+   ============================================== */
+.apuracao-finalizada-container {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border-color, #e0e0e0);
+  text-align: left;
+
+  h5 {
+    font-size: 1.3rem;
+    color: var(--primary-dark, #003366);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  button {
+    background-color: var(--action-secondary);
+    color: white;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+
+    &:hover:not(:disabled) {
+      background-color: #5a6268;
+    }
+  }
+}
+
+.apuracao-final-item {
+  background-color: #f8f9fa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.apuracao-final-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fdfdfd;
+
+  > strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-color);
+  }
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  color: white;
+
+  &.status-fechado {
+    background-color: var(--status-fechado, #757575);
+  }
+  &.status-nao_iniciado {
+    background-color: var(--status-nao-iniciado, #90a4ae);
+  }
+  &.status-aberto {
+      background-color: var(--status-aberto, #4CAF50);
+  }
+}
+
+.apuracao-final-content {
+  padding: 1rem;
+}
+
+.total-votos-info {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+/* ==============================================
+   [NOVOS ESTILOS] Botão Sanfona (Acordeão)
+   ============================================== */
+.btn-sanfona {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: #f1f3f5; // Um cinza bem claro
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-top: 1.5rem; // Espaço do conteúdo acima
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-dark, #003366);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #e9ecef; // Um cinza um pouco mais escuro
+  }
+
+  .sanfona-icon {
+    font-size: 0.9rem;
+  }
+}
+
+/* Container do conteúdo da sanfona */
+.sanfona-conteudo {
+  // O container de apuração final já tem estilos
+  // Vamos ajustar a borda e a margem dele quando
+  // está dentro da sanfona
+  .apuracao-finalizada-container {
+    margin-top: 0.75rem; // Margem pequena do botão
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color); // Borda mais fina
   }
 }
