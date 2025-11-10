@@ -5,7 +5,7 @@ export const menus: Navigation[] = [
     id: 'navigation',
     title: 'Navigation',
     type: 'group',
-    icon: 'icon-navigation',
+    icon: 'ti ti-menu-2',
     children: [
       {
         id: 'Dashboard',
@@ -13,7 +13,7 @@ export const menus: Navigation[] = [
         type: 'item',
         classes: 'nav-item',
         url: '/dashboard',
-        icon: '#custom-status-up'
+        icon: 'ti ti-home'
       },
         {
         id: 'Registrar Eleições',
@@ -21,7 +21,7 @@ export const menus: Navigation[] = [
         type: 'item',
         classes: 'nav-item',
         url: '/eleicoes/registrar',
-        icon: '#custom-status-up'
+        icon: 'ti ti-file-plus'
       },
         {
         id: 'Gerenciar Eleicões',
@@ -29,7 +29,7 @@ export const menus: Navigation[] = [
         type: 'item',
         classes: 'nav-item',
         url: '/eleicoes/lista',
-        icon: '#custom-status-up'
+        icon: 'ti ti-adjustments-check'
       }
     ]
   },

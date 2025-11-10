@@ -3,9 +3,7 @@
     <a class="nav-link" [target]="item.target ? '_blank' : '_self'" [routerLink]="[item.url]" (click)="toggleMenu($event)">
       @if (item.icon) {
         <span class="coded-micon">
-          <svg class="pc-icon">
-            <use attr.xlink:href="assets/fonts/custom-icon.svg{{ item.icon }}"></use>
-          </svg>
+          <i [class]="item.icon"></i>
         </span>
       }
       @if (item.icon) {
@@ -21,9 +19,7 @@
     <a [target]="item.target ? '_blank' : '_self'" [href]="sanitizeURL(item.url)">
       @if (item.icon) {
         <span class="coded-micon">
-          <svg class="pc-icon">
-            <use attr.xlink:href="assets/fonts/custom-icon.svg{{ item.icon }}"></use>
-          </svg>
+          <i [class]="item.icon"></i>
         </span>
       }
       @if (item.icon) {
