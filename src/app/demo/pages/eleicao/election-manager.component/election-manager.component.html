@@ -106,9 +106,14 @@
                 [disabled]="cargo.escrutinios[1].status !== 'fechado'">
                 Preparar 3º Escrutínio (Top 2)
               </button>
+
               <button
                 (click)="onAbrirEscrutinio(eleicao, cargo, escrutinio)"
-                [disabled]="eleicao.cargoAbertoParaVotacao !== null || (escrutinio.numero === 3 && escrutinio.candidatos.length === 0)">
+                [disabled]="
+                  eleicao.cargoAbertoParaVotacao !== null ||
+                  (escrutinio.numero === 2 && cargo.escrutinios[0].status !== 'fechado') ||
+                  (escrutinio.numero === 3 && escrutinio.candidatos.length === 0)
+                ">
                 Abrir Votação
               </button>
             </ng-container>

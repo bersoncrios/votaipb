@@ -590,11 +590,11 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background-color: #f1f3f5; // Um cinza bem claro
+  background-color: #f1f3f5;
   border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 6px;
   padding: 0.75rem 1rem;
-  margin-top: 1.5rem; // Espaço do conteúdo acima
+  margin-top: 1.5rem;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--primary-dark, #003366);
@@ -602,7 +602,7 @@
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #e9ecef; // Um cinza um pouco mais escuro
+    background-color: #e9ecef;
   }
 
   .sanfona-icon {
@@ -612,12 +612,9 @@
 
 /* Container do conteúdo da sanfona */
 .sanfona-conteudo {
-  // O container de apuração final já tem estilos
-  // Vamos ajustar a borda e a margem dele quando
-  // está dentro da sanfona
   .apuracao-finalizada-container {
-    margin-top: 0.75rem; // Margem pequena do botão
+    margin-top: 0.75rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--border-color); // Borda mais fina
+    border-top: 1px solid var(--border-color);
   }
 }

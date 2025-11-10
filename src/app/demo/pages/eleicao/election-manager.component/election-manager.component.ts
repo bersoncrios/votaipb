@@ -40,7 +40,6 @@ export class EleicaoManageComponent implements OnInit {
   public apuracaoCache = new Map<string, ApuracaoResultado>();
   public apuracaoOrdenadaCache = new Map<string, ApuracaoOrdenadaItem[]>();
 
-  // [NOVO] Guarda os IDs dos cargos cujos resultados estão expandidos
   public resultadosExpandidos = new Set<string>();
 
   ngOnInit(): void {
@@ -52,19 +51,27 @@ export class EleicaoManageComponent implements OnInit {
         }
         return this.eleicaoAdminService.getEleicaoObservable(id);
       }),
+      // [CORRIGIDO] Adiciona um 'map' para normalizar dados antigos
       map(eleicao => this.normalizarEleicao(eleicao))
     );
   }
 
   /**
-   * Helper para consertar dados antigos (sem status, sem vencedor=null)
+   * [CORRIGIDO] Helper para consertar dados antigos (sem status, sem vencedor=null)
    */
   private normalizarEleicao(eleicao: Eleicao): Eleicao {
     if (!eleicao) return eleicao;
 
     const cargosNormalizados = (eleicao.cargos || []).map(cargo => {
-      const status: CargoStatus = cargo.status || 'aguardando';
+      // 1. Normaliza o vencedor (undefined vira null)
       const vencedor = cargo.vencedor === undefined ? null : cargo.vencedor;
+
+      // 2. [LÓGICA CORRIGIDA] Define o status
+      // Se o status já existe, usa ele.
+      // Se não existe, VERIFICA SE HÁ VENCEDOR.
+      // Se tiver vencedor (dado antigo), o status é 'finalizado'.
+      // Se não tiver vencedor, aí sim é 'aguardando'.
+      const status: CargoStatus = cargo.status || (vencedor ? 'finalizado' : 'aguardando');
 
       return {
         ...cargo,
@@ -79,7 +86,7 @@ export class EleicaoManageComponent implements OnInit {
     };
   }
 
-  // [NOVA FUNÇÃO] Alterna a visibilidade dos resultados (sanfona)
+  // Alterna a visibilidade dos resultados (sanfona)
   toggleResultados(cargoId: string): void {
     if (this.resultadosExpandidos.has(cargoId)) {
       this.resultadosExpandidos.delete(cargoId);
@@ -88,7 +95,7 @@ export class EleicaoManageComponent implements OnInit {
     }
   }
 
-  // [NOVA FUNÇÃO] Verifica se os resultados de um cargo devem estar visíveis
+  // Verifica se os resultados de um cargo devem estar visíveis
   isResultadosExpandidos(cargoId: string): boolean {
     return this.resultadosExpandidos.has(cargoId);
   }
