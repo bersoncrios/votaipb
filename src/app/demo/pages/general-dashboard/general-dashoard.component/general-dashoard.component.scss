@@ -1,150 +1,374 @@
-/* * 1. TEMA DE CORES
- * Define as cores principais em um só lugar.
- */
+/* =========================================
+   1. VARIÁVEIS E TEMA
+   ========================================= */
 :host {
-  // Cores de Acento (baseadas em semântica)
-  --color-primary: #007bff;     // Azul (Total)
-  --color-success: #28a745;     // Verde (Em Andamento)
-  --color-warning: #ffc107;     // Amarelo (Agendada)
-  --color-danger: #dc3545;      // Vermelho (Desconhecido)
-  --color-secondary: #6c757d;  // Cinza (Finalizada)
+  // Cores Institucionais/Semânticas
+  --color-primary: #0056b3;      // Azul mais sóbrio/institucional
+  --color-primary-light: #eef6fc;
+  --color-success: #22c55e;      // Verde vibrante moderno
+  --color-warning: #f59e0b;      // Laranja/Amarelo moderno
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
 
-  // Cores de UI
-  --color-text: #333;
-  --color-text-secondary: #777;
-  --color-text-light: #fff;
-  --color-bg-card: #fff;
-  --color-bg-page: #f4f7f6;
-  --color-icon-bg: #e9ecef;
+  // Cores Neutras
+  --color-text-heading: #111827; // Quase preto para títulos
+  --color-text-body: #4b5563;    // Cinza escuro para texto
+  --color-text-light: #9ca3af;   // Cinza claro para detalhes
+  --color-bg-main: #f9fafb;      // Fundo geral muito suave
+  --color-bg-white: #ffffff;
 
   // Métricas de UI
-  --card-padding: 20px;
-  --card-border-radius: 8px;
-  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --border-radius-lg: 16px;
+  --border-radius-md: 8px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --section-spacing: 80px;
 }
 
+/* =========================================
+   2. ESTRUTURA GERAL DA LP
+   ========================================= */
+.lp-container {
+  font-family: 'Inter', 'Segoe UI', sans-serif; // Fonte moderna recomendada
+  color: var(--color-text-body);
+  background-color: var(--color-bg-main);
+  overflow-x: hidden;
+}
 
-/* * 2. LAYOUT GERAL
- */
-.dashboard-container {
-  padding: 24px;
-  background-color: var(--color-bg-page);
-  font-family: 'Segoe UI', Arial, sans-serif;
-  color: var(--color-text);
-  min-height: 100vh;
+.lp-section {
+  padding: var(--section-spacing) 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 48px auto;
 
   h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 32px;
-    color: var(--color-text);
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--color-text-heading);
+    margin-bottom: 16px;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    font-size: 1.125rem;
+    color: var(--color-text-body);
+    line-height: 1.6;
   }
 }
 
-.loading-container {
+/* =========================================
+   3. COMPONENTES UI (Botões, Badges)
+   ========================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  border-radius: var(--border-radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+
+  &--primary {
+    background-color: var(--color-primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+      background-color: darken(#0056b3, 5%);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  &--text {
+    background: transparent;
+    color: var(--color-text-body);
+    &:hover { color: var(--color-primary); }
+  }
+
+  &--white {
+    background-color: white;
+    color: var(--color-primary);
+    &:hover { background-color: #f8fafc; }
+  }
+
+  &--large {
+    padding: 16px 32px;
+    font-size: 1.125rem;
+  }
+}
+
+/* =========================================
+   4. HERO SECTION
+   ========================================= */
+.hero-section {
+  padding: 100px 24px 80px;
+  background: linear-gradient(135deg, var(--color-bg-white) 0%, #f0f7ff 100%);
   text-align: center;
-  padding: 40px;
-  font-size: 1.2rem;
-  color: var(--color-text-secondary);
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  // Estilo da Logo Adicionado
+  .hero-logo {
+    max-height: 120px; // Ajuste esta altura como preferir
+    width: auto;
+    margin-bottom: 24px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 999px;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem); // Responsivo
+    font-weight: 800;
+    color: var(--color-text-heading);
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--color-text-body);
+    margin-bottom: 40px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================
+   5. FEATURES SECTION
+   ========================================= */
+.features-section {
+  background-color: var(--color-bg-white);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+}
+
+.feature-card {
+  padding: 32px 24px;
+  background-color: var(--color-bg-main);
+  border-radius: var(--border-radius-lg);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    background-color: var(--color-primary);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 24px;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-heading);
+    margin-bottom: 12px;
+  }
+
+  p {
+    color: var(--color-text-body);
+    line-height: 1.5;
+  }
+}
+
+/* =========================================
+   6. STATS SECTION (Redesenhada)
+   ========================================= */
+.stats-section {
+  // Mantém o fundo suave para contraste
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 24px;
 }
 
-
-/* * 3. O NOVO "STAT-CARD"
- */
 .stat-card {
-  background-color: var(--color-bg-card);
-  border-radius: var(--card-border-radius);
-  box-shadow: var(--card-shadow);
+  background-color: var(--color-bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: var(--card-padding);
-
-  // A linha colorida sutil que define o status
-  border-left: 5px solid;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(0,0,0,0.1);
   }
-}
 
-.stat-content {
-  flex-grow: 1;
+  .stat-content {
+    z-index: 2;
+  }
 
-  .stat-title {
-    font-size: 0.9rem;
+  .stat-label {
+    display: block;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text-secondary);
     text-transform: uppercase;
-    margin: 0 0 8px 0;
+    letter-spacing: 0.05em;
+    color: var(--color-text-light);
+    margin-bottom: 8px;
   }
 
   .stat-number {
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: var(--color-text);
-    margin: 0 0 12px 0;
+    font-size: 3rem;
+    font-weight: 800;
     line-height: 1;
+    color: var(--color-text-heading);
+    margin-bottom: 12px;
   }
 
-  .stat-link {
-    font-size: 0.85rem;
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 500;
-    margin: 0;
+  .stat-description {
+    font-size: 0.9rem;
+    color: var(--color-text-body);
+    line-height: 1.4;
+  }
 
-    &:hover {
-      text-decoration: underline;
-    }
+  .stat-icon-bg {
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    font-size: 8rem;
+    opacity: 0.05;
+    transform: rotate(-15deg);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  // Modificadores de Cor dos Cards
+  &--total {
+    .stat-number { color: var(--color-primary); }
+    .stat-icon-bg { color: var(--color-primary); }
+  }
+  &--finalizada {
+    .stat-number { color: var(--color-text-heading); } // Neutro para finalizado
+    .stat-icon-bg { color: var(--color-text-body); opacity: 0.03; }
+  }
+  &--em-andamento {
+    border-bottom: 4px solid var(--color-success);
+    .stat-number { color: var(--color-success); }
+    .stat-icon-bg { color: var(--color-success); opacity: 0.08; }
+  }
+  &--agendada {
+    .stat-number { color: var(--color-warning); }
+    .stat-icon-bg { color: var(--color-warning); }
+  }
+  &--desconhecido {
+    background-color: #fef2f2;
+    .stat-number { color: var(--color-danger); }
   }
 }
 
-.stat-icon {
-  font-size: 2.5rem; // Tamanho do ícone
-  color: var(--color-icon-bg); // Cor de fundo sutil
-  padding-left: 10px;
-  align-self: center;
+// Animação para "Em Andamento"
+@keyframes pulse-soft {
+  0% { opacity: 0.05; }
+  50% { opacity: 0.12; }
+  100% { opacity: 0.05; }
+}
+.pulse-animation {
+  animation: pulse-soft 3s infinite ease-in-out;
 }
 
+/* =========================================
+   7. LOADING STATE
+   ========================================= */
+.loading-container {
+  text-align: center;
+  padding: 60px;
+  color: var(--color-text-light);
 
-/* * 4. MODIFICADORES DE COR
- * Apenas mudam a cor da borda e, se quisermos, a cor do ícone.
- */
-.stat-card--total {
-  border-color: var(--color-primary);
-  .stat-icon { color: var(--color-primary); opacity: 0.8; }
-  .stat-link { color: var(--color-primary); }
+  .spinner {
+    // Exemplo simples de spinner CSS
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--color-bg-main);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 24px auto;
+  }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* =========================================
+   8. CTA FINAL SECTION
+   ========================================= */
+.cta-section {
+  background-color: var(--color-primary);
+  color: white;
+  text-align: center;
+  border-radius: var(--border-radius-lg);
+  margin: 0 24px var(--section-spacing) 24px; // Margem lateral para parecer um "card" gigante
+  width: auto; // Sobrescreve o width fixo se houver
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  h2 {
+    color: white;
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: rgba(255,255,255, 0.9);
+    font-size: 1.25rem;
+    margin-bottom: 32px;
+  }
 }
 
-.stat-card--agendada {
-  border-color: var(--color-warning);
-  .stat-icon { color: var(--color-warning); opacity: 0.8; }
-  .stat-link { color: var(--color-warning); }
-}
-
-.stat-card--em-andamento {
-  border-color: var(--color-success);
-  .stat-icon { color: var(--color-success); opacity: 0.8; }
-  .stat-link { color: var(--color-success); }
-}
-
-.stat-card--finalizada {
-  border-color: var(--color-secondary);
-  .stat-icon { color: var(--color-secondary); opacity: 0.8; }
-  .stat-link { color: var(--color-secondary); }
-}
-
-.stat-card--desconhecido {
-  border-color: var(--color-danger);
-  .stat-icon { color: var(--color-danger); opacity: 0.8; }
-  .stat-link { color: var(--color-danger); }
+/* =========================================
+   9. RESPONSIVIDADE EXTRA
+   ========================================= */
+@media (max-width: 768px) {
+  :host { --section-spacing: 60px; }
+  .hero-section { padding-top: 60px; }
+  .cta-section { margin: 0 0 var(--section-spacing) 0; border-radius: 0; }
 }

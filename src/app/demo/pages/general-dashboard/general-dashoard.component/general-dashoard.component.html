@@ -1,63 +1,144 @@
-<div class="dashboard-container">
-  <h2>Estatísticas das Eleições</h2>
+<div class="lp-container">
 
-  <div *ngIf="isLoading; else loaded" class="loading-container">
-    <p>Carregando estatísticas...</p>
-  </div>
-
-  <ng-template #loaded>
-    <div *ngIf="stats" class="stats-grid">
-
-      <div class="stat-card stat-card--total">
-        <div class="stat-content">
-          <p class="stat-title">Total de Eleições</p>
-          <p class="stat-number">{{ stats.total }}</p>
-        </div>
-        <div class="stat-icon">
-          <fa-icon [icon]="faArchive"></fa-icon>
-        </div>
+  <header class="hero-section">
+    <div class="hero-content">
+      <img src="assets/images/logo.png" alt="Logo VotaIPB" class="hero-logo" />
+      <h1>Votações seguras e transparentes para a sua Igreja</h1>
+      <p class="hero-subtitle">
+        Modernize assembleias, reuniões de conselho e eleições com o VotaIPB.<br>
+        Simples para quem vota, auditável para quem administra.
+      </p>
+      <div class="hero-actions">
+        <a routerLink="/auth/login" class="btn btn--primary">
+          Começar Agora <fa-icon [icon]="faArrowRight"></fa-icon>
+        </a>
+        <a href="#numeros" class="btn btn--text">Ver nossos números</a>
       </div>
-
-      <div class="stat-card stat-card--agendada">
-        <div class="stat-content">
-          <p class="stat-title">Agendadas</p>
-          <p class="stat-number">{{ stats.agendada }}</p>
-        </div>
-        <div class="stat-icon">
-          <fa-icon [icon]="faCalendarAlt"></fa-icon>
-        </div>
-      </div>
-
-      <div class="stat-card stat-card--em-andamento">
-        <div class="stat-content">
-          <p class="stat-title">Em Andamento</p>
-          <p class="stat-number">{{ stats.emAndamento }}</p>
-        </div>
-        <div class="stat-icon">
-          <fa-icon [icon]="faSyncAlt"></fa-icon>
-        </div>
-      </div>
-
-      <div class="stat-card stat-card--finalizada">
-        <div class="stat-content">
-          <p class="stat-title">Finalizadas</p>
-          <p class="stat-number">{{ stats.finalizada }}</p>
-        </div>
-        <div class="stat-icon">
-          <fa-icon [icon]="faCheckCircle"></fa-icon>
-        </div>
-      </div>
-
-      <div *ngIf="stats.desconhecido > 0" class="stat-card stat-card--desconhecido">
-        <div class="stat-content">
-          <p class="stat-title">Status Desconhecido</p>
-          <p class="stat-number">{{ stats.desconhecido }}</p>
-        </div>
-        <div class="stat-icon">
-          <fa-icon [icon]="faExclamationTriangle"></fa-icon>
-        </div>
-      </div>
-
     </div>
-  </ng-template>
+  </header>
+
+  <section class="lp-section features-section">
+    <div class="section-header">
+      <h2>Por que escolher o VotaIPB?</h2>
+      <p>Desenvolvido pensando nas necessidades específicas das eleições da IPB.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <fa-icon [icon]="faLock"></fa-icon>
+        </div>
+        <h3>Segurança Total</h3>
+        <p>Criptografia de ponta a ponta garante que cada voto seja secreto e imutável.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <fa-icon [icon]="faBolt"></fa-icon>
+        </div>
+        <h3>Apuração Instantânea</h3>
+        <p>Fim da contagem manual. Resultados precisos disponíveis segundos após o encerramento.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <fa-icon [icon]="faFileInvoice"></fa-icon>
+        </div>
+        <h3>Auditável</h3>
+        <p>Geração automática de relatórios e atas para total transparência do processo.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <fa-icon [icon]="faMobileAlt"></fa-icon>
+        </div>
+        <h3>Acessível</h3>
+        <p>Vote pelo celular, tablet ou computador, presencialmente ou à distância.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-section stats-section" id="numeros">
+    <div class="section-header">
+      <h2>A confiança da Igreja em números</h2>
+      <p>Junte-se as igrejas e concílios que já modernizaram suas eleições.</p>
+    </div>
+
+    <div *ngIf="isLoading; else loaded" class="loading-container">
+      <div class="spinner"></div>
+      <p>Carregando indicadores em tempo real...</p>
+    </div>
+
+    <ng-template #loaded>
+      <div *ngIf="stats" class="stats-grid">
+
+        <div class="stat-card stat-card--total">
+          <div class="stat-content">
+            <span class="stat-label">Total Processado</span>
+            <p class="stat-number">{{ stats.total | number }}</p>
+            <p class="stat-description">Eleições já registradas em nossa base.</p>
+          </div>
+          <div class="stat-icon-bg">
+            <fa-icon [icon]="faArchive"></fa-icon>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--finalizada">
+          <div class="stat-content">
+            <span class="stat-label">Sucesso</span>
+            <p class="stat-number">{{ stats.finalizada | number }}</p>
+            <p class="stat-description">Eleições finalizadas e apuradas com sucesso.</p>
+          </div>
+          <div class="stat-icon-bg">
+            <fa-icon [icon]="faCheckCircle"></fa-icon>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--em-andamento">
+          <div class="stat-content">
+            <span class="stat-label">Acontecendo Agora</span>
+            <p class="stat-number">{{ stats.emAndamento | number }}</p>
+            <p class="stat-description">Eleições em andamento neste exato momento.</p>
+          </div>
+          <div class="stat-icon-bg pulse-animation">
+            <fa-icon [icon]="faSyncAlt"></fa-icon>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--agendada">
+          <div class="stat-content">
+            <span class="stat-label">Futuro</span>
+            <p class="stat-number">{{ stats.agendada | number }}</p>
+            <p class="stat-description">Próximas eleições já programadas.</p>
+          </div>
+          <div class="stat-icon-bg">
+            <fa-icon [icon]="faCalendarAlt"></fa-icon>
+          </div>
+        </div>
+
+        <div *ngIf="stats.desconhecido > 0" class="stat-card stat-card--desconhecido">
+          <div class="stat-content">
+            <span class="stat-label">Atenção</span>
+            <p class="stat-number">{{ stats.desconhecido | number }}</p>
+            <p class="stat-description">Status não identificado.</p>
+          </div>
+          <div class="stat-icon-bg">
+            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+          </div>
+        </div>
+
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="lp-section cta-section">
+    <div class="cta-content">
+      <h2>Pronto para modernizar sua próxima assembleia?</h2>
+      <p>Crie sua conta hoje mesmo e experimente a simplicidade do VotaIPB.</p>
+      <a routerLink="/auth/login" class="btn btn--large btn--white">
+        Criar Eleição Agora
+      </a>
+    </div>
+  </section>
+
 </div>
