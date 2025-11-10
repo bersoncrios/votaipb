@@ -1,0 +1,152 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5; // Cor de fundo suave
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.inscricao-container {
+  width: 100%;
+  max-width: 480px; // Largura máxima do cartão
+}
+
+.card-inscricao {
+  background: white;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15); // Sombra moderna
+  text-align: center;
+  animation: slideUp 0.4s ease-out;
+
+  h2 {
+    color: #1a237e; // Azul escuro
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+  }
+  h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.5rem;
+  }
+
+  .descricao {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .instrucao {
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* --- Formulário --- */
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #374151;
+  }
+  input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #1a237e; // Azul primário no foco
+      box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+    }
+
+    &.invalid {
+      border-color: #ef4444; // Vermelho para erro
+      background-color: #fef2f2;
+    }
+  }
+  .error-feedback {
+    color: #ef4444;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+  }
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 1rem;
+  background-color: #1a237e; // Azul primário
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #283593; // Azul um pouco mais claro no hover
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* --- Estados (Loading, Sucesso, Erro) --- */
+.state-loading {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.state-success, .state-closed, .state-error {
+  padding: 1rem 0;
+}
+
+mat-icon {
+  // Garante tamanho grande para os ícones de estado
+  font-size: 5rem;
+  height: 5rem;
+  width: 5rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon-success { color: #10b981; } // Verde esmeralda
+.icon-closed { color: #f59e0b; }  // Âmbar
+.icon-error { color: #ef4444; }   // Vermelho
+
+.lista-titulo {
+  font-weight: 600;
+  color: #666;
+  margin-top: 1.5rem;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsividade --- */
+@media (max-width: 480px) {
+  :host { padding: 1rem; }
+  .card-inscricao { padding: 2rem 1.5rem; }
+  h2 { font-size: 1.5rem; }
+}

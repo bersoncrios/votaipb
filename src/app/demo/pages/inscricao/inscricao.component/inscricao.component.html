@@ -1,0 +1,66 @@
+<div class="inscricao-container">
+  <div class="card-inscricao" [ngSwitch]="step">
+
+    <div *ngSwitchCase="'loading'" class="state-loading">
+      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+    </div>
+
+    <div *ngSwitchCase="'form'" class="state-form">
+      <h2>{{ listaDados?.titulo }}</h2>
+      <p class="descricao" *ngIf="listaDados?.descricao">{{ listaDados?.descricao }}</p>
+      <p class="instrucao">Preencha os dados abaixo para se habilitar a votar.</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="nomeInput">Nome Completo</label>
+          <input id="nomeInput" type="text" formControlName="nome" placeholder="Ex: Maria Silva"
+                 [class.invalid]="form.get('nome')?.invalid && form.get('nome')?.touched"
+                 autocomplete="name">
+
+          <div class="error-feedback" *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched">
+            Por favor, insira o seu nome completo.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="userIdInput">ID de Identificação (CPF, Matrícula, etc.)</label>
+          <input id="userIdInput" type="text" formControlName="userId" placeholder="Digite o seu ID"
+                 [class.invalid]="form.get('userId')?.invalid && form.get('userId')?.touched"
+                 autocomplete="off">
+
+          <div class="error-feedback" *ngIf="form.get('userId')?.hasError('duplicado')">
+             Este ID já está inscrito nesta lista.
+          </div>
+          <div class="error-feedback" *ngIf="form.get('userId')?.hasError('required') && form.get('userId')?.touched">
+             O ID é obrigatório.
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" [disabled]="form.invalid && form.touched">
+          Confirmar Inscrição
+        </button>
+      </form>
+    </div>
+
+    <div *ngSwitchCase="'success'" class="state-success">
+      <mat-icon class="icon-success">check_circle</mat-icon>
+      <h3>Inscrição Realizada!</h3>
+      <p>Obrigado, <strong>{{ form.get('nome')?.value }}</strong>.</p>
+      <p>Os seus dados foram registados com sucesso.</p>
+    </div>
+
+    <div *ngSwitchCase="'closed'" class="state-closed">
+      <mat-icon class="icon-closed">lock</mat-icon>
+      <h3>Inscrições Encerradas</h3>
+      <p>Esta lista já não está a aceitar novas inscrições.</p>
+      <p class="lista-titulo" *ngIf="listaDados">{{ listaDados.titulo }}</p>
+    </div>
+
+    <div *ngSwitchCase="'error'" class="state-error">
+      <mat-icon class="icon-error">error_outline</mat-icon>
+      <h3>Erro</h3>
+      <p>{{ errorMessage }}</p>
+    </div>
+
+  </div>
+</div>

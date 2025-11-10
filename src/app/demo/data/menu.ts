@@ -3,7 +3,7 @@ import { Navigation } from 'src/app/@theme/types/navigation';
 export const menus: Navigation[] = [
   {
     id: 'navigation',
-    title: 'Navigation',
+    title: '',
     type: 'group',
     icon: 'ti ti-menu-2',
     children: [
@@ -30,6 +30,14 @@ export const menus: Navigation[] = [
         classes: 'nav-item',
         url: '/eleicoes/lista',
         icon: 'ti ti-adjustments-check'
+      },
+        {
+        id: 'Gerenciar Inscrições',
+        title: 'Gerenciar Inscrições',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/inscricoes/lista',
+        icon: 'ti ti-list-details'
       }
     ]
   },

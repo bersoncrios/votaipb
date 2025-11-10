@@ -24,6 +24,10 @@ export const routes: Routes = [
         path: 'votar/:id',
         loadComponent: () => import('./demo/pages/eleicao/votacao.component/votacao.component').then((m) => m.VotacaoComponent)
       },
+       {
+        path: 'inscrever/:id',
+        loadComponent: () => import('./demo/pages/inscricao/inscricao.component/inscricao.component').then((m) => m.InscricaoComponent)
+      },
       // 4. (Opcional) Se você ainda quiser que /dash funcione, pode redirecionar para a raiz.
       {
         path: 'dash',
@@ -58,6 +62,11 @@ export const routes: Routes = [
         path: 'dashboard', // Este é o dashboard *privado* do admin
         canActivate: [AuthGuard],
         loadComponent: () => import('./demo/pages/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+      },
+      {
+        path: 'inscricoes/lista',
+        canActivate: [AuthGuard],
+        loadComponent: () => import('./demo/pages/inscricao/admin-listas.component/admin-listas.component').then((m) => m.AdminListasComponent)
       }
     ]
   }

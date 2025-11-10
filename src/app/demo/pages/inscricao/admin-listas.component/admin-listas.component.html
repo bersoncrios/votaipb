@@ -1,0 +1,76 @@
+
+<div class="admin-container">
+
+  <header class="page-header">
+    <h1>Listas de Inscrição</h1>
+    <button class="btn-primary" (click)="showForm = !showForm">
+      <mat-icon>{{ showForm ? 'close' : 'add' }}</mat-icon>
+      {{ showForm ? 'Cancelar' : 'Nova Lista' }}
+    </button>
+  </header>
+
+  <div class="new-list-form" *ngIf="showForm">
+    <h3>Criar Nova Lista</h3>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="form-group">
+        <label>Título da Lista *</label>
+        <input formControlName="titulo" placeholder="Ex: Assembleia Geral Dezembro 2024">
+        <div *ngIf="form.get('titulo')?.invalid && form.get('titulo')?.touched" class="error-feedback">
+          O título é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Descrição (Opcional)</label>
+        <input formControlName="descricao" placeholder="Instruções para quem se vai inscrever...">
+      </div>
+
+      <button type="submit" [disabled]="form.invalid" class="btn-submit">Criar Lista</button>
+    </form>
+  </div>
+
+  <div class="listas-grid" *ngIf="listas$ | async as listas; else loading">
+
+    <div *ngIf="listas.length === 0" class="empty-state">
+      <mat-icon>list_alt</mat-icon>
+      <p>Ainda não criou nenhuma lista de inscrição.</p>
+    </div>
+
+    <div class="lista-card" *ngFor="let lista of listas" [class.fechada]="!lista.ativa">
+      <div class="card-header">
+        <span class="status-badge" [class.ativo]="lista.ativa">
+          {{ lista.ativa ? 'ABERTA' : 'FECHADA' }}
+        </span>
+        <span class="inscritos-count">
+          <strong>{{ lista.inscritos?.length || 0 }}</strong> inscritos
+        </span>
+      </div>
+
+      <h2>{{ lista.titulo }}</h2>
+      <p class="descricao">{{ lista.descricao || 'Sem descrição.' }}</p>
+
+      <div class="card-actions">
+        <button (click)="copiarLink(lista.id)" class="btn-icon" title="Copiar Link Público">
+          <mat-icon>link</mat-icon>
+        </button>
+
+        <button (click)="toggleStatus(lista)" class="btn-icon" [title]="lista.ativa ? 'Fechar Lista' : 'Abrir Lista'">
+          <mat-icon>{{ lista.ativa ? 'lock_open' : 'lock' }}</mat-icon>
+        </button>
+
+        <button (click)="exportarExcel(lista)" class="btn-icon btn-excel" title="Baixar lista (XLSX)">
+          <mat-icon>download</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-template #loading>
+    <div class="loading-state">
+      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+    </div>
+  </ng-template>
+
+</div>
