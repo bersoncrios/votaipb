@@ -618,3 +618,322 @@
     border-top: 1px solid var(--border-color);
   }
 }
+
+
+/* ==============================================
+   [NOVO] Botão Gerar PDF
+   ============================================== */
+.btn-gerar-pdf {
+  display: block; // Garante que ocupe a linha
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--action-secondary); // Cor cinza
+  color: white;
+  margin: 0 auto 0.75rem auto; // Centraliza e dá espaço inferior
+
+  &:hover:not(:disabled) {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Nos blocos finalizados/pendentes, limitar a largura em telas maiores */
+  .vencedor-bloco &,
+  .vencedor-pendente-bloco & {
+    margin-top: 1.5rem; // Adiciona espaço superior
+
+    @media (min-width: 600px) {
+      max-width: 300px; // Limita a largura em telas de desktop
+    }
+  }
+
+  /* Ajuste específico para o bloco pendente */
+  .vencedor-pendente-bloco & {
+     margin-bottom: 0; // Remove a margem inferior antes da sanfona
+  }
+}
+/* ==============================================
+   Variáveis de Cor (Tema do Admin)
+   ============================================== */
+:host {
+  --primary-color: #004a98;     // Azul principal
+  --primary-dark: #003366;      // Azul (hover)
+  --bg-color: #f4f7f6;          // Fundo da página
+  --card-bg-color: #ffffff;     // Fundo do card principal
+  --nested-card-bg: #fdfdfd;   // Fundo do card de escrutínio
+  --border-color: #e0e0e0;      // Borda padrão
+  --text-color: #333333;        // Cor principal do texto
+  --text-muted: #6c757d;      // Texto (status, etc)
+
+  // Cores de Ação
+  --action-open: var(--primary-color);
+  --action-close: #D32F2F;      // Vermelho (Perigoso)
+  --action-prepare: #fbc02d;    // Laranja/Amarelo (Atenção)
+  --action-secondary: #6c757d; // Cinza (Ver apuração, PDF)
+  --action-confirm: #4CAF50;    // Verde (Aceitar)
+
+  // Cores de Status
+  --status-aberto: #4CAF50;     // Verde
+  --status-fechado: #757575;    // Cinza
+  --status-pendente: #0097a7;   // Ciano
+  --status-nao-iniciado: #90a4ae; // Cinza azulado
+  --status-aguardando: var(--primary-color);
+  --status-em_votacao: var(--status-aberto);
+}
+
+/* ==============================================
+   Container Principal (Admin)
+   ============================================== */
+:host {
+  display: block;
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+.manage-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: inherit;
+  color: var(--text-color);
+
+  h1 {
+    color: var(--primary-dark);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+  }
+
+  p {
+    font-size: 1.1rem;
+    strong {
+      color: var(--text-muted);
+    }
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+  }
+}
+
+/* ==============================================
+   [NOVO] Header Principal (Título e Ações)
+   ============================================== */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; // Permite quebra de linha em telas pequenas
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  h1 {
+    margin-bottom: 0; // Remove margem que estava no h1
+    flex-grow: 1; // Permite que o título ocupe espaço
+  }
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap; // Permite que os botões quebrem a linha
+  gap: 0.75rem;
+}
+
+.btn-header {
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  white-space: nowrap; // Impede que o texto do botão quebre
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.btn-copiar-link {
+  background-color: var(--action-open); // Reusa a variável --primary-color
+  color: white;
+
+  &:hover {
+    background-color: var(--primary-dark);
+  }
+}
+
+.btn-pdf-geral {
+  background-color: var(--action-secondary); // Reusa a variável --action-secondary
+  color: white;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+}
+
+
+/* ==============================================
+   Aviso de Votação Aberta
+   ============================================== */
+.votacao-aberta-aviso {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Lista de Cargos (Card Principal)
+   ============================================== */
+.cargo-card {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Lista de Escrutínios (Cards Aninhados)
+   ============================================== */
+.escrutinio-card {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Botões de Controle
+   ============================================== */
+.controles {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Resultados da Apuração (Dentro do Escrutínio Card)
+   ============================================== */
+.apuracao-resultados {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Bloco Vencedor (Finalizado)
+   ============================================== */
+.vencedor-bloco {
+  // ... (estilos existentes)
+}
+
+/* Bloco "Sem Vencedor" (Finalizado) */
+.sem-vencedor {
+  // ... (estilos existentes)
+}
+
+
+/* ==============================================
+   [REFATORADO] Estilos para a Lista de Apuração
+   ============================================== */
+.lista-resultados-apuracao {
+  // ... (estilos existentes)
+}
+
+.brancos-nulos {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Bloco de Contagem de Votos
+   ============================================== */
+.contagem-votacao {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Bloco de Confirmação Pendente
+   ============================================== */
+.vencedor-pendente-bloco {
+  // ... (estilos existentes)
+}
+
+.controles-confirmacao {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Bloco de Apuração Final (em Finalizado/Pendente)
+   ============================================== */
+.apuracao-finalizada-container {
+  // ... (estilos existentes)
+}
+
+.apuracao-final-item {
+  // ... (estilos existentes)
+}
+
+.apuracao-final-header {
+  // ... (estilos existentes)
+}
+
+.status-badge {
+  // ... (estilos existentes)
+}
+
+.apuracao-final-content {
+  // ... (estilos existentes)
+}
+
+.total-votos-info {
+  // ... (estilos existentes)
+}
+
+/* ==============================================
+   Botão Sanfona (Acordeão)
+   ============================================== */
+.btn-sanfona {
+  // ... (estilos existentes)
+}
+
+/* Container do conteúdo da sanfona */
+.sanfona-conteudo {
+  // ... (estilos existentes)
+}
+
+
+/* ==============================================
+   Botão Gerar PDF (INDIVIDUAL, DENTRO DO CARD)
+   ============================================== */
+.btn-gerar-pdf {
+  display: block; // Garante que ocupe a linha
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--action-secondary); // Cor cinza
+  color: white;
+  margin: 0 auto 0.75rem auto; // Centraliza e dá espaço inferior
+
+  &:hover:not(:disabled) {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Nos blocos finalizados/pendentes, limitar a largura em telas maiores */
+  .vencedor-bloco &,
+  .vencedor-pendente-bloco & {
+    margin-top: 1.5rem; // Adiciona espaço superior
+
+    @media (min-width: 600px) {
+      max-width: 300px; // Limita a largura em telas de desktop
+    }
+  }
+
+  /* Ajuste específico para o bloco pendente */
+  .vencedor-pendente-bloco & {
+     margin-bottom: 0; // Remove a margem inferior antes da sanfona
+  }
+}

@@ -12,6 +12,9 @@ import { CommonModule } from '@angular/common';
 import { cloneDeep } from 'lodash-es';
 import Swal from 'sweetalert2';
 
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 type ApuracaoResultado = {
   votosPorCandidato: Map<string, number>;
   totalBrancos: number;
@@ -484,5 +487,151 @@ export class EleicaoManageComponent implements OnInit {
     } else {
       Swal.fire('Concluído', 'Nenhum vencedor encontrado após re-apuração. A eleição continua para o 3º escrutínio.', 'info');
     }
+  }
+
+  /**
+   * Gera um PDF com o relatório geral de TODOS os cargos.
+   */
+  async onGerarPdfGeral(eleicao: Eleicao) {
+    for (const cargo of eleicao.cargos) {
+      for (const esc of cargo.escrutinios) {
+        if (esc.status === 'fechado') {
+          const cacheKey = `${cargo.id}-${esc.numero}`;
+          if (!this.apuracaoOrdenadaCache.has(cacheKey) || !this.apuracaoCache.has(cacheKey)) {
+            this.onApurar(cargo, esc);
+          }
+        }
+      }
+    }
+
+    const doc = new jsPDF();
+    const MARGEM_ESQUERDA = 14;
+    let cursorY = 20;
+    const PAGE_HEIGHT = doc.internal.pageSize.height;
+    const BOTTOM_MARGIN = 30;
+
+    doc.setFontSize(18);
+    doc.text('Relatório Geral da Eleição', MARGEM_ESQUERDA, cursorY);
+    cursorY += 10;
+    doc.setFontSize(14);
+    doc.text('Eleição Realizada via votaipb.com.br', MARGEM_ESQUERDA, cursorY);
+    cursorY += 12;
+    doc.setFontSize(14);
+    doc.text(`Eleição: ${eleicao.titulo}`, MARGEM_ESQUERDA, cursorY);
+    cursorY += 7;
+    doc.text(`Status da Eleição: ${eleicao.status}`, MARGEM_ESQUERDA, cursorY);
+    cursorY += 15;
+
+    for (const cargo of eleicao.cargos) {
+
+      if (cursorY > PAGE_HEIGHT - BOTTOM_MARGIN - 40) {
+        this.adicionarRodape(doc, MARGEM_ESQUERDA);
+        doc.addPage();
+        cursorY = 20;
+      }
+
+      doc.setFontSize(16);
+      doc.text(`Cargo: ${cargo.titulo}`, MARGEM_ESQUERDA, cursorY);
+      cursorY += 8;
+
+      doc.setFontSize(12);
+      doc.text(`Status do Cargo: ${cargo.status}`, MARGEM_ESQUERDA, cursorY);
+      cursorY += 7;
+
+      const vencedorNome = cargo.vencedor?.nome || 'Nenhum vencedor definido';
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Vencedor: ${vencedorNome}`, MARGEM_ESQUERDA, cursorY);
+      doc.setFont('helvetica', 'normal');
+      cursorY += 10;
+
+      const escrutiniosFechados = cargo.escrutinios.filter(e => e.status === 'fechado');
+
+      if (escrutiniosFechados.length === 0) {
+         doc.setFontSize(10);
+         doc.setFont('helvetica', 'italic');
+         doc.text('Nenhum escrutínio finalizado para este cargo.', MARGEM_ESQUERDA, cursorY);
+         doc.setFont('helvetica', 'normal');
+         cursorY += 10;
+      }
+
+      for (const esc of escrutiniosFechados) {
+
+        if (cursorY > PAGE_HEIGHT - BOTTOM_MARGIN - 60) {
+          this.adicionarRodape(doc, MARGEM_ESQUERDA);
+          doc.addPage();
+          cursorY = 20;
+        }
+
+        doc.setFontSize(14);
+        doc.text(`Resultados do ${esc.numero}º Escrutínio`, MARGEM_ESQUERDA, cursorY);
+        cursorY += 8;
+
+        const cacheKey = `${cargo.id}-${esc.numero}`;
+        const resultados = this.apuracaoOrdenadaCache.get(cacheKey);
+        const extras = this.apuracaoCache.get(cacheKey);
+
+        if (!resultados || !extras) {
+          doc.setFontSize(10);
+          doc.text('Não foi possível carregar os dados desta apuração.', MARGEM_ESQUERDA, cursorY);
+          cursorY += 10;
+          continue;
+        }
+
+        const tableHead = [['Pos.', 'Candidato', 'Votos']];
+        const tableBody = resultados.map((item, index) => [
+          `${index + 1}º`,
+          item.nome,
+          item.votos.toString()
+        ]);
+
+        tableBody.push(['-', 'Votos em Branco', extras.totalBrancos.toString()]);
+        tableBody.push(['-', 'Votos Nulos', extras.totalNulos.toString()]);
+
+        const totalVotos = esc.votos.length;
+        tableBody.push(['-', 'Total de Votos Registrados', totalVotos.toString()]);
+
+        autoTable(doc, {
+          head: tableHead,
+          body: tableBody,
+          startY: cursorY,
+          theme: 'striped',
+          headStyles: { fillColor: [0, 74, 152] },
+          didDrawPage: (data) => {
+            this.adicionarRodape(doc, MARGEM_ESQUERDA);
+          }
+        });
+
+        cursorY = (doc as any).lastAutoTable.finalY + 15;
+      }
+
+      cursorY += 5;
+      if (cursorY < PAGE_HEIGHT - BOTTOM_MARGIN) {
+         doc.setDrawColor(180, 180, 180);
+         doc.line(MARGEM_ESQUERDA, cursorY, 200, cursorY);
+      }
+      cursorY += 10;
+    }
+
+    this.adicionarRodape(doc, MARGEM_ESQUERDA);
+
+    const safeFileName = eleicao.titulo.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    doc.save(`relatorio_geral_${safeFileName}.pdf`);
+  }
+
+
+  /**
+   * [NOVO HELPER] Adiciona rodapé com data e paginação
+   */
+  private adicionarRodape(doc: jsPDF, margemEsquerda: number): void {
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    doc.setFontSize(8);
+    doc.setTextColor(100); // cinza
+    // const pageNum = doc.internal.getCurrentPageInfo.name;
+    doc.text(
+      `Gerado em: ${new Date().toLocaleString('pt-BR')}`,
+      margemEsquerda,
+      doc.internal.pageSize.height - 10
+    );
+    doc.setTextColor(0);
   }
 }

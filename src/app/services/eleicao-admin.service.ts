@@ -11,9 +11,9 @@ import {
   query,
   runTransaction
 } from '@angular/fire/firestore';
-import { Cargo, CargoStatus } from '../models/Cargo'; // Importe o CargoStatus
+import { Cargo, CargoStatus } from '../models/Cargo';
 import { Escrutinio } from '../models/Escritineo';
-import { Observable, map } from 'rxjs'; // Importe o 'map' do rxjs
+import { Observable, map } from 'rxjs';
 import { nanoid } from 'nanoid';
 import { Candidato } from '../models/Candidato';
 import { AuthService } from '../services/auth.service';
@@ -28,7 +28,7 @@ export class EleicaoAdminService {
   private eleicoesCollection = collection(this.db, 'eleicoes');
 
   /**
-   * [CORRIGIDO] Função helper para consertar dados antigos
+   * Função helper para consertar dados antigos
    */
   private normalizarEleicao(eleicao: Eleicao): Eleicao {
     if (!eleicao) return eleicao;
@@ -37,11 +37,6 @@ export class EleicaoAdminService {
       // 1. Normaliza o vencedor (undefined vira null)
       const vencedor = cargo.vencedor === undefined ? null : cargo.vencedor;
 
-      // 2. [LÓGICA CORRIGIDA] Define o status
-      // Se o status já existe, usa ele.
-      // Se não existe, VERIFICA SE HÁ VENCEDOR.
-      // Se tiver vencedor (dado antigo), o status é 'finalizado'.
-      // Se não tiver vencedor, aí sim é 'aguardando'.
       const status: CargoStatus = cargo.status || (vencedor ? 'finalizado' : 'aguardando');
 
       return {
@@ -136,7 +131,6 @@ export class EleicaoAdminService {
       where('adminUid', '==', adminUid)
     );
 
-    // Usa o 'map' para consertar os dados antigos na lista
     return (collectionData(q, { idField: 'id' }) as Observable<Eleicao[]>).pipe(
       map(eleicoes => eleicoes.map(this.normalizarEleicao))
     );
@@ -166,7 +160,6 @@ export class EleicaoAdminService {
             return cargo;
           }
 
-          // [CORRIGIDO] Normaliza o status antes de verificar
           const status = cargo.status || (cargo.vencedor ? 'finalizado' : 'aguardando');
           if (status !== 'aguardando') {
              return cargo;
