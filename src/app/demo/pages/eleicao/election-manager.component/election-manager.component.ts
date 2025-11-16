@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EleicaoAdminService } from '../../../../services/eleicao-admin.service';
 import { Eleicao } from '../../../../models/Eleicao';
-import { Cargo, CargoStatus } from '../../../../models/Cargo'; // Importe CargoStatus
+import { Cargo, CargoStatus } from '../../../../models/Cargo';
 import { Escrutinio } from '../../../../models/Escritineo';
 import { Candidato } from '../../../../models/Candidato';
 
@@ -54,32 +54,26 @@ export class EleicaoManageComponent implements OnInit {
         }
         return this.eleicaoAdminService.getEleicaoObservable(id);
       }),
-      // [CORRIGIDO] Adiciona um 'map' para normalizar dados antigos
       map(eleicao => this.normalizarEleicao(eleicao))
     );
   }
 
-  /**
-   * [CORRIGIDO] Helper para consertar dados antigos (sem status, sem vencedor=null)
-   */
+
   private normalizarEleicao(eleicao: Eleicao): Eleicao {
     if (!eleicao) return eleicao;
 
     const cargosNormalizados = (eleicao.cargos || []).map(cargo => {
-      // 1. Normaliza o vencedor (undefined vira null)
       const vencedor = cargo.vencedor === undefined ? null : cargo.vencedor;
 
-      // 2. [LÓGICA CORRIGIDA] Define o status
-      // Se o status já existe, usa ele.
-      // Se não existe, VERIFICA SE HÁ VENCEDOR.
-      // Se tiver vencedor (dado antigo), o status é 'finalizado'.
-      // Se não tiver vencedor, aí sim é 'aguardando'.
+      const candidatosEmpatados = (cargo as any).candidatosEmpatados || null;
+
       const status: CargoStatus = cargo.status || (vencedor ? 'finalizado' : 'aguardando');
 
       return {
         ...cargo,
         status,
-        vencedor
+        vencedor,
+        candidatosEmpatados
       };
     });
 
@@ -89,7 +83,6 @@ export class EleicaoManageComponent implements OnInit {
     };
   }
 
-  // Alterna a visibilidade dos resultados (sanfona)
   toggleResultados(cargoId: string): void {
     if (this.resultadosExpandidos.has(cargoId)) {
       this.resultadosExpandidos.delete(cargoId);
@@ -98,7 +91,6 @@ export class EleicaoManageComponent implements OnInit {
     }
   }
 
-  // Verifica se os resultados de um cargo devem estar visíveis
   isResultadosExpandidos(cargoId: string): boolean {
     return this.resultadosExpandidos.has(cargoId);
   }
@@ -183,8 +175,24 @@ export class EleicaoManageComponent implements OnInit {
     }
     else if (escrutinio.numero === 3) {
       if (totalVotosValidos > 0 && apuracaoOrdenada.length > 0) {
-        const vencedorId = apuracaoOrdenada[0].userId;
-        vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+
+        const maxVotos = apuracaoOrdenada[0].votos;
+        const empatados = apuracaoOrdenada.filter(c => c.votos === maxVotos && c.votos > 0);
+
+        if (empatados.length === 1) {
+          const vencedorId = empatados[0].userId;
+          vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
+        } else if (empatados.length > 1) {
+          console.log('Empate no 3º escrutínio detectado. Aguardando desempate manual.');
+
+          cargoAtual.status = 'pendente_desempate';
+
+          const idsEmpatados = empatados.map(e => e.userId);
+          const candidatosEmpatados = cargo.candidatosIniciais.filter(c => idsEmpatados.includes(c.userId));
+
+          (cargoAtual as any).candidatosEmpatados = candidatosEmpatados;
+        }
+
       }
     }
 
@@ -200,14 +208,22 @@ export class EleicaoManageComponent implements OnInit {
         `Vencedor para ${cargo.titulo}: ${vencedorEncontrado.nome}.<br>Aguardando confirmação de aceite.`,
         'info'
       );
-    } else {
+    }
+    else if (cargoAtual.status === 'pendente_desempate') {
+        Swal.fire(
+          'Empate!',
+          `Houve um empate no 3º escrutínio para ${cargo.titulo}.<br>Um desempate manual (voto de minerva) é necessário.`,
+          'warning'
+        );
+    }
+    else {
       if (escrutinio.numero < 3) {
         cargoAtual.status = 'aguardando';
         Swal.fire('Escrutínio Fechado', `Escrutínio ${escrutinio.numero} fechado. Nenhum candidato atingiu mais de 50%. Prossiga para o próximo escrutínio.`, 'info');
       } else {
         cargoAtual.vencedor = null;
         cargoAtual.status = 'finalizado';
-        Swal.fire('Escrutínio Fechado', 'Escrutínio 3 fechado. Nenhum vencedor por maioria simples.', 'info');
+        Swal.fire('Escrutínio Fechado', 'Escrutínio 3 fechado. Nenhum vencedor definido.', 'info');
       }
     }
 
@@ -318,9 +334,49 @@ export class EleicaoManageComponent implements OnInit {
   }
 
   /**
+   * Lógica para definir um vencedor manualmente em caso de empate.
+   */
+  async onDesempatar(eleicao: Eleicao, cargo: Cargo, vencedor: Candidato) {
+    const { value: confirmou } = await Swal.fire({
+      title: 'Confirmar Voto de Minerva',
+      text: `Você confirma que ${vencedor.nome} foi escolhido para desempatar e assumir o cargo de ${cargo.titulo}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, confirmar vencedor!',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirmou) return;
+
+    const novosCargos = cloneDeep(eleicao.cargos);
+    const cargoAtual = novosCargos.find(c => c.id === cargo.id)!;
+
+    cargoAtual.vencedor = vencedor;
+    cargoAtual.status = 'pendente_confirmacao';
+    (cargoAtual as any).candidatosEmpatados = [];
+
+    const updates: Partial<Eleicao> = {
+      cargos: novosCargos
+    };
+
+    try {
+      await this.eleicaoAdminService.updateEleicao(eleicao.id, updates);
+      Swal.fire(
+        'Desempate Resolvido!',
+        `Vencedor ${vencedor.nome} definido para ${cargo.titulo}.<br>Aguardando confirmação de aceite.`,
+        'success'
+      );
+    } catch (e) {
+      console.error('Erro ao resolver desempate:', e);
+      Swal.fire('Erro!', `Ocorreu um erro: ${e}`, 'error');
+    }
+  }
+
+  /**
    * Helper privado que APENAS conta os votos e retorna os resultados.
    */
   private _apurarVotos(escrutinio: Escrutinio): { apuracao: ApuracaoResultado, totalVotosValidos: number } {
+    // ... (Sem alterações nesta função) ...
     const votos = escrutinio.votos || [];
     const resultados = new Map<string, number>();
     let totalBrancos = 0;
@@ -401,6 +457,7 @@ export class EleicaoManageComponent implements OnInit {
    * Copia o link público de votação
    */
   async onCopiarLink(eleicaoId: string) {
+    // ... (Sem alterações nesta função) ...
     const origin = window.location.origin;
     const link = `${origin}/votar/${eleicaoId}`;
 
@@ -493,6 +550,7 @@ export class EleicaoManageComponent implements OnInit {
    * Gera um PDF com o relatório geral de TODOS os cargos.
    */
   async onGerarPdfGeral(eleicao: Eleicao) {
+    // ... (Sem alterações nesta função) ...
     for (const cargo of eleicao.cargos) {
       for (const esc of cargo.escrutinios) {
         if (esc.status === 'fechado') {

@@ -79,6 +79,28 @@
         </div>
       </div>
 
+      <div *ngIf="cargo.status === 'pendente_desempate' && cargo.candidatosEmpatados" class="desempate-pendente-bloco">
+        <h4>⚠️ Empate! Voto de Minerva Requerido</h4>
+        <p>Houve um empate no 3º escrutínio. Por favor, escolha o vencedor:</p>
+
+        <div class="controles-desempate">
+           <div *ngFor="let candidato of $any(cargo).candidatosEmpatados" class="candidato-empatado">
+            <p class="candidato-nome">{{ candidato.nome }}</p>
+            <button (click)="onDesempatar(eleicao, cargo, candidato)" class="btn-desempatar">
+              Declarar Vencedor
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-sanfona" (click)="toggleResultados(cargo.id)">
+          {{ isResultadosExpandidos(cargo.id) ? 'Recolher' : 'Ver' }} Resultados Detalhados
+          <span class="sanfona-icon">{{ isResultadosExpandidos(cargo.id) ? '▲' : '▼' }}</span>
+        </button>
+
+        <div class="sanfona-conteudo" *ngIf="isResultadosExpandidos(cargo.id)">
+          <ng-container *ngTemplateOutlet="apuracaoFinalResultados; context: { cargo: cargo }"></ng-container>
+        </div>
+      </div>
       <div class="escrutinios-lista" *ngIf="cargo.status === 'aguardando' || cargo.status === 'em_votacao'">
         <div *ngFor="let escrutinio of cargo.escrutinios" class="escrutinio-card">
           <h4>{{ escrutinio.numero }}º Escrutínio</h4>
