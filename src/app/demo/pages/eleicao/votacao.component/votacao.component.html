@@ -1,7 +1,5 @@
-<!-- Link para ícones do Material (se já não estiver no index.html) -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<!-- Hack para subscrever ao Observable e iniciar a lógica, sem esconder o template se for null -->
 <ng-container *ngIf="{ data: cedula$ | async }"></ng-container>
 
 <div class="votacao-container">
@@ -16,7 +14,6 @@
 
     <!-- PASSO 1: IDENTIFICAÇÃO -->
     <div *ngSwitchCase="'identificacao'" class="wizard-step step-identificacao">
-      <!-- NgIf extra para segurança, garante que temos os dados antes de renderizar -->
       <ng-container *ngIf="cedulaAberta">
         <h2 class="step-title">{{ cedulaAberta.eleicao.titulo }}</h2>
         <p class="step-description">Bem-vindo(a) à votação para <strong>{{ cedulaAberta.cargo.titulo }}</strong>.<br> ({{ cedulaAberta.escrutinio.numero }}º Escrutínio)</p>
@@ -85,7 +82,7 @@
     <!-- PASSO 4: CONCLUÍDO -->
     <div *ngSwitchCase="'concluido'" class="wizard-step step-concluido">
       <mat-icon class="feedback-icon success">check_circle_outline</mat-icon>
-      <h2 class="step-title">Voto Registado!</h2>
+      <h2 class="step-title">Voto Registrado!</h2>
       <p class="step-description">Obrigado, <strong>{{ membroValidado?.nome }}</strong>. O seu voto foi computado com segurança.</p>
     </div>
 
