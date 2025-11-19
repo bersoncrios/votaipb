@@ -6,29 +6,24 @@ import { AuthGuard } from './auth/auth-guard';
 export const routes: Routes = [
   {
     path: '',
-    component: EmptyComponent, // Layout "vazio" (sem menu de admin) para páginas públicas
+    component: EmptyComponent,
     children: [
-      // --- MUDANÇA AQUI ---
-      // 1. A rota raiz ('') agora carrega a Landing Page (DashboardPublicoComponent)
       {
         path: '',
         loadComponent: () => import('./demo/pages/general-dashboard/general-dashoard.component/general-dashoard.component').then((m) => m.DashboardPublicoComponent)
       },
-      // 2. A rota 'auth' continua carregando os filhos de autenticação (login, register, etc.)
       {
         path: 'auth',
         loadChildren: () => import('./auth/auth.routes').then((m) => m.routes)
       },
-      // 3. As outras rotas públicas continuam iguais
       {
         path: 'votar/:id',
         loadComponent: () => import('./demo/pages/eleicao/votacao.component/votacao.component').then((m) => m.VotacaoComponent)
       },
-       {
+      {
         path: 'inscrever/:id',
         loadComponent: () => import('./demo/pages/inscricao/inscricao.component/inscricao.component').then((m) => m.InscricaoComponent)
       },
-      // 4. (Opcional) Se você ainda quiser que /dash funcione, pode redirecionar para a raiz.
       {
         path: 'dash',
         redirectTo: '',
@@ -38,7 +33,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: AdminComponent, // Layout "admin" (com menu) para páginas privadas
+    component: AdminComponent,
     children: [
       {
         path: 'eleicoes/registrar',
@@ -59,7 +54,7 @@ export const routes: Routes = [
           import('./demo/pages/eleicao/election-list.component/election-list.component').then((m) => m.EleicaoListComponent)
       },
       {
-        path: 'dashboard', // Este é o dashboard *privado* do admin
+        path: 'dashboard',
         canActivate: [AuthGuard],
         loadComponent: () => import('./demo/pages/dashboard/dashboard.component').then((m) => m.DashboardComponent)
       },

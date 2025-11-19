@@ -21,18 +21,16 @@ export const AuthGuard: CanActivateFn = async () => {
 
   if (user) {
     const tokenResult = await getIdTokenResult(user);
-
-    // compara expiração
     const exp = tokenResult.expirationTime
       ? new Date(tokenResult.expirationTime).getTime()
       : 0;
 
     if (Date.now() < exp) {
-      return true; // ✅ token válido
+      return true;
     } else {
       sessionStorage.clear();
       router.navigate(['/auth/login']);
-      return false; // ❌ token expirado
+      return false;
     }
   }
 
