@@ -53,23 +53,34 @@ export class LoginComponent {
     this.authService.signin({ email, password }).subscribe({
       next: async (res: any) => {
         if (res?.user) {
-          const user = res.user;
-          const token = await user.getIdToken();
-          const uid = user.uid;
-
-          console.log('Login bem-sucedido:', { user, token, uid });
-          sessionStorage.setItem('token', token);
-          sessionStorage.setItem('uid', uid);
-
+          await this.authService.findData(res.user.uid);
           this.router.navigate(['/dashboard']);
         } else if (res?.error) {
           this.loginError = res.error.message || 'Erro ao fazer login';
         }
       },
       error: (err: any) => {
-        sessionStorage.clear();
         console.error(err);
         this.loginError = 'Erro ao fazer login';
+      }
+    });
+  }
+
+  loginWithGoogle() {
+    this.loginError = '';
+
+    this.authService.signInWithGoogle().subscribe({
+      next: async (res: any) => {
+        if (res?.user) {
+          await this.authService.findData(res.user.uid);
+          this.router.navigate(['/dashboard']);
+        } else if (res?.error) {
+          this.loginError = res.error.message || 'Erro ao fazer login com Google';
+        }
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.loginError = 'Erro ao fazer login com Google';
       }
     });
   }

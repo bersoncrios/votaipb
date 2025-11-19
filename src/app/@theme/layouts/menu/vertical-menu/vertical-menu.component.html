@@ -3,9 +3,13 @@
   <app-card [showHeader]="false" cardClass="user-card" [padding]="20">
     <div class="flex align-items-center">
       <div class="flex-shrink-0">
-        <div class="user-initials-avatar">
-          <span>{{ getUserInitials() }}</span>
-        </div>
+        @if (hasPhoto()) {
+          <img [src]="authService.photoURL" alt="User photo" class="user-photo-avatar" />
+        } @else {
+          <div class="user-initials-avatar">
+            <span>{{ getUserInitials() }}</span>
+          </div>
+        }
         </div>
       <div class="flex-grow-1 user-details">
 

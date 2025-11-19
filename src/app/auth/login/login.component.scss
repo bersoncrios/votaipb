@@ -18,3 +18,53 @@
     margin-bottom: 2rem;
   }
 }
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #999;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  span {
+    padding: 0 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #dadce0;
+  color: #3c4043;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  svg {
+    flex-shrink: 0;
+    padding-right: 10px;
+  }
+
+  &:hover {
+    background-color: #f8f9fa;
+    border-color: #d2d3d4;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  }
+
+  &:active {
+    background-color: #f1f3f4;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3);
+  }
+}

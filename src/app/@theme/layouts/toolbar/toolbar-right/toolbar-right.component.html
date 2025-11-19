@@ -9,9 +9,13 @@
 
   <button mat-button [matMenuTriggerFor]="user" aria-label="Menu do usuário" class="header-item">
     <a class="pc-head-link">
-      <div class="user-initials-avatar header-avatar">
-        <span>{{ getUserInitials() }}</span>
-      </div>
+      @if (hasPhoto()) {
+        <img [src]="authService.photoURL" alt="User photo" class="user-photo-avatar header-avatar" />
+      } @else {
+        <div class="user-initials-avatar header-avatar">
+          <span>{{ getUserInitials() }}</span>
+        </div>
+      }
     </a>
   </button>
 
@@ -36,15 +40,35 @@
     </div>
     <ng-scrollbar style="height: auto; max-height: calc(100vh - 225px)" visibility="hover"> <div class="dropdown-body">
         <div class="flex m-b-5 align-items-center"> <div class="topic-icon">
-             <div class="user-initials-avatar dropdown-avatar">
-               <span>{{ getUserInitials() }}</span>
-             </div>
+             @if (hasPhoto()) {
+               <img [src]="authService.photoURL" alt="User photo" class="user-photo-avatar dropdown-avatar" />
+             } @else {
+               <div class="user-initials-avatar dropdown-avatar">
+                 <span>{{ getUserInitials() }}</span>
+               </div>
+             }
           </div>
           <div class="topic-description m-l-15">
             <h6 class="user-name">{{ authService.nome || 'UNKNOWN' }}</h6>
-            <!-- <p class="mat-body text-muted">{{ authService|| 'email@exemplo.com' }}</p> -->
           </div>
         </div>
+        
+        @if (!isGoogleLinked()) {
+          <div class="grid m-b-10">
+            <button mat-stroked-button color="primary" class="link-google-btn" (click)="linkGoogle()">
+              <div class="flex-inline align-item-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px" class="m-r-10">
+                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </svg>
+                Vincular Google
+              </div>
+            </button>
+          </div>
+        }
+        
         <div class="grid m-b-15">
           <button mat-stroked-button color="warn" class="user-logout" (click)="authService.logout()">
             <div class="flex-inline align-item-center">

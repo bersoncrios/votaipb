@@ -94,4 +94,11 @@ export class VerticalMenuComponent {
 
     return initials.toUpperCase();
   }
+
+  /**
+   * Verifica se o usuário tem foto de perfil
+   */
+  hasPhoto(): boolean {
+    return !!this.authService.photoURL;
+  }
 }

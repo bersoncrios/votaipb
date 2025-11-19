@@ -4,8 +4,11 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  onAuthStateChanged, // <<< 1. IMPORTADO
-  User                  // <<< 2. IMPORTADO
+  onAuthStateChanged,
+  User,
+  GoogleAuthProvider,
+  signInWithPopup,
+  linkWithPopup
 } from '@angular/fire/auth';
 import {
   Firestore,
@@ -18,7 +21,7 @@ import {
   getDocs
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { Observable, from, BehaviorSubject } from 'rxjs'; // <<< 3. IMPORTADO
+import { Observable, from, BehaviorSubject } from 'rxjs';
 import Swal from 'sweetalert2';
 import { SignIn } from 'src/app/models/UserSignIn';
 import { SignUp } from 'src/app/models/UserSignUp';
@@ -31,6 +34,7 @@ export class AuthService {
   private firestore: Firestore = inject(Firestore);
   private router: Router = inject(Router);
   public nome: string | undefined;
+  public photoURL: string | undefined;
 
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -42,14 +46,11 @@ export class AuthService {
         this.findData(user.uid);
       } else {
         this.nome = undefined;
+        this.photoURL = undefined;
       }
     });
   }
 
-  /**
-   * Obtém o UID do usuário logado de forma síncrona.
-   * Isto é o que o EleicaoAdminService usará.
-   */
   public getCurrentUserUid(): string | null {
     return this.currentUserSubject.value?.uid || null;
   }
@@ -72,12 +73,114 @@ export class AuthService {
     );
   }
 
+  signInWithGoogle(): Observable<any> {
+    const provider = new GoogleAuthProvider();
+    return from(
+      signInWithPopup(this.auth, provider)
+        .then(async (userCredential) => {
+          const user = userCredential.user;
+
+          const q = query(collection(this.firestore, 'users'), where('userId', '==', user.uid));
+          const querySnapshot = await getDocs(q);
+
+          if (querySnapshot.empty) {
+            await addDoc(collection(this.firestore, 'users'), {
+              name: user.displayName || '',
+              email: user.email || '',
+              userId: user.uid,
+              role: 'user',
+              photoURL: user.photoURL || ''
+            }).then((userRef) => {
+              updateDoc(doc(this.firestore, 'users', userRef.id), { id: userRef.id });
+            });
+          }
+
+          return userCredential;
+        })
+        .catch(error => {
+          let errorMessage = 'Erro ao fazer login com Google';
+
+          if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Login cancelado';
+          } else if (error.code === 'auth/popup-blocked') {
+            errorMessage = 'Popup bloqueado pelo navegador';
+          } else if (error.code === 'auth/cancelled-popup-request') {
+            errorMessage = 'Solicitação de login cancelada';
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: errorMessage
+          });
+
+          return { error };
+        })
+    );
+  }
+
+  linkGoogleAccount(): Observable<any> {
+    const provider = new GoogleAuthProvider();
+    const currentUser = this.auth.currentUser;
+
+    if (!currentUser) {
+      return from(Promise.reject({ error: 'Nenhum usuário logado' }));
+    }
+
+    return from(
+      linkWithPopup(currentUser, provider)
+        .then(async (result) => {
+          const user = result.user;
+
+          const googleProvider = user.providerData.find(p => p.providerId === 'google.com');
+          const photoURL = googleProvider?.photoURL || user.photoURL || '';
+
+          const q = query(
+            collection(this.firestore, 'users'),
+            where('userId', '==', user.uid)
+          );
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const userDocRef = doc(this.firestore, 'users', querySnapshot.docs[0].id);
+            await updateDoc(userDocRef, {
+              photoURL: photoURL
+            });
+
+            this.photoURL = photoURL || undefined;
+
+            await this.findData(user.uid);
+          }
+
+          return result;
+        })
+        .catch(error => {
+          let errorMessage = 'Erro ao vincular conta Google';
+
+          if (error.code === 'auth/provider-already-linked') {
+            errorMessage = 'Conta Google já vinculada';
+          } else if (error.code === 'auth/credential-already-in-use') {
+            errorMessage = 'Esta conta Google já está sendo usada por outro usuário';
+          } else if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Vinculação cancelada';
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: errorMessage
+          });
+
+          return { error };
+        })
+    );
+  }
+
   signup(params: SignUp): Observable<any> {
     return from(createUserWithEmailAndPassword(this.auth, params.email, params.password));
   }
 
   logout(): void {
-    sessionStorage.removeItem('token');
     this.auth.signOut();
     this.router.navigate(['/auth/login']);
   }
@@ -96,18 +199,14 @@ export class AuthService {
     await updateDoc(doc(this.firestore, 'users', userRef.id), { id: userRef.id });
   }
 
-  /**
-   * Busca os dados do usuário e atualiza a propriedade 'nome'.
-   * Agora é chamado pelo 'onAuthStateChanged' no constructor.
-   */
   async findData(uid: string): Promise<string | null> {
-    // Não usa 'this.auth.currentUser' para evitar race conditions
     const q = query(collection(this.firestore, 'users'), where('userId', '==', uid));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       const userDoc = querySnapshot.docs[0].data() as SignUp;
       this.nome = userDoc.name;
+      this.photoURL = userDoc.photoURL;
       return this.nome;
     }
     return null;

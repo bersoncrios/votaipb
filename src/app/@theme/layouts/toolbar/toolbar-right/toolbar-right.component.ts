@@ -1,37 +1,23 @@
-// angular import
 import { Component, inject } from '@angular/core';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-
-// project import
 import { SharedModule } from 'src/app/shared/shared.module';
-// ===========================================
-// 1. IMPORTE O AUTHSERVICE
-// ===========================================
-import { AuthService } from 'src/app/services/auth.service'; // Ajuste o caminho se necessário
+import { AuthService } from 'src/app/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-nav-right', // Certifique-se que este seletor está correto
+  selector: 'app-nav-right',
   imports: [SharedModule, NgScrollbarModule],
-  standalone: true, // Adicionado se for standalone
+  standalone: true,
   templateUrl: './toolbar-right.component.html',
   styleUrls: ['./toolbar-right.component.scss']
 })
 export class NavRightComponent {
-  // ===========================================
-  // 2. INJETE O AUTHSERVICE E TORNE-O PÚBLICO
-  // ===========================================
   public authService = inject(AuthService);
 
-  // ===========================================
-  // 3. ADICIONE A FUNÇÃO GET USER INITIALS
-  // ===========================================
-  /**
-   * Retorna as duas primeiras iniciais de um nome.
-   */
   getUserInitials(): string {
-    const name = this.authService.nome; // Usa a propriedade pública 'nome' do AuthService
+    const name = this.authService.nome;
     if (!name) {
-      return '?'; // Fallback
+      return '?';
     }
 
     const parts = name.split(' ').filter(p => p.length > 0);
@@ -40,7 +26,6 @@ export class NavRightComponent {
     }
 
     let initials = parts[0].charAt(0);
-    // Pega a inicial do último nome se houver mais de um nome
     if (parts.length > 1) {
       initials += parts[parts.length - 1].charAt(0);
     }
@@ -48,4 +33,29 @@ export class NavRightComponent {
     return initials.toUpperCase();
   }
 
+  hasPhoto(): boolean {
+    return !!this.authService.photoURL;
+  }
+
+  isGoogleLinked(): boolean {
+    return !!this.authService.photoURL;
+  }
+
+  linkGoogle() {
+    this.authService.linkGoogleAccount().subscribe({
+      next: (res: any) => {
+        if (res?.user && !res?.error) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Sucesso!',
+            text: 'Conta Google vinculada com sucesso',
+            timer: 2000
+          });
+        }
+      },
+      error: (err: any) => {
+        console.error('Erro ao vincular:', err);
+      }
+    });
+  }
 }
