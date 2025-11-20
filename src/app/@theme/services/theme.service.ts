@@ -20,7 +20,6 @@ export class ThemeService {
         if (savedTheme === 'dark') {
             this.enableDarkMode();
         } else {
-            // Default to light mode, ignoring system preference
             this.enableLightMode();
         }
     }
