@@ -17,6 +17,11 @@
   @include generate-theme-classes($blue-theme); // generate non material classes based on theme
 }
 
+.dark-theme {
+  @include mat.all-component-colors(get-dark-theme($blue-theme));
+  @include generate-dark-theme-classes($blue-theme);
+}
+
 // common
 @import './scss/generic';
 @import './scss/common';

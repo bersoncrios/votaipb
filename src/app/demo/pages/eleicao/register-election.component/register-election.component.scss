@@ -103,6 +103,7 @@ h1 {
   margin-top: 1.5rem;
 
   .mat-mdc-card {
+
     // Usamos o 'outlined' para um look mais limpo
     &.mat-mdc-card-outlined {
       border-color: rgba(0, 0, 0, 0.12);
@@ -115,7 +116,7 @@ h1 {
       font-size: 32px;
       width: 32px;
       height: 32px;
-      color: #5d5d5d
+      color: var(--accent-600); // Was #5d5d5d
     }
   }
 
@@ -130,7 +131,7 @@ h1 {
     // Parágrafo simples (usado para o título da eleição)
     p {
       font-size: 1rem;
-      color: #5d5d5d
+      color: var(--accent-600); // Was #5d5d5d
     }
 
     .mat-mdc-list-base {
@@ -144,12 +145,12 @@ h1 {
       margin-top: 1rem;
       margin-bottom: 0.5rem;
       // Cor de destaque para o título do cargo
-      color: #5d5d5d
+      color: var(--accent-600); // Was #5d5d5d
     }
 
     // Ícones da lista (pessoa, candidato)
     .mat-mdc-list-item-icon {
-      color: #5d5d5d
+      color: var(--accent-600); // Was #5d5d5d
     }
 
     // Espaçamento para o divisor entre os cargos
@@ -163,7 +164,7 @@ h1 {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      color: #5d5d5d;
+      color: var(--accent-600); // Was #5d5d5d
       font-style: italic;
       margin: 1rem 0;
 
@@ -194,15 +195,18 @@ h1 {
       width: calc(100% - 60px);
       margin-right: 10px;
       padding-bottom: 0;
+
       .mat-mdc-form-field-subscript-wrapper {
         display: none;
       }
+
       &.mat-form-field-invalid .mat-mdc-form-field-subscript-wrapper {
         display: block;
       }
     }
   }
 }
+
 .add-membro-actions {
   display: flex;
   align-items: center;
@@ -217,7 +221,7 @@ h1 {
 
 /* Opcional: Adicionar um divisor "ou" */
 .ou-divider {
-  color: rgba(0, 0, 0, 0.54);
+  color: var(--accent-600); // Was rgba(0, 0, 0, 0.54)
   font-style: italic;
 }
 

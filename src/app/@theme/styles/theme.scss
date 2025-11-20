@@ -5,15 +5,15 @@
 /// @return {number} mat-theme
 
 @function get-light-theme($color) {
-  @return mat.m2-define-light-theme(
-    (
-      color: (
-        primary: mat.m2-define-palette($color),
+  @return mat.m2-define-light-theme((color: (primary: mat.m2-define-palette($color),
         accent: mat.m2-define-palette($grey-theme),
-        warn: mat.m2-define-palette($red-theme)
-      )
-    )
-  );
+        warn: mat.m2-define-palette($red-theme))));
+}
+
+@function get-dark-theme($color) {
+  @return mat.m2-define-dark-theme((color: (primary: mat.m2-define-palette($color),
+        accent: mat.m2-define-palette($grey-theme),
+        warn: mat.m2-define-palette($red-theme))));
 }
 
 /// setup theme based on param received
@@ -22,8 +22,7 @@
 ///   font string
 /// @return {number} mat-typography
 @function theme-typography($font) {
-  @return mat.m2-define-typography-config(
-    $font-family: $font,
+  @return mat.m2-define-typography-config($font-family: $font,
     $headline-1: mat.m2-define-typography-level(2.25rem, 3.1, 500),
     $headline-2: mat.m2-define-typography-level(2rem, 2.28, 500),
     $headline-3: mat.m2-define-typography-level(1.75rem, 2.57, 500),
@@ -39,8 +38,7 @@
     $body-2: mat.m2-define-typography-level(0.875rem, 1.57),
     $subtitle-2: mat.m2-define-typography-level(0.75rem, 1.66, 500),
     $caption: mat.m2-define-typography-level(0.75rem, 1.66, 400),
-    $button: mat.m2-define-typography-level(0.875, 0, 500)
-  );
+    $button: mat.m2-define-typography-level(0.875, 0, 500));
 }
 
 /// This will generate classed based on selected theme color
@@ -59,34 +57,63 @@
     'warning': $yellow-theme
   );
 
-  @each $color-name, $color-values in $color-themes {
-    $i: 50;
-    $color: $color-values;
+@each $color-name, $color-values in $color-themes {
+  $i: 50;
+  $color: $color-values;
 
-    @while $i<=900 {
-      .bg-#{$color-name}-#{$i} {
-        background: map-get($color, $i);
-      }
+  @while $i<=900 {
+    .bg-#{$color-name}-#{$i} {
+      background: map-get($color, $i);
+    }
 
-      .text-#{$color-name}-#{$i} {
-        color: map-get($color, $i) !important;
-      }
+    .text-#{$color-name}-#{$i} {
+      color: map-get($color, $i) !important;
+    }
 
-      .b-#{$color-name}-#{$i} {
-        border-color: map-get($color, $i) !important;
-      }
+    .b-#{$color-name}-#{$i} {
+      border-color: map-get($color, $i) !important;
+    }
 
-      --#{$color-name}-#{$i}: #{map-get($color, $i)};
+    --#{$color-name}-#{$i}: #{map-get($color, $i)};
 
-      @if $i == 50 {
-        // First 50
-        $i: $i + 50;
-      } @else {
-        // Rest 100-900
-        $i: $i + 100;
-      }
+    @if $i ==50 {
+      // First 50
+      $i: $i + 50;
+    }
+
+    @else {
+      // Rest 100-900
+      $i: $i + 100;
     }
   }
+}
+}
+
+@mixin generate-dark-theme-classes($color) {
+  $color-themes: (
+    'primary': $color,
+    'accent': $grey-theme-dark,
+    'warn': $red-theme,
+    'success': $green-theme,
+    'warning': $yellow-theme
+  );
+
+@each $color-name, $color-values in $color-themes {
+  $i: 50;
+  $color: $color-values;
+
+  @while $i<=900 {
+    --#{$color-name}-#{$i}: #{map-get($color, $i)};
+
+    @if $i ==50 {
+      $i: $i + 50;
+    }
+
+    @else {
+      $i: $i + 100;
+    }
+  }
+}
 }
 
 /// Start: Additional style that are not available via material functions
@@ -100,4 +127,5 @@ h6 {
   font-size: 13px !important;
   font-weight: 400 !important;
 }
+
 /// End

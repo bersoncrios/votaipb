@@ -14,7 +14,7 @@
   /* Mesma altura da imagem original */
   border-radius: 50%;
   /* Faz a bola */
-  background-color: #4CAF50;
+  background-color: var(--success-500); // Was #4CAF50
   /* Verde */
   color: white;
   /* Cor do texto */
@@ -37,7 +37,7 @@
   object-fit: cover;
   flex-shrink: 0;
   margin-right: 15px;
-  border: 2px solid #f0f0f0;
+  border: 2px solid var(--accent-200); // Was #f0f0f0
 }
 
 /* Opcional: Remova o estilo do user-avatar original se não for mais usar */

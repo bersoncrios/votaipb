@@ -21,7 +21,7 @@
   .version {
     padding: 0.15rem 0.25rem;
     color: var(--primary-500);
-    background: var(--primary-50);
+    background: var(--accent-100);
     border-radius: 50rem;
     margin-left: 0.5rem;
     font-size: 12px;
@@ -53,7 +53,7 @@
       margin-left: 16px;
       margin-right: 8px;
 
-      > h6 {
+      >h6 {
         margin-bottom: 0px;
         font-weight: 600 !important;
       }
@@ -96,7 +96,7 @@
       position: relative;
       padding-bottom: 2px;
 
-      > a {
+      >a {
         padding: 14px 20px;
         display: block;
         border-radius: 5px;
@@ -107,7 +107,7 @@
           position: relative;
         }
 
-        > .coded-micon {
+        >.coded-micon {
           font-size: 18px;
           align-items: center;
           margin-right: 15px;
@@ -123,7 +123,7 @@
             display: inline-block;
           }
 
-          + .coded-mtext {
+          +.coded-mtext {
             position: relative;
             vertical-align: middle;
             text-align: center;
@@ -132,7 +132,7 @@
       }
 
       &.coded-hasmenu {
-        > a {
+        >a {
           &:after {
             content: '\ea61';
             font-family: 'tabler-icons';
@@ -148,7 +148,7 @@
         .coded-submenu {
           app-menu-collapse li {
             &.coded-hasmenu {
-              > a {
+              >a {
                 &:after {
                   content: '\ea61';
                   font-family: 'tabler-icons';
@@ -164,7 +164,7 @@
               .coded-submenu {
                 app-menu-collapse li {
                   &.coded-hasmenu {
-                    > a {
+                    >a {
                       &:after {
                         content: '\ea61';
                         font-family: 'tabler-icons';
@@ -184,7 +184,7 @@
         }
 
         &.coded-trigger {
-          > a {
+          >a {
             &:after {
               transform: rotate(90deg);
             }
@@ -196,20 +196,21 @@
         }
 
         &.coded-trigger.active {
-          > .coded-submenu {
+          >.coded-submenu {
             display: block;
           }
 
-          > a {
+          >a {
             position: relative;
           }
         }
 
         .coded-submenu {
-          > app-menu-item,
-          > app-menu-collapse {
+
+          >app-menu-item,
+          >app-menu-collapse {
             li {
-              > a {
+              >a {
                 text-align: left;
                 padding: 12px 30px 12px 63px;
                 margin: 0;
@@ -231,8 +232,8 @@
               }
 
               .coded-submenu {
-                > app-menu-item li {
-                  > a {
+                >app-menu-item li {
+                  >a {
                     padding: 10px 30px 10px 75px;
                   }
                 }
@@ -242,14 +243,14 @@
             ul {
               app-menu-collapse {
                 li {
-                  > a {
+                  >a {
                     padding: 10px 30px 10px 75px;
                   }
                 }
 
                 .coded-submenu {
-                  > app-menu-item li {
-                    > a {
+                  >app-menu-item li {
+                    >a {
                       padding: 10px 30px 10px 69px;
                     }
                   }
@@ -272,14 +273,14 @@
       }
 
       &.disabled {
-        > a {
+        >a {
           cursor: default;
           opacity: 0.5;
         }
       }
     }
 
-    > app-nav-group > app-menu-item {
+    >app-nav-group>app-menu-item {
       li {
         &:before {
           content: '';
@@ -294,12 +295,13 @@
   }
 
   .coded-inner-navbar {
-    > app-menu-group-vertical > app-menu-collapse li {
-      .coded-submenu > app-menu-item li {
+    >app-menu-group-vertical>app-menu-collapse li {
+      .coded-submenu>app-menu-item li {
+
         &.active,
         &:focus,
         &:hover {
-          > a {
+          >a {
             color: var(--primary-500);
 
             &:before {
@@ -312,11 +314,13 @@
 
     .coded-hasmenu {
       .coded-submenu {
+
         app-menu-collapse li,
         app-menu-item li {
+
           &.active,
           &.coded-trigger {
-            > a {
+            >a {
               color: var(--primary-500);
               font-weight: 500;
             }
@@ -325,11 +329,12 @@
       }
     }
 
-    app-menu-item > li.nav-item,
-    > app-menu-group-vertical > app-menu-collapse > li {
+    app-menu-item>li.nav-item,
+    >app-menu-group-vertical>app-menu-collapse>li {
+
       &.active,
       &.coded-trigger {
-        > a {
+        >a {
           color: var(--primary-500);
           font-weight: 500;
 
@@ -340,14 +345,14 @@
       }
 
       &:hover:not(.coded-trigger, .active) {
-        > a {
+        >a {
           &:before {
             background: var(--accent-500);
           }
         }
       }
 
-      > a {
+      >a {
         &::before {
           content: '';
           border-radius: $border-radius;
@@ -384,7 +389,7 @@
         }
 
         &.coded-trigger {
-          > .coded-submenu {
+          >.coded-submenu {
             position: relative;
             opacity: 1;
             visibility: visible;

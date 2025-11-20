@@ -4,15 +4,19 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AuthService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
 
+import { CommonModule } from '@angular/common';
+import { ThemeService } from '../../../services/theme.service';
+
 @Component({
   selector: 'app-nav-right',
-  imports: [SharedModule, NgScrollbarModule],
+  imports: [CommonModule, SharedModule, NgScrollbarModule],
   standalone: true,
   templateUrl: './toolbar-right.component.html',
   styleUrls: ['./toolbar-right.component.scss']
 })
 export class NavRightComponent {
   public authService = inject(AuthService);
+  public themeService = inject(ThemeService);
 
   getUserInitials(): string {
     const name = this.authService.nome;

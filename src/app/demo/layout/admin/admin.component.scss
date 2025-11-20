@@ -16,13 +16,16 @@
   }
 }
 
-.pc-sidebar { // Contexto do seu sidebar
+.pc-sidebar {
+
+  // Contexto do seu sidebar
   .navbar-wrapper {
-    .m-header { // O div que envolve o logo e versão
+    .m-header {
+      // O div que envolve o logo e versão
       padding: 20px 25px; // Espaçamento interno para o cabeçalho
       text-align: center; // Centraliza o conteúdo (h1 e span)
-      background-color: #f2f4f7; // Um fundo sutil para o cabeçalho do sidebar
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05); // Linha separadora
+      background-color: var(--accent-100); // Was #f2f4f7
+      border-bottom: 1px solid var(--accent-300); // Was rgba(0, 0, 0, 0.05)
 
       a {
         text-decoration: none; // Remove sublinhado do link
@@ -32,7 +35,7 @@
           font-family: 'Montserrat', sans-serif; // Uma fonte moderna (exemplo)
           font-size: 1.8rem; // Tamanho ideal para logo no sidebar
           font-weight: 800; // Extra Bold para destaque
-          color: #004a98; // Cor principal da sua marca
+          color: var(--primary-500); // Was #004a98
           margin: 0; // Remove margens padrão do h1
           line-height: 1; // Ajusta altura da linha
           text-transform: uppercase; // Letras maiúsculas
@@ -42,7 +45,7 @@
         .version {
           display: block; // Garante que a versão fique abaixo do logo
           font-size: 0.75rem; // Tamanho menor para a versão
-          color: #6c757d; // Cor discreta para a versão
+          color: var(--accent-600); // Was #6c757d
           margin-top: 5px; // Espaçamento acima
           font-weight: 400;
         }

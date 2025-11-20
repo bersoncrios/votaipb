@@ -2,29 +2,29 @@
    Variáveis de Cor (Tema do Admin)
    ============================================== */
 :host {
-  --primary-color: #004a98;     // Azul principal
-  --primary-dark: #003366;      // Azul (hover)
-  --bg-color: #f4f7f6;          // Fundo da página
-  --card-bg-color: #ffffff;     // Fundo do card principal
-  --nested-card-bg: #fdfdfd;   // Fundo do card de escrutínio
-  --border-color: #e0e0e0;      // Borda padrão
-  --text-color: #333333;        // Cor principal do texto
-  --text-muted: #6c757d;      // Texto (status, etc)
+  --primary-color: var(--primary-500);
+  --primary-dark: var(--primary-700);
+  --bg-color: var(--accent-100);
+  --card-bg-color: var(--accent-50);
+  --nested-card-bg: var(--accent-200);
+  --border-color: var(--accent-300);
+  --text-color: var(--accent-900);
+  --text-muted: var(--accent-600);
 
   // Cores de Ação
-  --action-open: var(--primary-color);
-  --action-close: #D32F2F;      // Vermelho (Perigoso)
-  --action-prepare: #fbc02d;    // Laranja/Amarelo (Atenção)
-  --action-secondary: #6c757d; // Cinza (Ver apuração, PDF)
-  --action-confirm: #4CAF50;    // Verde (Aceitar)
+  --action-open: var(--primary-500);
+  --action-close: var(--warn-500);
+  --action-prepare: var(--warning-500);
+  --action-secondary: var(--accent-600);
+  --action-confirm: var(--success-500);
 
   // Cores de Status
-  --status-aberto: #4CAF50;     // Verde
-  --status-fechado: #757575;    // Cinza
-  --status-pendente: #0097a7;   // Ciano
-  --status-desempate: #f57c00;  // Laranja [NOVO]
-  --status-nao-iniciado: #90a4ae; // Cinza azulado
-  --status-aguardando: var(--primary-color);
+  --status-aberto: var(--success-500);
+  --status-fechado: var(--accent-600);
+  --status-pendente: var(--primary-600); // Was #0097a7
+  --status-desempate: var(--warning-600);
+  --status-nao-iniciado: var(--accent-400);
+  --status-aguardando: var(--primary-500);
   --status-em_votacao: var(--status-aberto);
 }
 
@@ -102,12 +102,13 @@
   color: white;
 
   &:hover {
-    background-color: #5a6268;
+    background-color: var(--accent-700); // Was #5a6268
   }
 }
 
 .manage-container p {
   font-size: 1.1rem;
+
   strong {
     color: var(--text-muted);
   }
@@ -124,14 +125,14 @@
    Aviso de Votação Aberta
    ============================================== */
 .votacao-aberta-aviso {
-  background-color: #fff3e0;
-  border: 1px solid #ffb74d;
-  border-left: 5px solid #f57c00;
+  background-color: var(--warning-50); // Was #fff3e0
+  border: 1px solid var(--warning-300); // Was #ffb74d
+  border-left: 5px solid var(--warning-700); // Was #f57c00
   padding: 1rem 1.5rem;
   border-radius: 6px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #c85a00;
+  color: var(--warning-900); // Was #c85a00
   margin-bottom: 1.5rem;
 }
 
@@ -156,7 +157,7 @@
     color: var(--primary-dark);
     margin: 0;
     padding: 1.5rem 2rem 1rem 2rem;
-    background-color: rgba(0, 74, 152, 0.03);
+    background-color: var(--primary-50); // Was rgba(0, 74, 152, 0.03)
     border-bottom: 1px solid var(--border-color);
   }
 
@@ -173,24 +174,28 @@
       font-weight: 700;
     }
 
-    [ngIf*="pendente_confirmacao"] + .cargo-status strong,
+    [ngIf*="pendente_confirmacao"]+.cargo-status strong,
     [ngIf*="status === 'pendente_confirmacao'"] strong {
       color: var(--status-pendente);
     }
+
     /* [NOVO] */
-    [ngIf*="pendente_desempate"] + .cargo-status strong,
+    [ngIf*="pendente_desempate"]+.cargo-status strong,
     [ngIf*="status === 'pendente_desempate'"] strong {
       color: var(--status-desempate);
     }
-    [ngIf*="finalizado"] + .cargo-status strong,
+
+    [ngIf*="finalizado"]+.cargo-status strong,
     [ngIf*="status === 'finalizado'"] strong {
       color: var(--status-fechado);
     }
-     [ngIf*="em_votacao"] + .cargo-status strong,
-     [ngIf*="status === 'em_votacao'"] strong {
+
+    [ngIf*="em_votacao"]+.cargo-status strong,
+    [ngIf*="status === 'em_votacao'"] strong {
       color: var(--status-aberto);
     }
-    [ngIf*="aguardando"] + .cargo-status strong,
+
+    [ngIf*="aguardando"]+.cargo-status strong,
     [ngIf*="status === 'aguardando'"] strong {
       color: var(--status-aguardando);
     }
@@ -209,7 +214,7 @@
 
 .escrutinio-card {
   background-color: var(--nested-card-bg);
-  border: 1px solid #eee;
+  border: 1px solid var(--accent-300); // Was #eee
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
@@ -240,12 +245,14 @@
     }
   }
 
-  & [ngIf*="fechado"] + p strong {
+  & [ngIf*="fechado"]+p strong {
     background-color: var(--status-fechado);
   }
-  & [ngIf*="aberto"] + p strong {
+
+  & [ngIf*="aberto"]+p strong {
     background-color: var(--status-aberto);
   }
+
   & [ngIf*="aberto"] {
     border-left: 5px solid var(--status-aberto);
     box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
@@ -281,7 +288,7 @@
     }
 
     &:disabled {
-      background-color: #bdc3c7;
+      background-color: var(--accent-400); // Was #bdc3c7
       cursor: not-allowed;
     }
   }
@@ -289,15 +296,17 @@
   button[ngIf*="numero === 3"] {
     background-color: var(--action-prepare);
     color: #333;
+
     &:hover:not(:disabled) {
-      background-color: #fdd835;
+      background-color: var(--warning-400); // Was #fdd835
     }
   }
 
   button[ngIf*="aberto"] {
     background-color: var(--action-close);
+
     &:hover:not(:disabled) {
-      background-color: #b71c1c;
+      background-color: var(--warn-900); // Was #b71c1c
     }
   }
 }
@@ -306,7 +315,7 @@
    Resultados da Apuração (Dentro do Escrutínio Card)
    ============================================== */
 .apuracao-resultados {
-  background-color: #f8f9fa;
+  background-color: var(--accent-50);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 1rem;
@@ -332,7 +341,7 @@
     margin-bottom: 1rem;
 
     &:hover:not(:disabled) {
-      background-color: #5a6268;
+      background-color: var(--accent-700); // Was #5a6268
     }
   }
 }
@@ -342,12 +351,12 @@
    ============================================== */
 .vencedor-bloco {
   padding: 2rem 2.5rem;
-  background-color: #f6fef6;
+  background-color: var(--success-50);
   text-align: center;
 
   h4 {
     font-size: 1.5rem;
-    color: #2E7D32;
+    color: var(--success-700);
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
@@ -360,20 +369,23 @@
   strong {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #1B5E20;
+    color: var(--success-900);
   }
 }
 
 /* Bloco "Sem Vencedor" (Finalizado) */
 .sem-vencedor {
-  background-color: #fcf8e3;
+  background-color: var(--warning-50);
+
   h4 {
-    color: #8a6d3b;
+    color: var(--warning-800);
   }
+
   p {
-    color: #8a6d3b;
+    color: var(--warning-800);
+
     strong {
-      color: #8a6d3b;
+      color: var(--warning-900);
     }
   }
 }
@@ -402,7 +414,7 @@
 
       .id-candidato {
         font-size: 0.8rem;
-        color: var(--text-muted, #6c757d);
+        color: var(--text-muted);
         display: block;
       }
     }
@@ -413,26 +425,27 @@
   }
 
   li.vencedor-item {
-    background-color: #e8f5e9;
+    background-color: var(--success-50);
     border-left: 4px solid var(--action-confirm);
 
     .nome-candidato {
-      color: #1B5E20;
+      color: var(--success-900);
     }
+
     .votos-candidato {
-      color: #1B5E20;
+      color: var(--success-900);
       font-weight: 700;
     }
   }
 
   li.outros-item {
-    background-color: #fafafa;
-    border-left: 4px solid #eee;
+    background-color: var(--accent-50);
+    border-left: 4px solid var(--accent-200);
   }
 }
 
 .brancos-nulos {
-  border-top: 1px dashed #ccc;
+  border-top: 1px dashed var(--accent-300); // Was #ccc
   padding-top: 0.75rem;
   margin-top: 1rem;
 
@@ -440,7 +453,7 @@
     font-size: 0.95rem;
     font-weight: 600;
     margin: 0.25rem 0;
-    color: var(--text-muted, #6c757d);
+    color: var(--text-muted);
   }
 }
 
@@ -451,8 +464,8 @@
   display: flex;
   justify-content: space-around;
   gap: 0.5rem;
-  background-color: #f8f9fa;
-  border: 1px solid var(--border-color, #e0e0e0);
+  background-color: var(--accent-100); // Was #f8f9fa
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 0.75rem;
   margin-bottom: 1.5rem;
@@ -463,22 +476,22 @@
   margin: 0 !important;
   padding: 0;
   font-size: 0.9rem !important;
-  color: var(--text-muted, #6c757d) !important;
+  color: var(--text-muted) !important;
   font-weight: 600 !important;
 
   strong {
     display: block;
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--text-color, #333);
+    color: var(--text-color);
   }
 
   &.total strong {
-    color: var(--primary-color, #004a98);
+    color: var(--primary-color);
   }
 
   &.faltam strong {
-    color: var(--action-close, #D32F2F);
+    color: var(--action-close);
   }
 }
 
@@ -487,12 +500,12 @@
    ============================================== */
 .vencedor-pendente-bloco {
   padding: 2rem 2.5rem;
-  background-color: #e0f7fa; // Ciano claro
+  background-color: var(--primary-50); // Was #e0f7fa
   text-align: center;
 
   h4 {
     font-size: 1.5rem;
-    color: #006064; // Ciano escuro
+    color: var(--primary-900); // Was #006064
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
@@ -500,13 +513,13 @@
   p {
     font-size: 1.1rem;
     margin: 0.25rem 0;
-    color: #333;
+    color: var(--text-color); // Was #333
   }
 
   strong {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #004d40;
+    color: var(--primary-800); // Was #004d40
   }
 }
 
@@ -540,16 +553,18 @@
   .btn-aceitar {
     background-color: var(--action-confirm);
     color: white;
+
     &:hover {
-      background-color: #388E3C;
+      background-color: var(--success-700); // Was #388E3C
     }
   }
 
   .btn-declinar {
     background-color: var(--action-close);
     color: white;
+
     &:hover {
-      background-color: #b71c1c;
+      background-color: var(--warn-900); // Was #b71c1c
     }
   }
 }
@@ -559,12 +574,12 @@
    ============================================== */
 .desempate-pendente-bloco {
   padding: 2rem 2.5rem;
-  background-color: #fff3e0; // Laranja claro
+  background-color: var(--warning-50); // Was #fff3e0
   text-align: center;
 
   h4 {
     font-size: 1.5rem;
-    color: #e65100; // Laranja escuro
+    color: var(--warning-900); // Was #e65100
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
@@ -572,7 +587,7 @@
   p {
     font-size: 1.1rem;
     margin: 0.25rem 0;
-    color: #333;
+    color: var(--text-color); // Was #333
   }
 }
 
@@ -584,16 +599,16 @@
   margin-top: 1.5rem;
 
   .candidato-empatado {
-    border: 2px solid var(--border-color, #e0e0e0);
+    border: 2px solid var(--border-color);
     padding: 1rem;
     border-radius: 8px;
-    background: var(--card-bg-color, #fff);
+    background: var(--card-bg-color);
   }
 
   .candidato-nome {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--primary-dark, #003366);
+    color: var(--primary-dark);
     margin: 0 0 0.75rem 0;
   }
 
@@ -628,12 +643,12 @@
 .apuracao-finalizada-container {
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 2px solid var(--border-color, #e0e0e0);
+  border-top: 2px solid var(--border-color);
   text-align: left;
 
   h5 {
     font-size: 1.3rem;
-    color: var(--primary-dark, #003366);
+    color: var(--primary-dark);
     margin-top: 0;
     margin-bottom: 1rem;
     text-align: center;
@@ -653,14 +668,14 @@
     margin-bottom: 1rem;
 
     &:hover:not(:disabled) {
-      background-color: #5a6268;
+      background-color: var(--accent-700); // Was #5a6268
     }
   }
 }
 
 .apuracao-final-item {
-  background-color: #f8f9fa;
-  border: 1px solid #eee;
+  background-color: var(--accent-100); // Was #f8f9fa
+  border: 1px solid var(--accent-300); // Was #eee
   border-radius: 6px;
   margin-bottom: 1rem;
   overflow: hidden;
@@ -671,10 +686,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #fdfdfd;
+  border-bottom: 1px solid var(--border-color); // Was #e0e0e0
+  background-color: var(--card-bg-color); // Was #fdfdfd
 
-  > strong {
+  >strong {
     display: block;
     font-size: 1.1rem;
     color: var(--text-color);
@@ -689,13 +704,15 @@
   color: white;
 
   &.status-fechado {
-    background-color: var(--status-fechado, #757575);
+    background-color: var(--status-fechado);
   }
-  &.status-nao_iniciado {
-    background-color: var(--status-nao-iniciado, #90a4ae);
+
+  &.status-nao-iniciado {
+    background-color: var(--status-nao-iniciado);
   }
+
   &.status-aberto {
-      background-color: var(--status-aberto, #4CAF50);
+    background-color: var(--status-aberto);
   }
 }
 
@@ -719,19 +736,19 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background-color: #f1f3f5;
-  border: 1px solid var(--border-color, #e0e0e0);
+  background-color: var(--accent-100); // Was #f1f3f5
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 0.75rem 1rem;
   margin-top: 1.5rem;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--primary-dark, #003366);
+  color: var(--primary-dark);
   cursor: pointer;
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #e9ecef;
+    background-color: var(--accent-200); // Was #e9ecef
   }
 
   .sanfona-icon {
@@ -752,6 +769,9 @@
 /* ==============================================
    [NOVO] Botão Gerar PDF (INDIVIDUAL, DENTRO DO CARD)
    ============================================== */
+/* ==============================================
+   [NOVO] Botão Gerar PDF (INDIVIDUAL, DENTRO DO CARD)
+   ============================================== */
 .btn-gerar-pdf {
   display: block; // Garante que ocupe a linha
   width: 100%;
@@ -767,7 +787,7 @@
   margin: 0 auto 0.75rem auto; // Centraliza e dá espaço inferior
 
   &:hover:not(:disabled) {
-    background-color: #5a6268;
+    background-color: var(--accent-700); // Was #5a6268
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
@@ -775,7 +795,8 @@
   /* Nos blocos finalizados/pendentes, limitar a largura em telas maiores */
   .vencedor-bloco &,
   .vencedor-pendente-bloco &,
-  .desempate-pendente-bloco & { // [NOVO]
+  .desempate-pendente-bloco & {
+    // [NOVO]
     margin-top: 1.5rem; // Adiciona espaço superior
 
     @media (min-width: 600px) {
@@ -785,7 +806,8 @@
 
   /* Ajuste específico para o bloco pendente */
   .vencedor-pendente-bloco &,
-  .desempate-pendente-bloco & { // [NOVO]
-     margin-bottom: 0; // Remove a margem inferior antes da sanfona
+  .desempate-pendente-bloco & {
+    // [NOVO]
+    margin-bottom: 0; // Remove a margem inferior antes da sanfona
   }
 }

@@ -1,7 +1,7 @@
 :host {
   display: block;
   padding: 2rem;
-  background-color: #f5f7fa; // Fundo cinza muito suave
+  background-color: var(--accent-100); // Was #f5f7fa
   min-height: 100vh;
   font-family: 'Roboto', sans-serif;
 }
@@ -21,20 +21,20 @@
     font-size: 3.5rem;
     height: 3.5rem;
     width: 3.5rem;
-    color: #1a237e; // Azul primário forte
+    color: var(--primary-700); // Was #1a237e
     opacity: 0.9;
   }
 
   h1 {
     margin: 0;
-    color: #1a237e;
+    color: var(--primary-700);
     font-size: 2rem;
     font-weight: 500;
   }
 
   .subtitulo {
     margin: 0.5rem 0 0 0;
-    color: #666;
+    color: var(--accent-600);
     font-size: 1.1rem;
   }
 }
@@ -42,13 +42,14 @@
 /* --- Acordeão Personalizado --- */
 .instrucoes-acordeao {
   mat-expansion-panel {
+    background-color: var(--card-bg-color) !important;
     border-radius: 8px !important;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
     overflow: hidden; // Para a borda arredondada funcionar bem
 
     &.mat-expanded {
-      border: 1px solid #1a237e; // Destaque quando aberto
+      border: 1px solid var(--primary-700); // Destaque quando aberto
     }
   }
 
@@ -67,19 +68,25 @@
       align-items: center;
       gap: 1rem;
       flex-basis: 60%; // Dá mais espaço ao título
+      color: var(--text-color);
     }
 
     mat-panel-description {
       font-size: 0.95rem;
-      color: #666;
-      @media (max-width: 600px) { display: none; } // Esconde em mobile se necessário
+      color: var(--accent-600);
+
+      @media (max-width: 600px) {
+        display: none;
+      }
+
+      // Esconde em mobile se necessário
     }
   }
 }
 
 .step-number {
-  background: #e8eaf6;
-  color: #1a237e;
+  background: var(--primary-50);
+  color: var(--primary-700);
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -92,11 +99,13 @@
 
 .panel-content {
   padding: 0 1rem 1.5rem 3.5rem; // Alinhado com o texto do título
-  color: #444;
+  color: var(--text-color); // Was #444
   font-size: 1rem;
   line-height: 1.6;
 
-  @media (max-width: 600px) { padding-left: 0; }
+  @media (max-width: 600px) {
+    padding-left: 0;
+  }
 }
 
 /* --- Lista de Passos --- */
@@ -109,17 +118,20 @@
     padding-left: 0.5rem;
 
     a {
-      color: #1565c0;
+      color: var(--primary-600);
       text-decoration: none;
       font-weight: 600;
-      &:hover { text-decoration: underline; }
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }
 
 .destaque {
-  background-color: #e3f2fd;
-  color: #0d47a1;
+  background-color: var(--primary-50);
+  color: var(--primary-700);
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 600;
@@ -132,11 +144,12 @@
   width: 1.3em;
   vertical-align: middle;
   margin: 0 2px;
-  color: #555;
+  color: var(--accent-600);
 }
 
 /* --- Caixas de Alerta --- */
-.alerta-info, .alerta-sucesso {
+.alerta-info,
+.alerta-sucesso {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
@@ -151,13 +164,13 @@
 }
 
 .alerta-info {
-  background-color: #fff3e0; // Laranja muito claro
-  color: #e65100;
-  border-left: 4px solid #ff9800;
+  background-color: var(--warning-50); // Was #fff3e0
+  color: var(--warning-900);
+  border-left: 4px solid var(--warning-500);
 }
 
 .alerta-sucesso {
-  background-color: #e8f5e9; // Verde muito claro
-  color: #2e7d32;
-  border-left: 4px solid #4caf50;
+  background-color: var(--success-50); // Was #e8f5e9
+  color: var(--success-900);
+  border-left: 4px solid var(--success-500);
 }

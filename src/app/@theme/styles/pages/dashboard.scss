@@ -22,7 +22,7 @@
 }
 
 .upgrade-button {
-  background: map-get($yellow-theme, 500) !important;
+  background: var(--warning-500) !important;
 
   a {
     color: var(--accent-50) !important;
@@ -66,8 +66,10 @@
         }
       }
     }
+
     .project-report {
       padding-left: 0px;
+
       .list-group-item {
         padding: 16px 20px;
 

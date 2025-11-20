@@ -1,28 +1,28 @@
 /* Variáveis (Combine com seu tema) */
 :host {
-  --primary-color: #004a98;
-  --primary-dark: #003366;
-  --bg-color: #f8f9fa; // Fundo um pouco mais claro
-  --card-bg-color: #ffffff;
-  --border-color: #dee2e6; // Borda mais suave
-  --text-color: #212529; // Texto principal mais escuro
-  --text-muted: #6c757d;
+  --primary-color: var(--primary-500);
+  --primary-dark: var(--primary-700);
+  --bg-color: var(--accent-100); // Was #f8f9fa
+  --card-bg-color: var(--accent-50); // Was #ffffff
+  --border-color: var(--accent-300); // Was #dee2e6
+  --text-color: var(--accent-900); // Was #212529
+  --text-muted: var(--accent-600); // Was #6c757d
   --link-color: var(--primary-color);
   --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); // Sombra mais pronunciada no hover
   --border-radius: 8px; // Raio de borda padrão
 
   // Cores de Status
-  --status-agendada-bg: #fff3cd; // Amarelo claro
-  --status-agendada-text: #664d03; // Amarelo escuro
-  --status-agendada-border: #ffecb5;
+  --status-agendada-bg: var(--warning-50);
+  --status-agendada-text: var(--warning-900);
+  --status-agendada-border: var(--warning-200);
 
-  --status-em_andamento-bg: #d1e7dd; // Verde claro
-  --status-em_andamento-text: #0f5132; // Verde escuro
-  --status-em_andamento-border: #badbcc;
+  --status-em_andamento-bg: var(--success-50);
+  --status-em_andamento-text: var(--success-900);
+  --status-em_andamento-border: var(--success-200);
 
-  --status-finalizada-bg: #e2e3e5; // Cinza claro
-  --status-finalizada-text: #41464b; // Cinza escuro
-  --status-finalizada-border: #d3d6d8;
+  --status-finalizada-bg: var(--accent-200);
+  --status-finalizada-text: var(--accent-800);
+  --status-finalizada-border: var(--accent-300);
 
   .list-container {
     max-width: 1400px;
@@ -110,11 +110,13 @@
   }
 
   .error-message {
-    color: #842029; // Vermelho mais escuro (Bootstrap danger text)
-    background-color: #f8d7da; // Fundo vermelho claro
-    border-color: #f5c2c7; // Borda vermelha
+    color: var(--warn-900); // Was #842029
+    background-color: var(--warn-50); // Was #f8d7da
+    border-color: var(--warn-200); // Was #f5c2c7
   }
+
   .empty-state {
+
     // Adiciona um ícone simples via pseudo-elemento
     &::before {
       content: '📄'; // Ícone de documento
@@ -123,6 +125,7 @@
       margin-bottom: 1rem;
       opacity: 0.5;
     }
+
     // Estiliza o link/botão dentro do empty state
     a {
       // Reutiliza estilo do .btn-criar-nova, mas talvez com cor secundária
@@ -196,11 +199,13 @@
         color: var(--status-agendada-text);
         border-color: var(--status-agendada-border);
       }
+
       &.em_andamento {
         background-color: var(--status-em_andamento-bg);
         color: var(--status-em_andamento-text);
         border-color: var(--status-em_andamento-border);
       }
+
       &.finalizada {
         background-color: var(--status-finalizada-bg);
         color: var(--status-finalizada-text);
@@ -222,6 +227,7 @@
         content: '🗳️'; // Ícone urna (exemplo)
         opacity: 0.7;
       }
+
       &.info-membros::before {
         content: '👥'; // Ícone pessoas (exemplo)
         opacity: 0.7;
@@ -230,7 +236,7 @@
 
     // Footer do Card
     .card-footer {
-      background-color: #f9fafb; // Fundo ligeiramente diferente
+      background-color: var(--accent-100); // Was #f9fafb
       border-top: 1px solid var(--border-color);
       padding: 1rem 1.75rem;
       text-align: right;
@@ -253,6 +259,7 @@
         background-color: var(--primary-dark);
         transform: scale(1.03); // Leve aumento no hover
       }
+
       &:active {
         transform: scale(0.98); // Efeito de clique
       }
@@ -273,12 +280,14 @@
 
     // Ajusta a cor dos dropdowns e labels
     .mat-mdc-form-field {
+
       .mat-mdc-select-value,
       .mat-mdc-select-arrow,
       .mat-mdc-floating-label,
       .mdc-line-ripple {
         color: var(--primary-color) !important;
       }
+
       .mdc-line-ripple::after {
         border-bottom-color: var(--primary-color) !important;
       }
@@ -287,6 +296,7 @@
     // Botões de ícone (setas)
     .mat-mdc-icon-button {
       color: var(--text-muted);
+
       &:not(:disabled):hover {
         background-color: rgba(0, 0, 0, 0.05);
       }

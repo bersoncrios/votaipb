@@ -2,6 +2,7 @@ body {
   &.mat-typography {
     font-feature-settings: 'salt' !important;
   }
+
   /* -------------------------------------------------------------------------- */
   /*  @ mat drawer
   /* -------------------------------------------------------------------------- */
@@ -40,6 +41,7 @@ body {
 
   // Outlined text input
   .mdc-text-field--outlined:not(.mdc-text-field--disabled) {
+
     .mdc-notched-outline__leading,
     .mdc-notched-outline__trailing,
     .mdc-notched-outline__notch {
@@ -47,15 +49,33 @@ body {
     }
   }
 
-  // filled text input
+  // text input (filled and outlined)
+  .mdc-text-field:not(.mdc-text-field--disabled) {
+    .mdc-text-field__input {
+      color: var(--accent-900) !important;
+      caret-color: var(--accent-900) !important;
+    }
+  }
+
+  // filled text input specific background
   .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     background-color: var(--accent-200) !important;
+  }
+
+  // mat-select
+  .mat-mdc-select-value {
+    color: var(--accent-900) !important;
+  }
+
+  .mat-mdc-select-arrow {
+    color: var(--accent-600) !important;
   }
 
   /* -------------------------------------------------------------------------- */
   /*  @ mat card
   /* -------------------------------------------------------------------------- */
   .mat-mdc-card {
+    background-color: var(--accent-50) !important; // Use accent-50 for card background (lighter/darker depending on theme)
     border: 1px solid var(--accent-300) !important;
     border-radius: 12px !important;
     box-shadow: none !important;
