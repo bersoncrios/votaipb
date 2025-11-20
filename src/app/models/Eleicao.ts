@@ -9,7 +9,7 @@ export type Eleicao = {
   cargos: Cargo[];
   cargoAbertoParaVotacao: {
     cargoId: string;
-    escrutinioNum: 1 | 2 | 3;
+    escrutinioNum: number;
   } | null;
   adminUid: string;
 };

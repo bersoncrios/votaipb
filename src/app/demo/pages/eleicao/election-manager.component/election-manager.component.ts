@@ -95,13 +95,30 @@ export class EleicaoManageComponent implements OnInit {
     return this.resultadosExpandidos.has(cargoId);
   }
 
+  podeAbrirEscrutinio(eleicao: Eleicao, cargo: Cargo, escrutinio: Escrutinio): boolean {
+    if (eleicao.cargoAbertoParaVotacao) return false;
+    if (escrutinio.candidatos.length === 0) return false;
+
+    if (escrutinio.numero > 1) {
+      const anterior = cargo.escrutinios.find(e => e.numero === escrutinio.numero - 1);
+      if (!anterior || anterior.status !== 'fechado') return false;
+    }
+
+    return true;
+  }
+
 
   /**
    * Lógica para abrir um escrutínio
    */
   async onAbrirEscrutinio(eleicao: Eleicao, cargo: Cargo, escrutinio: Escrutinio) {
     if (eleicao.cargoAbertoParaVotacao) {
-      Swal.fire('Atenção', 'Já existe um escrutínio aberto. Feche-o antes de abrir outro.', 'warning');
+      console.log('Bloqueio de abertura: ', eleicao.cargoAbertoParaVotacao);
+      Swal.fire(
+        'Atenção',
+        `Já existe um escrutínio aberto (Cargo: ${eleicao.cargoAbertoParaVotacao.cargoId}, Escrutínio: ${eleicao.cargoAbertoParaVotacao.escrutinioNum}). Feche-o antes de abrir outro.`,
+        'warning'
+      );
       return;
     }
     const novosCargos = cloneDeep(eleicao.cargos);
@@ -152,12 +169,12 @@ export class EleicaoManageComponent implements OnInit {
     this.apuracaoCache.set(cacheKey, apuracao);
     const apuracaoOrdenada: ApuracaoOrdenadaItem[] =
       Array.from(apuracao.votosPorCandidato.entries())
-      .map(([userId, votos]) => ({
-        userId: userId,
-        nome: this.getCandidatoNome(cargo, userId),
-        votos: votos
-      }))
-      .sort((a, b) => b.votos - a.votos);
+        .map(([userId, votos]) => ({
+          userId: userId,
+          nome: this.getCandidatoNome(cargo, userId),
+          votos: votos
+        }))
+        .sort((a, b) => b.votos - a.votos);
     this.apuracaoOrdenadaCache.set(cacheKey, apuracaoOrdenada);
 
     let vencedorEncontrado: Candidato | undefined = undefined;
@@ -166,14 +183,14 @@ export class EleicaoManageComponent implements OnInit {
       if (totalVotosValidos > 0) {
         const [vencedorId, _votosVencedor] =
           [...apuracao.votosPorCandidato.entries()]
-          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+            .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
 
         if (vencedorId) {
           vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
         }
       }
     }
-    else if (escrutinio.numero === 3) {
+    else if (escrutinio.numero >= 3) {
       if (totalVotosValidos > 0 && apuracaoOrdenada.length > 0) {
 
         const maxVotos = apuracaoOrdenada[0].votos;
@@ -183,16 +200,62 @@ export class EleicaoManageComponent implements OnInit {
           const vencedorId = empatados[0].userId;
           vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
         } else if (empatados.length > 1) {
-          console.log('Empate no 3º escrutínio detectado. Aguardando desempate manual.');
+          console.log(`Empate no ${escrutinio.numero}º escrutínio detectado.`);
 
-          cargoAtual.status = 'pendente_desempate';
+          // Pergunta ao admin o que fazer
+          const { value: decisao } = await Swal.fire({
+            title: 'Empate Detectado!',
+            html: `Houve um empate no ${escrutinio.numero}º escrutínio entre <b>${empatados.length} candidatos</b>.<br>O que deseja fazer?`,
+            icon: 'question',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Voto de Minerva',
+            denyButtonText: `Abrir ${escrutinio.numero + 1}º Escrutínio`,
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#3085d6',
+            denyButtonColor: '#d33'
+          });
 
-          const idsEmpatados = empatados.map(e => e.userId);
-          const candidatosEmpatados = cargo.candidatosIniciais.filter(c => idsEmpatados.includes(c.userId));
+          if (decisao === true) {
+            // Voto de Minerva (Comportamento Antigo)
+            cargoAtual.status = 'pendente_desempate';
+            const idsEmpatados = empatados.map(e => e.userId);
+            const candidatosEmpatados = cargo.candidatosIniciais.filter(c => idsEmpatados.includes(c.userId));
+            (cargoAtual as any).candidatosEmpatados = candidatosEmpatados;
 
-          (cargoAtual as any).candidatosEmpatados = candidatosEmpatados;
+            Swal.fire(
+              'Empate!',
+              `Modo de desempate manual ativado.<br>Selecione o vencedor manualmente.`,
+              'warning'
+            );
+
+          } else if (decisao === false) {
+            // Abrir Novo Escrutínio
+            const idsEmpatados = empatados.map(e => e.userId);
+            const candidatosEmpatados = cargo.candidatosIniciais.filter(c => idsEmpatados.includes(c.userId));
+
+            try {
+              await this.eleicaoAdminService.prepararProximoEscrutinio(
+                eleicao.id,
+                cargo.id,
+                escrutinio.numero + 1,
+                candidatosEmpatados
+              );
+
+              // Atualiza localmente para refletir a mudança sem reload se possível, 
+              // mas o update do service deve disparar o observable.
+              // Vamos apenas notificar.
+              Swal.fire('Sucesso', `${escrutinio.numero + 1}º Escrutínio preparado com os candidatos empatados.`, 'success');
+              return; // Sai da função pois o status do cargo mudou para aguardando no service
+            } catch (e) {
+              Swal.fire('Erro', `Erro ao criar novo escrutínio: ${e}`, 'error');
+              return;
+            }
+          } else {
+            // Cancelou
+            return;
+          }
         }
-
       }
     }
 
@@ -210,20 +273,19 @@ export class EleicaoManageComponent implements OnInit {
       );
     }
     else if (cargoAtual.status === 'pendente_desempate') {
-        Swal.fire(
-          'Empate!',
-          `Houve um empate no 3º escrutínio para ${cargo.titulo}.<br>Um desempate manual (voto de minerva) é necessário.`,
-          'warning'
-        );
+      // Já tratado no Swal acima, mas mantemos para consistência se cair aqui
     }
     else {
       if (escrutinio.numero < 3) {
         cargoAtual.status = 'aguardando';
         Swal.fire('Escrutínio Fechado', `Escrutínio ${escrutinio.numero} fechado. Nenhum candidato atingiu mais de 50%. Prossiga para o próximo escrutínio.`, 'info');
-      } else {
+      } else if (escrutinio.numero >= 3 && !vencedorEncontrado) {
+        // Se chegou aqui e é >= 3 e não tem vencedor e não é desempate, 
+        // significa que não houve empate (todos 0 votos?) ou algo atípico.
+        // Ou simplesmente fechou sem vencedor definido (ex: todos 0).
         cargoAtual.vencedor = null;
         cargoAtual.status = 'finalizado';
-        Swal.fire('Escrutínio Fechado', 'Escrutínio 3 fechado. Nenhum vencedor definido.', 'info');
+        Swal.fire('Escrutínio Fechado', `Escrutínio ${escrutinio.numero} fechado. Nenhum vencedor definido.`, 'info');
       }
     }
 
@@ -397,7 +459,7 @@ export class EleicaoManageComponent implements OnInit {
     }
 
     const totalVotosValidos = Array.from(resultados.values())
-                                   .reduce((a, b) => a + b, 0);
+      .reduce((a, b) => a + b, 0);
 
     const apuracao = {
       votosPorCandidato: resultados,
@@ -418,12 +480,12 @@ export class EleicaoManageComponent implements OnInit {
     this.apuracaoCache.set(cacheKey, apuracao);
     const apuracaoOrdenada: ApuracaoOrdenadaItem[] =
       Array.from(apuracao.votosPorCandidato.entries())
-      .map(([userId, votos]) => ({
-        userId: userId,
-        nome: this.getCandidatoNome(cargo, userId),
-        votos: votos
-      }))
-      .sort((a, b) => b.votos - a.votos);
+        .map(([userId, votos]) => ({
+          userId: userId,
+          nome: this.getCandidatoNome(cargo, userId),
+          votos: votos
+        }))
+        .sort((a, b) => b.votos - a.votos);
 
     this.apuracaoOrdenadaCache.set(cacheKey, apuracaoOrdenada);
   }
@@ -508,7 +570,7 @@ export class EleicaoManageComponent implements OnInit {
       if (totalVotosValidos > 0) {
         const [vencedorId, _votos] =
           [...apuracao.votosPorCandidato.entries()]
-          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+            .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
         if (vencedorId) {
           vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
         }
@@ -521,7 +583,7 @@ export class EleicaoManageComponent implements OnInit {
       if (totalVotosValidos > 0) {
         const [vencedorId, _votos] =
           [...apuracao.votosPorCandidato.entries()]
-          .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
+            .find(([id, contagem]) => contagem > (totalVotosValidos / 2)) || [];
         if (vencedorId) {
           vencedorEncontrado = cargo.candidatosIniciais.find(c => c.userId === vencedorId);
         }
@@ -605,11 +667,11 @@ export class EleicaoManageComponent implements OnInit {
       const escrutiniosFechados = cargo.escrutinios.filter(e => e.status === 'fechado');
 
       if (escrutiniosFechados.length === 0) {
-         doc.setFontSize(10);
-         doc.setFont('helvetica', 'italic');
-         doc.text('Nenhum escrutínio finalizado para este cargo.', MARGEM_ESQUERDA, cursorY);
-         doc.setFont('helvetica', 'normal');
-         cursorY += 10;
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'italic');
+        doc.text('Nenhum escrutínio finalizado para este cargo.', MARGEM_ESQUERDA, cursorY);
+        doc.setFont('helvetica', 'normal');
+        cursorY += 10;
       }
 
       for (const esc of escrutiniosFechados) {
@@ -664,8 +726,8 @@ export class EleicaoManageComponent implements OnInit {
 
       cursorY += 5;
       if (cursorY < PAGE_HEIGHT - BOTTOM_MARGIN) {
-         doc.setDrawColor(180, 180, 180);
-         doc.line(MARGEM_ESQUERDA, cursorY, 200, cursorY);
+        doc.setDrawColor(180, 180, 180);
+        doc.line(MARGEM_ESQUERDA, cursorY, 200, cursorY);
       }
       cursorY += 10;
     }

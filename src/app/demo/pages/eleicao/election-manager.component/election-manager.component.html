@@ -133,11 +133,7 @@
 
               <button
                 (click)="onAbrirEscrutinio(eleicao, cargo, escrutinio)"
-                [disabled]="
-                  eleicao.cargoAbertoParaVotacao !== null ||
-                  (escrutinio.numero === 2 && cargo.escrutinios[0].status !== 'fechado') ||
-                  (escrutinio.numero === 3 && escrutinio.candidatos.length === 0)
-                ">
+                [disabled]="!podeAbrirEscrutinio(eleicao, cargo, escrutinio)">
                 Abrir Votação
               </button>
             </ng-container>

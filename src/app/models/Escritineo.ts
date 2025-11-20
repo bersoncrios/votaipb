@@ -2,7 +2,7 @@ import { Candidato } from "./Candidato";
 import { Voto } from "./Voto";
 
 export type Escrutinio = {
-  numero: 1 | 2 | 3;
+  numero: number;
   candidatos: Candidato[];
   votos: Voto[];
   status: 'nao_iniciado' | 'aberto' | 'fechado';

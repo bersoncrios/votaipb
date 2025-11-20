@@ -1,7 +1,7 @@
 # 🗳️ Vota IPB - Sistema de Eleição
 
 ![Status](https://img.shields.io/website?url=https://votaipb.com.br/&label=Status&style=for-the-badge)
-![Version](https://img.shields.io/badge/version-1.8.0-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.9.0-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/licen%C3%A7a-Propriet%C3%A1ria-red?style=for-the-badge)
 
 **Vota IPB** é um sistema de votação eletrônica seguro e moderno, desenhado para gerenciar as eleições da **Igreja Presbiteriana do Brasil (IPB)**, garantindo integridade, transparência e agilidade no processo.

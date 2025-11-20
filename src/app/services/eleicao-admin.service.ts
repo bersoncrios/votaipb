@@ -117,7 +117,6 @@ export class EleicaoAdminService {
   getEleicaoObservable(id: string): Observable<Eleicao> {
     const eleicaoRef = doc(this.db, 'eleicoes', id);
     return docData(eleicaoRef, { idField: 'id' }) as Observable<Eleicao>;
-    // A normalização será feita no component.ts
   }
 
   updateEleicao(id: string, updates: Partial<Eleicao>): Promise<void> {
@@ -162,7 +161,7 @@ export class EleicaoAdminService {
 
           const status = cargo.status || (cargo.vencedor ? 'finalizado' : 'aguardando');
           if (status !== 'aguardando') {
-             return cargo;
+            return cargo;
           }
 
           const novosCandidatosIniciais = cargo.candidatosIniciais.filter(
@@ -355,6 +354,71 @@ export class EleicaoAdminService {
       });
     } catch (e) {
       console.error('Erro ao preparar o terceiro escrutínio:', e);
+      throw e;
+    }
+  }
+  /**
+   * Prepara um novo escrutínio (4º, 5º, etc.) apenas com os candidatos selecionados
+   */
+  async prepararProximoEscrutinio(
+    eleicaoId: string,
+    cargoId: string,
+    numeroNovoEscrutinio: number,
+    candidatos: Candidato[]
+  ): Promise<void> {
+    const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
+
+    try {
+      await runTransaction(this.db, async transaction => {
+        const eleicaoSnap = await transaction.get(eleicaoRef);
+        if (!eleicaoSnap.exists()) {
+          throw new Error('Eleição não encontrada.');
+        }
+
+        const eleicaoData = eleicaoSnap.data() as Eleicao;
+        const cargosAtualizados = eleicaoData.cargos.map(c => ({
+          ...c,
+          escrutinios: c.escrutinios.map(e => ({ ...e, votos: [...e.votos] }))
+        }));
+
+        const cargoIndex = cargosAtualizados.findIndex(c => c.id === cargoId);
+        if (cargoIndex === -1) {
+          throw new Error('Cargo não encontrado.');
+        }
+
+        const cargo = cargosAtualizados[cargoIndex];
+
+        const escrutinioAnterior = cargo.escrutinios.find(e => e.numero === numeroNovoEscrutinio - 1);
+        if (escrutinioAnterior) {
+          escrutinioAnterior.status = 'fechado';
+        }
+
+        const existe = cargo.escrutinios.some(e => e.numero === numeroNovoEscrutinio);
+        if (existe) {
+          throw new Error(`Escrutínio ${numeroNovoEscrutinio} já existe.`);
+        }
+
+        const novoEscrutinio: Escrutinio = {
+          numero: numeroNovoEscrutinio,
+          candidatos: candidatos,
+          votos: [],
+          status: 'aberto'
+        };
+
+        cargo.escrutinios.push(novoEscrutinio);
+        cargo.status = 'em_votacao';
+        (cargo as any).candidatosEmpatados = [];
+
+        transaction.update(eleicaoRef, {
+          cargos: cargosAtualizados,
+          cargoAbertoParaVotacao: {
+            cargoId: cargoId,
+            escrutinioNum: numeroNovoEscrutinio
+          }
+        });
+      });
+    } catch (e) {
+      console.error(`Erro ao preparar ${numeroNovoEscrutinio}º escrutínio:`, e);
       throw e;
     }
   }
