@@ -181,6 +181,18 @@ h1 {
   align-items: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 
+  // Responsive adjustments
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+
+    .hero-stats {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
   .hero-content {
     h3 {
       font-size: 1.8rem;
