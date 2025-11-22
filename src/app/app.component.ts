@@ -4,6 +4,7 @@ import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationErr
 
 // project import
 import { SharedModule } from './shared/shared.module';
+import { AnalyticsService } from './core/services/analytics.service';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { SharedModule } from './shared/shared.module';
 })
 export class AppComponent {
   private router = inject(Router);
+  private analyticsService = inject(AnalyticsService);
 
   // public props
   isSpinnerVisible = true;
