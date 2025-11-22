@@ -19,9 +19,6 @@ export interface CedulaAberta {
 export class VotacaoService {
   private db = inject(Firestore);
 
-  /**
-   * 1. Busca a cédula aberta (lendo o documento único)
-   */
   async getCedulaAberta(eleicaoId: string): Promise<CedulaAberta | null> {
     const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
     const eleicaoSnap = await getDoc(eleicaoRef);
@@ -51,10 +48,6 @@ export class VotacaoService {
     return { eleicao, cargo, escrutinio };
   }
 
-  /**
-   * 2. Valida o votante (membro elegível + se já votou)
-   * (Recebe a 'CedulaAberta' que já encontramos)
-   */
   validarVotante(cedula: CedulaAberta, eleitorId: string): { valido: boolean; mensagem: string; membro?: Membro } {
     const membroElegivel = cedula.eleicao.membrosElegiveis.find((m) => m.id === eleitorId);
     if (!membroElegivel) {
@@ -69,9 +62,6 @@ export class VotacaoService {
     return { valido: true, mensagem: 'Votante validado.', membro: membroElegivel };
   }
 
-  /**
-   * 3. Registra o Voto (usando transação no documento ÚNICO)
-   */
   async registrarVoto(eleicaoId: string, cargoId: string, escrutinioNum: number, eleitorId: string, candidatoId: string): Promise<void> {
     const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
 

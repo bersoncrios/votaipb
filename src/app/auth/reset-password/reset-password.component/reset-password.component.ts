@@ -1,10 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AuthService } from 'src/app/services/auth.service';
-
 import Swal from 'sweetalert2';
 
 @Component({
@@ -50,8 +48,7 @@ export class ResetPasswordComponent {
           'success'
         );
         this.resetForm.reset();
-        // Opcional: Redirecionar para login após alguns segundos
-        // setTimeout(() => this.router.navigate(['/auth/login']), 2000);
+        setTimeout(() => this.router.navigate(['/auth/login']), 2000);
       })
       .catch(error => {
         let msg = 'Erro ao enviar e-mail de redefinição. Tente novamente.';

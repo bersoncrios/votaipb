@@ -27,14 +27,10 @@ export class EleicaoAdminService {
   private authService = inject(AuthService);
   private eleicoesCollection = collection(this.db, 'eleicoes');
 
-  /**
-   * Função helper para consertar dados antigos
-   */
   private normalizarEleicao(eleicao: Eleicao): Eleicao {
     if (!eleicao) return eleicao;
 
     const cargosNormalizados = (eleicao.cargos || []).map(cargo => {
-      // 1. Normaliza o vencedor (undefined vira null)
       const vencedor = cargo.vencedor === undefined ? null : cargo.vencedor;
 
       const status: CargoStatus = cargo.status || (vencedor ? 'finalizado' : 'aguardando');
@@ -135,9 +131,6 @@ export class EleicaoAdminService {
     );
   }
 
-  /**
-   * Remove candidatos eleitos
-   */
   async removerCandidatosEleitosDeOutrosCargos(
     eleicaoId: string,
     candidatosIds: string[],
@@ -188,9 +181,6 @@ export class EleicaoAdminService {
     }
   }
 
-  /**
-   * Reinicia um cargo
-   */
   async reiniciarCargo(eleicaoId: string, cargoId: string): Promise<void> {
     const eleicaoRef = doc(this.db, 'eleicoes', eleicaoId);
 
@@ -229,10 +219,6 @@ export class EleicaoAdminService {
     }
   }
 
-
-  /**
-   * Função auxiliar para converter IDs
-   */
   private mapIdsToCandidatos(
     ids: string[],
     listaCompleta: Candidato[]
@@ -244,9 +230,6 @@ export class EleicaoAdminService {
       .filter(Boolean) as Candidato[];
   }
 
-  /**
-   * Prepara o 3º escrutínio
-   */
   async prepararTerceiroEscrutinio(
     eleicaoId: string,
     cargoId: string
@@ -357,9 +340,7 @@ export class EleicaoAdminService {
       throw e;
     }
   }
-  /**
-   * Prepara um novo escrutínio (4º, 5º, etc.) apenas com os candidatos selecionados
-   */
+
   async prepararProximoEscrutinio(
     eleicaoId: string,
     cargoId: string,

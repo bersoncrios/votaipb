@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-
-// project imports
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -22,7 +20,6 @@ export class RegisterComponent {
   coHide = true;
   registerError = '';
 
-  // Reactive form
   registerForm: FormGroup = this.fb.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
@@ -32,7 +29,6 @@ export class RegisterComponent {
     terms: [false, Validators.requiredTrue]
   });
 
-  // Getters para facilitar acesso no template
   get email() {
     return this.registerForm.get('email');
   }
@@ -78,7 +74,6 @@ export class RegisterComponent {
           sessionStorage.setItem('token', token);
           sessionStorage.setItem('uid', uid);
 
-          // salvar dados extras no Firestore
           await this.authService.createData({
             id: '',
             name: `${firstName} ${lastName}`,

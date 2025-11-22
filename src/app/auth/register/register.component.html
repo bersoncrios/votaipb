@@ -7,12 +7,10 @@
       </div>
       <div class="main-form">
         <app-card [showHeader]="false" class="auth-form-card" [padding]="40">
-          <!-- Logo -->
           <div class="text-center">
             <img src="assets/images/logo.png" alt="Vota IPB Logo" style="max-width: 100px; margin-bottom: 20px;" />
           </div>
 
-          <!-- Nome e Sobrenome -->
           <div class="row text-start">
             <div class="col-md-6">
               <label for="firstName" class="f-w-500">Primeiro Nome</label>
@@ -27,7 +25,6 @@
               </mat-form-field>
             </div>
 
-            <!-- Email -->
             <div class="col-12">
               <label for="email" class="f-w-500">Email</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
@@ -38,72 +35,44 @@
               </mat-form-field>
             </div>
 
-            <!-- Senha -->
             <div class="col-12">
               <label for="password" class="f-w-500">Senha</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
-                <input
-                  matInput
-                  [type]="hide ? 'password' : 'text'"
-                  formControlName="password"
-                  placeholder="Digite sua senha"
-                />
-                <button
-                  mat-icon-button
-                  matSuffix
-                  (click)="hide = !hide"
-                  [attr.aria-label]="'Hide password'"
-                  [attr.aria-pressed]="hide"
-                >
+                <input matInput [type]="hide ? 'password' : 'text'" formControlName="password"
+                  placeholder="Digite sua senha" />
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide">
                   <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
               </mat-form-field>
             </div>
 
-            <!-- Confirmar Senha -->
             <div class="col-12">
               <label for="confirmPassword" class="f-w-500">Confirmar Senha</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
-                <input
-                  matInput
-                  [type]="coHide ? 'password' : 'text'"
-                  formControlName="confirmPassword"
-                  placeholder="Confirme sua senha"
-                />
-                <button
-                  mat-icon-button
-                  matSuffix
-                  (click)="coHide = !coHide"
-                  [attr.aria-label]="'Hide password'"
-                  [attr.aria-pressed]="coHide"
-                >
+                <input matInput [type]="coHide ? 'password' : 'text'" formControlName="confirmPassword"
+                  placeholder="Confirme sua senha" />
+                <button mat-icon-button matSuffix (click)="coHide = !coHide" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="coHide">
                   <mat-icon>{{ coHide ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
               </mat-form-field>
             </div>
           </div>
 
-          <!-- Checkbox -->
           <div class="check-me">
             <mat-checkbox formControlName="terms" class="float-start" color="primary">
               Concordo com os Termos & Condições
             </mat-checkbox>
           </div>
 
-          <!-- Botão Registrar -->
           <div class="grid">
-            <button
-              mat-flat-button
-              color="primary"
-              class="b-rad-20 m-t-15"
-              (click)="register()"
-              [disabled]="registerForm.invalid"
-            >
+            <button mat-flat-button color="primary" class="b-rad-20 m-t-15" (click)="register()"
+              [disabled]="registerForm.invalid">
               Registrar
             </button>
           </div>
 
-          <!-- Já tem conta -->
           <div class="check-me m-t-15 text-center">
             <h6 class="f-w-400 text-muted m-b-0">Já tem uma conta?</h6>
             <a class="text-primary-500" [routerLink]="['/auth/login']">Entrar</a>
