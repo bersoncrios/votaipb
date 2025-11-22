@@ -125,14 +125,14 @@
    Aviso de Votação Aberta
    ============================================== */
 .votacao-aberta-aviso {
-  background-color: var(--warning-50); // Was #fff3e0
-  border: 1px solid var(--warning-300); // Was #ffb74d
-  border-left: 5px solid var(--warning-700); // Was #f57c00
+  background-color: var(--nested-card-bg);
+  border: 1px solid var(--warning-300);
+  border-left: 5px solid var(--warning-700);
   padding: 1rem 1.5rem;
   border-radius: 6px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--warning-900); // Was #c85a00
+  color: var(--text-color);
   margin-bottom: 1.5rem;
 }
 
@@ -156,14 +156,13 @@
     font-size: 1.75rem;
     color: var(--primary-dark);
     margin: 0;
-    padding: 1.5rem 2rem 1rem 2rem;
-    background-color: var(--primary-50); // Was rgba(0, 74, 152, 0.03)
-    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem 2rem 0.5rem 2rem;
+    background-color: var(--nested-card-bg);
   }
 
   .cargo-status {
     padding: 0 2rem 1.5rem 2rem;
-    margin-top: -0.5rem;
+    background-color: var(--nested-card-bg);
     font-weight: 600;
     color: var(--text-muted);
     font-size: 1rem;
@@ -329,7 +328,7 @@
   }
 
   button {
-    background-color: var(--action-secondary);
+    background-color: var(--primary-color);
     color: white;
     width: 100%;
     padding: 0.7rem 1rem;
@@ -351,12 +350,13 @@
    ============================================== */
 .vencedor-bloco {
   padding: 2rem 2.5rem;
-  background-color: var(--success-50);
+  background-color: var(--nested-card-bg);
   text-align: center;
+  border: 1px solid var(--success-500);
 
   h4 {
     font-size: 1.5rem;
-    color: var(--success-700);
+    color: var(--success-500);
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
@@ -375,17 +375,18 @@
 
 /* Bloco "Sem Vencedor" (Finalizado) */
 .sem-vencedor {
-  background-color: var(--warning-50);
+  background-color: var(--nested-card-bg);
+  border: 1px solid var(--warning-500);
 
   h4 {
-    color: var(--warning-800);
+    color: var(--warning-500);
   }
 
   p {
-    color: var(--warning-800);
+    color: var(--text-color);
 
     strong {
-      color: var(--warning-900);
+      color: var(--warning-500);
     }
   }
 }
@@ -425,15 +426,15 @@
   }
 
   li.vencedor-item {
-    background-color: var(--success-50);
+    background-color: var(--nested-card-bg);
     border-left: 4px solid var(--action-confirm);
 
     .nome-candidato {
-      color: var(--success-900);
+      color: var(--text-color);
     }
 
     .votos-candidato {
-      color: var(--success-900);
+      color: var(--action-confirm);
       font-weight: 700;
     }
   }
@@ -500,12 +501,13 @@
    ============================================== */
 .vencedor-pendente-bloco {
   padding: 2rem 2.5rem;
-  background-color: var(--primary-50); // Was #e0f7fa
+  background-color: var(--nested-card-bg);
   text-align: center;
+  border: 1px solid var(--primary-500);
 
   h4 {
     font-size: 1.5rem;
-    color: var(--primary-900); // Was #006064
+    color: var(--primary-500);
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
@@ -519,7 +521,7 @@
   strong {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--primary-800); // Was #004d40
+    color: var(--primary-500);
   }
 }
 
@@ -574,12 +576,13 @@
    ============================================== */
 .desempate-pendente-bloco {
   padding: 2rem 2.5rem;
-  background-color: var(--warning-50); // Was #fff3e0
+  background-color: var(--nested-card-bg);
   text-align: center;
+  border: 1px solid var(--warning-500);
 
   h4 {
     font-size: 1.5rem;
-    color: var(--warning-900); // Was #e65100
+    color: var(--warning-500);
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
@@ -655,7 +658,7 @@
   }
 
   button {
-    background-color: var(--action-secondary);
+    background-color: var(--primary-color);
     color: white;
     width: 100%;
     padding: 0.7rem 1rem;
