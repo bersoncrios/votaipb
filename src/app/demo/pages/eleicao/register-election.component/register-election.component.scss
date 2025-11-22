@@ -5,6 +5,22 @@
 :host {
   display: block;
   padding: 2rem 1rem;
+
+  // Default (Light) Theme Variables
+  --card-bg-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #e0e0e0;
+  --card-header-bg: var(--accent-50);
+  --hero-text-color: #ffffff;
+  --stat-badge-bg: rgba(255, 255, 255, 0.2);
+}
+
+:host-context(.dark-theme) {
+  // Dark Theme Variables
+  --card-bg-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --border-color: #333333;
+  --card-header-bg: rgba(255, 255, 255, 0.05);
 }
 
 .eleicao-wizard-container {
@@ -96,90 +112,170 @@ h1 {
 // NOVOS ESTILOS PARA O PASSO DE REVISÃO
 // ===============================================
 //
-.review-cards-container {
+//
+// ===============================================
+// NOVOS ESTILOS PARA O PASSO DE REVISÃO (MODERNO)
+// ===============================================
+//
+.review-container-modern {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; // Espaçamento entre os cards
-  margin-top: 1.5rem;
+  gap: 2rem;
+  margin-top: 1rem;
+}
 
-  .mat-mdc-card {
+// Hero Section
+.review-hero {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 
-    // Usamos o 'outlined' para um look mais limpo
-    &.mat-mdc-card-outlined {
-      border-color: rgba(0, 0, 0, 0.12);
-    }
-  }
-
-  .mat-mdc-card-header {
-    .mat-mdc-card-avatar {
-      // Estiliza o ícone do cabeçalho
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      color: var(--accent-600); // Was #5d5d5d
-    }
-  }
-
-  .mat-mdc-card-content {
-    h4 {
-      // Títulos H4 dentro do card (Ex: "Título" ou o nome do cargo)
-      font-size: 1.1rem;
-      font-weight: 500;
-      margin: 0 0 0.5rem 0;
+  .hero-content {
+    h3 {
+      font-size: 1.8rem;
+      margin: 0;
+      font-weight: 700;
+      color: white;
     }
 
-    // Parágrafo simples (usado para o título da eleição)
     p {
+      margin: 0.5rem 0 0;
+      opacity: 0.9;
       font-size: 1rem;
-      color: var(--accent-600); // Was #5d5d5d
+    }
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .stat-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 80px;
+
+    .stat-number {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.2;
     }
 
-    .mat-mdc-list-base {
-      padding-top: 0;
+    .stat-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+  }
+}
+
+// Grid Layout
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// Modern Card
+.modern-card {
+  background-color: var(--card-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .card-header-modern {
+    padding: 1.2rem;
+    background-color: var(--card-header-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    mat-icon {
+      color: var(--primary-600);
     }
 
-    // Título de cada cargo na lista de revisão
-    .cargo-review-title {
+    h4 {
+      margin: 0;
       font-size: 1.1rem;
-      font-weight: 500;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
-      // Cor de destaque para o título do cargo
-      color: var(--accent-600); // Was #5d5d5d
+      font-weight: 600;
+      color: var(--text-color);
+    }
+  }
+
+  .card-content-modern {
+    padding: 0; // List items have their own padding
+    flex-grow: 1;
+
+    &.scrollable-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  }
+}
+
+// Cargo Item Styling
+.cargo-review-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .cargo-header-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    h5 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary-700);
     }
 
-    // Ícones da lista (pessoa, candidato)
-    .mat-mdc-list-item-icon {
-      color: var(--accent-600); // Was #5d5d5d
+    .badge-count {
+      font-size: 0.75rem;
+      background-color: var(--accent-200);
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: var(--text-muted);
     }
+  }
+}
 
-    // Espaçamento para o divisor entre os cargos
-    .mat-divider {
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-    }
+.empty-list-message {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 
-    // Mensagem de "Nenhum membro/cargo"
-    .empty-list-message {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--accent-600); // Was #5d5d5d
-      font-style: italic;
-      margin: 1rem 0;
-
-      .mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
-
-      // Versão menor para a lista de candidatos
-      &.small {
-        margin: 0.5rem 0;
-        font-size: 0.9rem;
-      }
-    }
+  &.small {
+    padding: 0.5rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -215,9 +311,7 @@ h1 {
   flex-wrap: wrap;
 }
 
-.import-button {
-  /* Estilo para o botão de importação */
-}
+
 
 /* Opcional: Adicionar um divisor "ou" */
 .ou-divider {

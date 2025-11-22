@@ -158,70 +158,81 @@
         <h2>Revisão Final</h2>
         <p>Confira os dados antes de criar a eleição.</p>
 
-        <div class="review-cards-container">
-          <mat-card appearance="outlined">
-            <mat-card-header>
-              <mat-icon mat-card-avatar>info_outline</mat-icon>
-              <mat-card-title>Detalhes da Eleição</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <h4>Título</h4>
-              <p>{{ eleicaoForm.get('passoTitulo.titulo')?.value || 'Nenhum título informado' }}</p>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card appearance="outlined">
-            <mat-card-header>
-              <mat-icon mat-card-avatar>people_outline</mat-icon>
-              <mat-card-title>Membros Elegíveis</mat-card-title>
-              <mat-card-subtitle>Total: {{ membrosElegiveisArr.length }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <mat-list dense *ngIf="membrosElegiveisArr.length > 0; else noMembros">
-                <mat-list-item *ngFor="let m of membrosElegiveisArr.value">
-                  <mat-icon matListItemIcon>person</mat-icon>
-                  <span matListItemTitle>{{ m.nome }}</span>
-                  <span matListItemLine>ID: {{ m.id }}</span>
-                </mat-list-item>
-              </mat-list>
-              <ng-template #noMembros>
-                <p class="empty-list-message">
-                  <mat-icon>warning_amber</mat-icon>
-                  Nenhum membro foi adicionado.
-                </p>
-              </ng-template>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card appearance="outlined">
-            <mat-card-header>
-              <mat-icon mat-card-avatar>assignment_ind_outline</mat-icon>
-              <mat-card-title>Cargos e Candidatos</mat-card-title>
-              <mat-card-subtitle>Total: {{ cargosArr.length }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <div *ngIf="cargosArr.length > 0; else noCargos">
-                <div *ngFor="let c of cargosArr.value; let i = index">
-                  <h4 class="cargo-review-title">{{ c.titulo || 'Cargo sem título' }}</h4>
-                  <mat-list dense>
-                    <mat-list-item *ngFor="let cand of getCandidatosIniciais(i).value">
-                      <mat-icon matListItemIcon>how_to_reg</mat-icon>
-                      <span matListItemTitle>{{ cand.nome }}</span>
-                      <span matListItemLine>ID: {{ cand.userId }}</span>
-                    </mat-list-item>
-                  </mat-list>
-                  <p *ngIf="getCandidatosIniciais(i).length === 0" class="empty-list-message small">Nenhum candidato para este cargo.</p>
-                  <mat-divider *ngIf="i < cargosArr.length - 1"></mat-divider>
-                </div>
+        <div class="review-container-modern">
+          <!-- Hero Section -->
+          <div class="review-hero">
+            <div class="hero-content">
+              <h3>{{ eleicaoForm.get('passoTitulo.titulo')?.value || 'Nova Eleição' }}</h3>
+              <p>Resumo da Eleição</p>
+            </div>
+            <div class="hero-stats">
+              <div class="stat-badge">
+                <span class="stat-number">{{ membrosElegiveisArr.length }}</span>
+                <span class="stat-label">Membros</span>
               </div>
-              <ng-template #noCargos>
-                <p class="empty-list-message">
-                  <mat-icon>warning_amber</mat-icon>
-                  Nenhum cargo foi adicionado.
-                </p>
-              </ng-template>
-            </mat-card-content>
-          </mat-card>
+              <div class="stat-badge">
+                <span class="stat-number">{{ cargosArr.length }}</span>
+                <span class="stat-label">Cargos</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid Layout -->
+          <div class="review-grid">
+            <!-- Membros Card -->
+            <div class="modern-card membros-card">
+              <div class="card-header-modern">
+                <mat-icon>people</mat-icon>
+                <h4>Membros Elegíveis</h4>
+              </div>
+              <div class="card-content-modern scrollable-list">
+                <mat-list dense *ngIf="membrosElegiveisArr.length > 0; else noMembros">
+                  <mat-list-item *ngFor="let m of membrosElegiveisArr.value">
+                    <mat-icon matListItemIcon>person</mat-icon>
+                    <span matListItemTitle>{{ m.nome }}</span>
+                    <span matListItemLine>ID: {{ m.id }}</span>
+                  </mat-list-item>
+                </mat-list>
+                <ng-template #noMembros>
+                  <p class="empty-list-message">
+                    <mat-icon>warning_amber</mat-icon>
+                    Nenhum membro adicionado.
+                  </p>
+                </ng-template>
+              </div>
+            </div>
+
+            <!-- Cargos Card -->
+            <div class="modern-card cargos-card">
+              <div class="card-header-modern">
+                <mat-icon>assignment_ind</mat-icon>
+                <h4>Cargos e Candidatos</h4>
+              </div>
+              <div class="card-content-modern scrollable-list">
+                <div *ngIf="cargosArr.length > 0; else noCargos">
+                  <div *ngFor="let c of cargosArr.value; let i = index" class="cargo-review-item">
+                    <div class="cargo-header-mini">
+                      <h5>{{ c.titulo || 'Sem Título' }}</h5>
+                      <span class="badge-count">{{ getCandidatosIniciais(i).length }} Cand.</span>
+                    </div>
+                    <mat-list dense>
+                      <mat-list-item *ngFor="let cand of getCandidatosIniciais(i).value">
+                        <mat-icon matListItemIcon>how_to_reg</mat-icon>
+                        <span matListItemTitle>{{ cand.nome }}</span>
+                      </mat-list-item>
+                    </mat-list>
+                    <p *ngIf="getCandidatosIniciais(i).length === 0" class="empty-list-message small">Sem candidatos.</p>
+                  </div>
+                </div>
+                <ng-template #noCargos>
+                  <p class="empty-list-message">
+                    <mat-icon>warning_amber</mat-icon>
+                    Nenhum cargo adicionado.
+                  </p>
+                </ng-template>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="step-nav-buttons">
