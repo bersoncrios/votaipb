@@ -22,14 +22,15 @@
         <p>Membros que poderão votar e ser votados.</p>
 
         <div class="add-membro-actions">
-          <button mat-stroked-button color="accent" type="button" (click)="fileInput.click()" [disabled]="isSaving" class="import-button">
+          <button mat-stroked-button color="accent" type="button" (click)="fileInput.click()" [disabled]="isSaving"
+            class="import-button">
             <mat-icon>upload_file</mat-icon>
             Importar de Planilha
           </button>
 
           <input hidden type="file" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls, .csv" />
 
-          </div>
+        </div>
         <div class="add-membro-form">
           <mat-form-field appearance="outline" class="membro-input">
             <mat-label>ID do Membro</mat-label>
@@ -39,14 +40,16 @@
             <mat-label>Nome Completo</mat-label>
             <input matInput #nomeInput (keyup.enter)="addMembro(idInput, nomeInput)" />
           </mat-form-field>
-          <button mat-flat-button color="primary" type="button" (click)="addMembro(idInput, nomeInput)">Adicionar</button>
+          <button mat-flat-button color="primary" type="button"
+            (click)="addMembro(idInput, nomeInput)">Adicionar</button>
         </div>
 
         <mat-list formArrayName="membrosElegiveis">
           <mat-list-item *ngFor="let membroCtrl of membrosElegiveisArr.controls; let i = index" [formGroupName]="i">
             <span matListItemTitle>{{ membroCtrl.value.nome }}</span>
             <span matListItemLine>ID: {{ membroCtrl.value.id }}</span>
-            <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)" matListItemMeta aria-label="Remover membro">
+            <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)" matListItemMeta
+              aria-label="Remover membro">
               <mat-icon>delete</mat-icon>
             </button>
           </mat-list-item>
@@ -64,83 +67,94 @@
 
     <mat-step [stepControl]="formPassoCargos" label="Cargos e Candidatos">
       <form [formGroup]="formPassoCargos" class="mat-step-form">
-        <h2>Cargos da Eleição</h2>
-        <button mat-stroked-button color="primary" type="button" (click)="addCargo()" class="add-cargo-button">
-          <mat-icon>add_circle_outline</mat-icon> Adicionar Novo Cargo
-        </button>
+        <div class="cargos-header-actions">
+          <h2>Cargos da Eleição</h2>
+          <button mat-stroked-button color="primary" type="button" (click)="addCargo()" class="add-cargo-button">
+            <mat-icon>add_circle_outline</mat-icon> Adicionar Novo Cargo
+          </button>
+        </div>
 
-        <div formArrayName="cargos" class="lista-cargos-material">
-          <mat-card *ngFor="let cargoCtrl of cargosArr.controls; let i = index" [formGroupName]="i" class="cargo-card-material">
-            <mat-card-header class="cargo-card-header-flex">
-              <mat-form-field appearance="outline" class="cargo-title-select-header">
-                <mat-label>Selecione o Cargo</mat-label>
-                <mat-select formControlName="titulo" required (selectionChange)="logSelecaoTitulo(i, cargoCtrl.get('titulo')?.value)">
-                  <mat-option *ngFor="let c of cargosDisponiveis" [value]="c">{{ c }}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="cargoCtrl.get('titulo')?.hasError('required') && cargoCtrl.get('titulo')?.touched">
-                  Obrigatório
-                </mat-error>
-              </mat-form-field>
+        <div formArrayName="cargos" class="lista-cargos-tabs">
+          <mat-tab-group [(selectedIndex)]="selectedCargoIndex" animationDuration="0ms"
+            *ngIf="cargosArr.length > 0; else noCargosWarning">
+            <mat-tab *ngFor="let cargoCtrl of cargosArr.controls; let i = index" [formGroupName]="i">
+              <ng-template mat-tab-label>
+                <div class="custom-tab-label">
+                  {{ cargoCtrl.get('titulo')?.value || 'Novo Cargo ' + (i + 1) }}
+                  <mat-icon class="tab-error-icon"
+                    *ngIf="cargoCtrl.invalid && cargoCtrl.touched">error_outline</mat-icon>
+                </div>
+              </ng-template>
 
-              <button mat-icon-button color="warn" type="button" (click)="removeCargo(i)" aria-label="Remover cargo">
-                <mat-icon>delete_forever</mat-icon>
-              </button>
-            </mat-card-header>
+              <div class="cargo-tab-content">
+                <div class="cargo-header-actions">
+                  <mat-form-field appearance="outline" class="cargo-title-select-header">
+                    <mat-label>Selecione o Cargo</mat-label>
+                    <mat-select formControlName="titulo" required
+                      (selectionChange)="logSelecaoTitulo(i, cargoCtrl.get('titulo')?.value)">
+                      <mat-option *ngFor="let c of cargosDisponiveis" [value]="c">{{ c }}</mat-option>
+                    </mat-select>
+                    <mat-error
+                      *ngIf="cargoCtrl.get('titulo')?.hasError('required') && cargoCtrl.get('titulo')?.touched">
+                      Obrigatório
+                    </mat-error>
+                  </mat-form-field>
 
-            <mat-card-content formArrayName="candidatosIniciais">
-              <h3>Candidatos ({{ getCandidatosIniciais(i).length }})</h3>
-
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Selecionar candidatos (da lista de membros)</mat-label>
-                <mat-select #membroSelect multiple> <mat-option *ngFor="let membro of membrosElegiveisArr.value; let mIdx = index" [value]="mIdx">
-                    {{ membro.nome }} ({{ membro.id }})
-                  </mat-option>
-                </mat-select>
-                <mat-error *ngIf="getCandidatosIniciais(i).invalid && getCandidatosIniciais(i).touched">
-                  É obrigatório adicionar pelo menos 1 candidato para este cargo.
-                </mat-error>
-              </mat-form-field>
-
-              <div class="candidato-actions-wrapper">
-                <button
-                  mat-stroked-button
-                  color="primary"
-                  type="button"
-                  (click)="addCandidatosSelecionados(i, membroSelect.value, membroSelect)"
-                  [disabled]="!membroSelect.value || membroSelect.value.length === 0"
-                >
-                  <mat-icon>add</mat-icon>
-                  Adicionar Selecionados
-                </button>
-                <button
-                  mat-stroked-button
-                  color="accent"
-                  type="button"
-                  (click)="addAllMembrosAsCandidatos(i)"
-                >
-                  <mat-icon>group_add</mat-icon>
-                  Adicionar Todos ({{ membrosElegiveisArr.length }})
-                </button>
-              </div>
-
-              <mat-list>
-                <mat-list-item *ngFor="let candCtrl of getCandidatosIniciais(i).controls; let cIdx = index" [formGroupName]="cIdx">
-                  <span matListItemTitle>{{ candCtrl.value.nome }}</span>
-                  <span matListItemLine>ID: {{ candCtrl.value.userId }}</span>
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    type="button"
-                    (click)="removeCandidatoDoCargo(i, cIdx)"
-                    matListItemMeta
-                    aria-label="Remover candidato"
-                  >
-                    <mat-icon>delete</mat-icon>
+                  <button mat-button color="warn" type="button" (click)="removeCargo(i)">
+                    <mat-icon>delete_forever</mat-icon> Remover este Cargo
                   </button>
-                </mat-list-item>
-              </mat-list>
-            </mat-card-content>
-          </mat-card>
+                </div>
+
+                <div class="candidatos-section" formArrayName="candidatosIniciais">
+                  <h3>Candidatos ({{ getCandidatosIniciais(i).length }})</h3>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Selecionar candidatos (da lista de membros)</mat-label>
+                    <mat-select #membroSelect multiple> <mat-option
+                        *ngFor="let membro of membrosElegiveisArr.value; let mIdx = index" [value]="mIdx">
+                        {{ membro.nome }} ({{ membro.id }})
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="getCandidatosIniciais(i).invalid && getCandidatosIniciais(i).touched">
+                      É obrigatório adicionar pelo menos 1 candidato para este cargo.
+                    </mat-error>
+                  </mat-form-field>
+
+                  <div class="candidato-actions-wrapper">
+                    <button mat-stroked-button color="primary" type="button"
+                      (click)="addCandidatosSelecionados(i, membroSelect.value, membroSelect)"
+                      [disabled]="!membroSelect.value || membroSelect.value.length === 0">
+                      <mat-icon>add</mat-icon>
+                      Adicionar Selecionados
+                    </button>
+                    <button mat-stroked-button color="accent" type="button" (click)="addAllMembrosAsCandidatos(i)">
+                      <mat-icon>group_add</mat-icon>
+                      Adicionar Todos ({{ membrosElegiveisArr.length }})
+                    </button>
+                  </div>
+
+                  <mat-list class="candidatos-list">
+                    <mat-list-item *ngFor="let candCtrl of getCandidatosIniciais(i).controls; let cIdx = index"
+                      [formGroupName]="cIdx">
+                      <span matListItemTitle>{{ candCtrl.value.nome }}</span>
+                      <span matListItemLine>ID: {{ candCtrl.value.userId }}</span>
+                      <button mat-icon-button color="warn" type="button" (click)="removeCandidatoDoCargo(i, cIdx)"
+                        matListItemMeta aria-label="Remover candidato">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+
+          <ng-template #noCargosWarning>
+            <div class="no-cargos-warning">
+              <mat-icon>info</mat-icon>
+              <p>Nenhum cargo adicionado. Clique no botão acima para começar.</p>
+            </div>
+          </ng-template>
         </div>
         <mat-error *ngIf="(cargosArr.length === 0 || cargosArr.invalid) && formPassoCargos.touched">
           Adicione pelo menos um cargo, selecione seu título e adicione pelo menos um candidato a ele.
@@ -221,7 +235,8 @@
                         <span matListItemTitle>{{ cand.nome }}</span>
                       </mat-list-item>
                     </mat-list>
-                    <p *ngIf="getCandidatosIniciais(i).length === 0" class="empty-list-message small">Sem candidatos.</p>
+                    <p *ngIf="getCandidatosIniciais(i).length === 0" class="empty-list-message small">Sem candidatos.
+                    </p>
                   </div>
                 </div>
                 <ng-template #noCargos>

@@ -76,34 +76,80 @@ h1 {
 }
 
 // Botão Adicionar Cargo (Passo 3)
-.add-cargo-button {
-  margin-bottom: 1.5rem;
+// Header Actions (Título + Botão Adicionar)
+.cargos-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+  }
+
+  .add-cargo-button {
+    margin: 0;
+  }
 }
 
-// Lista de Cards de Cargos
-.lista-cargos-material {
+// Tab Content Styling
+.cargo-tab-content {
+  padding: 1.5rem;
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-top: none; // Conecta com a aba
+  border-radius: 0 0 8px 8px;
+
+  .cargo-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+
+    .cargo-title-select-header {
+      flex-grow: 1;
+    }
+  }
+}
+
+// Custom Tab Label (com ícone de erro)
+.custom-tab-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .tab-error-icon {
+    color: var(--warn-500, #f44336);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Warning quando não há cargos
+.no-cargos-warning {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background-color: var(--accent-50);
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
 
-.cargo-card-material {
-  .mat-mdc-card-header {
-    padding-bottom: 0;
-    justify-content: space-between;
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
   }
 
-  // Estilo antigo - parece que faltava um '}' aqui, corrigi
-  .cargo-title-select {
-    width: 70%;
-  }
-
-  .remove-cargo-button {
-    margin-top: -8px;
-  }
-
-  .mat-mdc-card-content {
-    padding-top: 1rem;
+  p {
+    font-size: 1.1rem;
+    margin: 0;
   }
 }
 

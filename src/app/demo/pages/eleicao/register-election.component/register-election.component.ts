@@ -17,7 +17,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { MatSelect, MatSelectModule } from '@angular/material/select'; // <-- MUDANÇA: Importa MatSelect
+import { MatTabsModule } from '@angular/material/tabs'; // <-- MUDANÇA: Importa MatTabsModule
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { OnlyNumbersDirective } from "src/app/directives/OnlyNumbersDirective";
 import * as XLSX from 'xlsx';
@@ -45,9 +46,10 @@ const CARGOS_PERMITIDOS: Cargo['titulo'][] = [
     MatIconModule,
     MatCardModule,
     MatSelectModule,
+    MatTabsModule, // <-- MUDANÇA: Adiciona MatTabsModule
     MatSnackBarModule,
     OnlyNumbersDirective
-],
+  ],
   templateUrl: './register-election.component.html',
   styleUrls: ['./register-election.component.scss']
 })
@@ -60,6 +62,7 @@ export class RegisterElectionComponent implements OnInit {
   eleicaoForm: FormGroup;
   cargosDisponiveis = [...CARGOS_PERMITIDOS];
   isSaving = false;
+  selectedCargoIndex = 0; // <-- MUDANÇA: Índice da aba selecionada
 
   constructor() {
     this.eleicaoForm = this.fb.group({
@@ -75,7 +78,7 @@ export class RegisterElectionComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   get formPassoTitulo(): FormGroup {
     return this.eleicaoForm.get('passoTitulo') as FormGroup;
@@ -138,11 +141,18 @@ export class RegisterElectionComponent implements OnInit {
   addCargo() {
     const cargoFG = this.createCargoGroup();
     this.cargosArr.push(cargoFG);
+    // MUDANÇA: Seleciona a nova aba (último índice)
+    this.selectedCargoIndex = this.cargosArr.length - 1;
   }
   removeCargo(index: number) {
     const tituloRemovido = this.cargosArr.at(index).value.titulo || 'sem título';
     this.cargosArr.removeAt(index);
     this.snackBar.open(`Cargo ${tituloRemovido} removido.`, 'OK', { duration: 2000 });
+
+    // MUDANÇA: Ajusta a seleção da aba se necessário
+    if (this.selectedCargoIndex >= this.cargosArr.length) {
+      this.selectedCargoIndex = Math.max(0, this.cargosArr.length - 1);
+    }
   }
   getCandidatosIniciais(cargoIndex: number): FormArray {
     return (this.cargosArr.at(cargoIndex) as FormGroup).get('candidatosIniciais') as FormArray;
