@@ -1,18 +1,28 @@
 <div class="lp-container">
 
   <header class="hero-section">
-    <div class="hero-content">
-      <img src="assets/images/logo.png" alt="Logo VotaIPB" class="hero-logo" />
-      <h1>Votações seguras e transparentes para a sua Igreja</h1>
-      <p class="hero-subtitle">
-        Modernize assembleias, reuniões plenárias e eleições com o VotaIPB.<br>
-        Simples para quem vota, auditável para quem administra.
-      </p>
-      <div class="hero-actions">
-        <a routerLink="/auth/login" class="btn btn--primary">
-          Começar Agora <fa-icon [icon]="faArrowRight"></fa-icon>
-        </a>
-        <a href="#numeros" class="btn btn--text">Ver nossos números</a>
+    <div class="hero-container">
+      <div class="hero-content">
+        <img src="assets/images/logo.png" alt="Logo VotaIPB" class="hero-logo" />
+        <h1>Votações seguras e transparentes para a sua Igreja</h1>
+        <p class="hero-subtitle">
+          Modernize assembleias, reuniões plenárias e eleições com o VotaIPB.<br>
+          Simples para quem vota, auditável para quem administra.
+        </p>
+        <div class="hero-actions">
+          <a routerLink="/auth/login" class="btn btn--primary">
+            Começar Agora <fa-icon [icon]="faArrowRight"></fa-icon>
+          </a>
+          <a href="#numeros" class="btn btn--text">Ver nossos números</a>
+        </div>
+      </div>
+
+      <div class="hero-image-wrapper">
+        <img
+          src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1632&q=80"
+          alt="Interior de Igreja" class="hero-image" />
+        <!-- Elemento decorativo -->
+        <div class="hero-decoration"></div>
       </div>
     </div>
   </header>
@@ -126,6 +136,7 @@
   </section>
 
   <section class="lp-section cta-section">
+    <div class="cta-overlay"></div>
     <div class="cta-content">
       <h2>Pronto para modernizar sua próxima assembleia?</h2>
       <p>Crie sua conta hoje mesmo e experimente a simplicidade do VotaIPB.</p>
