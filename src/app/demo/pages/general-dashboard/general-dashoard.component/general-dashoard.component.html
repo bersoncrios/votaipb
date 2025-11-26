@@ -64,71 +64,65 @@
       <p>Junte-se as igrejas e concílios que já modernizaram suas eleições.</p>
     </div>
 
-    <div *ngIf="isLoading; else loaded" class="loading-container">
-      <div class="spinner"></div>
-      <p>Carregando indicadores em tempo real...</p>
-    </div>
+    <!-- Removido o loading spinner e ng-template -->
+    <div *ngIf="stats" class="stats-grid">
 
-    <ng-template #loaded>
-      <div *ngIf="stats" class="stats-grid">
-
-        <div class="stat-card stat-card--total">
-          <div class="stat-content">
-            <span class="stat-label">Total Processado</span>
-            <p class="stat-number">{{ stats.total | number }}</p>
-            <p class="stat-description">Eleições já registradas em nossa base.</p>
-          </div>
-          <div class="stat-icon-bg">
-            <fa-icon [icon]="faArchive"></fa-icon>
-          </div>
+      <div class="stat-card stat-card--total">
+        <div class="stat-content">
+          <span class="stat-label">Total Processado</span>
+          <p class="stat-number">{{ displayStats.total | number }}</p>
+          <p class="stat-description">Eleições já registradas em nossa base.</p>
         </div>
-
-        <div class="stat-card stat-card--finalizada">
-          <div class="stat-content">
-            <span class="stat-label">Sucesso</span>
-            <p class="stat-number">{{ stats.finalizada | number }}</p>
-            <p class="stat-description">Eleições finalizadas e apuradas com sucesso.</p>
-          </div>
-          <div class="stat-icon-bg">
-            <fa-icon [icon]="faCheckCircle"></fa-icon>
-          </div>
+        <div class="stat-icon-bg">
+          <fa-icon [icon]="faArchive"></fa-icon>
         </div>
-
-        <div class="stat-card stat-card--em-andamento">
-          <div class="stat-content">
-            <span class="stat-label">Acontecendo Agora</span>
-            <p class="stat-number">{{ stats.emAndamento | number }}</p>
-            <p class="stat-description">Eleições em andamento neste exato momento.</p>
-          </div>
-          <div class="stat-icon-bg pulse-animation">
-            <fa-icon [icon]="faSyncAlt"></fa-icon>
-          </div>
-        </div>
-
-        <div class="stat-card stat-card--agendada">
-          <div class="stat-content">
-            <span class="stat-label">Futuro</span>
-            <p class="stat-number">{{ stats.agendada | number }}</p>
-            <p class="stat-description">Próximas eleições já programadas.</p>
-          </div>
-          <div class="stat-icon-bg">
-            <fa-icon [icon]="faCalendarAlt"></fa-icon>
-          </div>
-        </div>
-
-        <div *ngIf="stats.desconhecido > 0" class="stat-card stat-card--desconhecido">
-          <div class="stat-content">
-            <span class="stat-label">Atenção</span>
-            <p class="stat-number">{{ stats.desconhecido | number }}</p>
-            <p class="stat-description">Status não identificado.</p>
-          </div>
-          <div class="stat-icon-bg">
-            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
-          </div>
-        </div>
-
       </div>
-    </ng-template>
+
+      <div class="stat-card stat-card--finalizada">
+        <div class="stat-content">
+          <span class="stat-label">Sucesso</span>
+          <p class="stat-number">{{ displayStats.finalizada | number }}</p>
+          <p class="stat-description">Eleições finalizadas e apuradas com sucesso.</p>
+        </div>
+        <div class="stat-icon-bg">
+          <fa-icon [icon]="faCheckCircle"></fa-icon>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--em-andamento">
+        <div class="stat-content">
+          <span class="stat-label">Acontecendo Agora</span>
+          <p class="stat-number">{{ displayStats.emAndamento | number }}</p>
+          <p class="stat-description">Eleições em andamento neste exato momento.</p>
+        </div>
+        <div class="stat-icon-bg pulse-animation">
+          <fa-icon [icon]="faSyncAlt"></fa-icon>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--agendada">
+        <div class="stat-content">
+          <span class="stat-label">Futuro</span>
+          <p class="stat-number">{{ displayStats.agendada | number }}</p>
+          <p class="stat-description">Próximas eleições já programadas.</p>
+        </div>
+        <div class="stat-icon-bg">
+          <fa-icon [icon]="faCalendarAlt"></fa-icon>
+        </div>
+      </div>
+
+      <div *ngIf="displayStats.desconhecido > 0" class="stat-card stat-card--desconhecido">
+        <div class="stat-content">
+          <span class="stat-label">Atenção</span>
+          <p class="stat-number">{{ displayStats.desconhecido | number }}</p>
+          <p class="stat-description">Status não identificado.</p>
+        </div>
+        <div class="stat-icon-bg">
+          <fa-icon [icon]="faExclamationTriangle"></fa-icon>
+        </div>
+      </div>
+
+    </div>
   </section>
 
   <section class="lp-section cta-section">
