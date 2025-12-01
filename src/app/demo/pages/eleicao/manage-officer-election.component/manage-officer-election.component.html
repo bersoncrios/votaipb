@@ -1,0 +1,98 @@
+<div class="manage-container" *ngIf="eleicao$ | async as eleicao; else loading">
+
+    <div class="header-container">
+        <h1>{{ eleicao.titulo }}</h1>
+        <div class="header-actions">
+            <button (click)="onCopiarLink(eleicao.id)" class="btn-header btn-copiar-link">
+                🔗 Copiar Link
+            </button>
+        </div>
+    </div>
+    <p><strong>Status:</strong> {{ eleicao.status | titlecase }}</p>
+
+    <div *ngIf="eleicao.cargoAbertoId" class="votacao-aberta-aviso">
+        ⚠️ VOTAÇÃO ABERTA: Cargo ID {{ eleicao.cargoAbertoId }}
+    </div>
+
+    <hr>
+
+    <h2>Cargos</h2>
+    <div class="cargos-lista">
+
+        <div *ngFor="let cargo of eleicao.cargos" class="cargo-card">
+            <h3>{{ cargo.titulo }}</h3>
+            <p class="cargo-status">Status do Cargo: <strong>{{ cargo.status | uppercase }}</strong></p>
+
+            <!-- CARGO AGUARDANDO -->
+            <div *ngIf="cargo.status === 'aguardando'" class="controles-inicial">
+                <p>A votação para este cargo ainda não foi iniciada.</p>
+                <button (click)="onAbrirVotacao(eleicao, cargo)" [disabled]="!!eleicao.cargoAbertoId">
+                    Iniciar Votação
+                </button>
+            </div>
+
+            <!-- CARGO EM VOTAÇÃO -->
+            <div *ngIf="cargo.status === 'em_votacao'" class="escrutinios-lista">
+                <div class="escrutinio-card">
+                    <h4>Votação em Andamento</h4>
+
+                    <div class="contagem-votacao">
+                        <div class="contagem-item">
+                            <strong>{{ cargo.votos.length }}</strong>
+                            <span>Votaram</span>
+                        </div>
+                        <div class="contagem-item faltam">
+                            <strong>{{ eleicao.membrosElegiveis.length - cargo.votos.length }}</strong>
+                            <span>Faltam</span>
+                        </div>
+                        <div class="contagem-item total">
+                            <strong>{{ eleicao.membrosElegiveis.length }}</strong>
+                            <span>Total</span>
+                        </div>
+                    </div>
+
+                    <div class="controles">
+                        <button (click)="onEncerrarVotacao(eleicao, cargo)">
+                            Fechar Votação e Apurar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARGO FINALIZADO -->
+            <div *ngIf="cargo.status === 'finalizado'" class="vencedor-bloco">
+                <h4>Eleição Finalizada</h4>
+                <p>{{ cargo.votos.length }} voto(s) computado(s)</p>
+
+                <button class="btn-sanfona" (click)="toggleResultados(cargo.id)">
+                    {{ isResultadosExpandidos(cargo.id) ? 'Recolher' : 'Ver' }} Resultados Detalhados
+                    <span class="sanfona-icon">{{ isResultadosExpandidos(cargo.id) ? '▲' : '▼' }}</span>
+                </button>
+
+                <div class="sanfona-conteudo" *ngIf="isResultadosExpandidos(cargo.id)">
+                    <div class="apuracao-finalizada-container">
+                        <h5>Resultado da Apuração</h5>
+
+                        <ul class="lista-resultados-apuracao">
+                            <li *ngFor="let resultado of getResultadosOrdenados(cargo); let i = index"
+                                [class.vencedor-item]="i < cargo.vagas" [class.outros-item]="i >= cargo.vagas">
+
+                                <span class="nome-candidato">
+                                    {{ i + 1 }}. {{ resultado.nome }}
+                                    <span class="badge-status">{{ i < cargo.vagas ? '✅ ELEITO' : 'Não eleito' }}</span>
+                                    </span>
+
+                                    <strong class="votos-candidato">{{ resultado.votos }} votos</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<ng-template #loading>
+    <p>Carregando dados da eleição...</p>
+</ng-template>

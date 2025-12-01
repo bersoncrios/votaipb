@@ -1,0 +1,119 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<div class="votacao-container">
+
+    <div [ngSwitch]="step">
+
+        <!-- ESTADO: CARREGANDO -->
+        <div *ngSwitchCase="'carregando'" class="loading-container">
+            <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+            <p>A carregar dados da votação...</p>
+        </div>
+
+        <!-- PASSO 1: IDENTIFICAÇÃO -->
+        <div *ngSwitchCase="'identificacao'" class="wizard-step step-identificacao">
+            <ng-container *ngIf="cargoAberto">
+                <h2 class="step-title">{{ eleicao?.titulo }}</h2>
+                <p class="step-description">
+                    Bem-vindo(a) à votação para <strong>{{ cargoAberto.titulo }}</strong>.<br>
+                    Por favor, identifique-se para continuar.
+                </p>
+
+                <form [formGroup]="idForm" (ngSubmit)="onValidarEleitor()" class="id-form">
+                    <label for="eleitorId" class="form-label">Identifique-se com o seu ID de membro:</label>
+                    <input id="eleitorId" formControlName="eleitorId" placeholder="Digite o seu ID" class="form-input"
+                        autocomplete="off">
+
+                    <button type="submit" [disabled]="idForm.invalid" class="btn btn-primary btn-submit">
+                        Entrar na Votação
+                    </button>
+                </form>
+
+                <!-- Mensagem de erro -->
+                <div *ngIf="errorMessage && step === 'identificacao'" class="error-message">
+                    <mat-icon>warning</mat-icon> {{ errorMessage }}
+                </div>
+            </ng-container>
+        </div>
+
+        <!-- PASSO 2: VOTAÇÃO (MULTI-SELECT) -->
+        <div *ngSwitchCase="'votacao'" class="wizard-step step-votacao">
+            <ng-container *ngIf="cargoAberto && eleitorValidado">
+                <h3 class="step-title">{{ cargoAberto.titulo }}</h3>
+                <p class="step-description">
+                    Olá, <strong>{{ eleitorValidado.nome }}</strong>.<br>
+                    Selecione até <strong>{{ cargoAberto.vagas }}</strong> candidato(s).
+                </p>
+
+                <div class="candidatos-grid">
+                    <div *ngFor="let candidato of cargoAberto.candidatos; let i = index" class="candidato-btn"
+                        [class.selected]="isCandidatoSelecionado(i)" (click)="toggleCandidato(i)">
+                        <span class="nome">{{ candidato.nome }}</span>
+                    </div>
+                </div>
+
+                <div class="selecao-info" [class.limit-reached]="candidatosSelecionados.length > cargoAberto.vagas">
+                    <span *ngIf="candidatosSelecionados.length <= cargoAberto.vagas">
+                        {{ candidatosSelecionados.length }} de {{ cargoAberto.vagas }} selecionados
+                    </span>
+                    <span *ngIf="candidatosSelecionados.length > cargoAberto.vagas">
+                        ⚠️ Você selecionou {{ candidatosSelecionados.length }}, o máximo é {{ cargoAberto.vagas }}.
+                    </span>
+                </div>
+
+                <button class="btn btn-primary btn-avancar" (click)="onAvancarParaConfirmacao()"
+                    [disabled]="!podeAvancar">
+                    Avançar para Confirmação
+                </button>
+            </ng-container>
+        </div>
+
+        <!-- PASSO 3: CONFIRMAÇÃO -->
+        <div *ngSwitchCase="'confirmacao'" class="wizard-step step-confirmacao">
+            <h3 class="step-title">Confirme o seu Voto</h3>
+            <p class="step-description">Você está votando para: <strong>{{ cargoAberto?.titulo }}</strong></p>
+
+            <div class="voto-selecionado-card">
+                <h5>Candidatos Selecionados:</h5>
+                <ul>
+                    <li *ngFor="let candidato of candidatosSelecionados">
+                        {{ candidato.nome }}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="botoes-confirmacao">
+                <button (click)="corrigirVoto()" class="btn btn-secondary">
+                    <mat-icon>edit</mat-icon> CORRIGIR
+                </button>
+                <button (click)="onConfirmarVoto()" class="btn btn-success">
+                    <mat-icon>check_circle</mat-icon> CONFIRMAR
+                </button>
+            </div>
+        </div>
+
+        <!-- PASSO 4: CONCLUÍDO -->
+        <div *ngSwitchCase="'concluido'" class="wizard-step step-concluido">
+            <mat-icon class="feedback-icon success">check_circle_outline</mat-icon>
+            <h2 class="step-title">Voto Registrado!</h2>
+            <p class="step-description">
+                Obrigado, <strong>{{ eleitorValidado?.nome }}</strong>.<br>
+                O seu voto foi computado com segurança.
+            </p>
+            <button (click)="reiniciar()" class="btn btn-primary">
+                Nova Votação
+            </button>
+        </div>
+
+        <!-- ESTADO: ERRO -->
+        <div *ngSwitchCase="'erro'" class="wizard-step step-erro">
+            <mat-icon class="feedback-icon error">error_outline</mat-icon>
+            <h2 class="step-title">Ops! Algo correu mal.</h2>
+            <p class="error-message-text">{{ errorMessage }}</p>
+            <button (click)="reiniciar()" class="btn btn-secondary">
+                <mat-icon>refresh</mat-icon> Tentar Novamente
+            </button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="list-container">
+    <div class="list-header">
+        <h1>Gerenciar Eleições de Oficiais</h1>
+        <a [routerLink]="['/eleicoes/oficiais/registrar']" class="btn-criar-nova">
+            Cadastrar Nova Eleição
+        </a>
+    </div>
+    <p>Aqui estão as eleições de oficiais que você cadastrou.</p>
+
+    <hr />
+
+    @if (isLoading()) {
+    <div class="loading-message">
+        <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+        <p>Carregando eleições de oficiais...</p>
+    </div>
+    } @else if (error()) {
+    <div class="error-message">
+        <p>{{ error() }}</p>
+    </div>
+    } @else if (allEleicoes().length === 0) {
+    <div class="empty-state">
+        <p>Nenhuma eleição de oficiais encontrada.</p>
+        <a [routerLink]="['/eleicoes/oficiais/registrar']" class="btn-criar-nova">
+            Cadastrar Nova Eleição
+        </a>
+    </div>
+    } @else {
+    <div class="eleicoes-grid">
+        @for (eleicao of paginatedEleicoes(); track eleicao.id) {
+        <div class="eleicao-card">
+            <div class="card-body">
+                <h3 class="card-title">{{ eleicao.titulo }}</h3>
+
+                <div class="card-status" [ngClass]="eleicao.status">
+                    {{ eleicao.status | titlecase }}
+                </div>
+
+                <p class="card-info info-cargos">
+                    {{ eleicao.cargos.length }}
+                    {{ eleicao.cargos.length === 1 ? 'cargo' : 'cargos' }}
+                </p>
+                <p class="card-info info-membros">
+                    {{ eleicao.membrosElegiveis.length }}
+                    {{
+                    eleicao.membrosElegiveis.length === 1
+                    ? 'membro elegível'
+                    : 'membros elegíveis'
+                    }}
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <a [routerLink]="['/eleicoes/oficiais/gerenciar', eleicao.id]" class="btn-gerenciar">
+                    Gerenciar
+                </a>
+            </div>
+        </div>
+        }
+    </div>
+
+    <mat-paginator class="eleicao-paginator" [length]="allEleicoes().length" [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()" [pageSizeOptions]="[4, 6, 9, 12, 24]" (page)="onPageChange($event)"
+        aria-label="Selecionar página de eleições de oficiais" showFirstLastButtons>
+    </mat-paginator>
+    }
+</div>

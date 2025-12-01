@@ -22,8 +22,16 @@ export const menus: Navigation[] = [
         classes: 'nav-item',
         url: '/sobre',
         icon: 'ti ti-info-square-rounded'
-      },
-        {
+      }
+    ]
+  },
+  {
+    id: 'eleicoesDiretorias',
+    title: 'Eleições de Diretorias',
+    type: 'group',
+    icon: 'ti ti-menu-2',
+    children: [
+      {
         id: 'Registrar Eleições',
         title: 'Registrar Eleições',
         type: 'item',
@@ -31,15 +39,47 @@ export const menus: Navigation[] = [
         url: '/eleicoes/registrar',
         icon: 'ti ti-file-plus'
       },
-        {
+      {
         id: 'Gerenciar Eleicões',
         title: 'Gerenciar Eleicões',
         type: 'item',
         classes: 'nav-item',
         url: '/eleicoes/lista',
         icon: 'ti ti-adjustments-check'
+      }
+    ]
+  },
+  {
+    id: 'eleicaoOficiais',
+    title: 'Eleições de Oficiais',
+    type: 'group',
+    icon: 'ti ti-menu-2',
+    children: [
+      {
+        id: 'Registrar Eleições de Oficiais',
+        title: 'Registrar Eleições',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/eleicoes/oficiais/registrar',
+        icon: 'ti ti-file-plus'
       },
-        {
+      {
+        id: 'Gerenciar Eleições de Oficiais',
+        title: 'Gerenciar Eleições',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/eleicoes/oficiais/gerenciar',
+        icon: 'ti ti-adjustments-check'
+      }
+    ]
+  },
+  {
+    id: 'inscricoes',
+    title: 'Inscrições',
+    type: 'group',
+    icon: 'ti ti-menu-2',
+    children: [
+      {
         id: 'Gerenciar Inscrições',
         title: 'Gerenciar Inscrições',
         type: 'item',

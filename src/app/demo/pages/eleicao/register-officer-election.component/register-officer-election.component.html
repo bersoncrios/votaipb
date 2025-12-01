@@ -1,0 +1,232 @@
+<div class="row">
+    <div class="col-sm-12">
+        <app-card cardTitle="Registrar Eleição de Oficiais">
+            <mat-stepper [linear]="true" #stepper>
+
+                <!-- PASSO 1: Título -->
+                <mat-step label="Título" [completed]="eleicaoForm.get('titulo')?.valid">
+                    <div class="p-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Título da Eleição</mat-label>
+                            <input matInput formControlName="titulo" [formControl]="$any(eleicaoForm.get('titulo'))"
+                                placeholder="Ex: Eleição de Oficiais 2024">
+                            <mat-error *ngIf="eleicaoForm.get('titulo')?.hasError('required')">
+                                O título é obrigatório.
+                            </mat-error>
+                        </mat-form-field>
+                        <div class="d-flex justify-content-end mt-3">
+                            <button mat-raised-button color="primary" matStepperNext>Próximo</button>
+                        </div>
+                    </div>
+                </mat-step>
+
+                <!-- PASSO 2: Votantes -->
+                <mat-step label="Votantes" [completed]="membrosElegiveisArr.valid">
+                    <div class="p-3">
+                        <div class="alert alert-info">
+                            <mat-icon class="align-middle">info</mat-icon>
+                            Adicione os membros que poderão votar nesta eleição.
+                        </div>
+
+                        <div class="row align-items-end mb-3">
+                            <div class="col-12 col-md-4 mb-2 mb-md-0">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>ID / Matrícula</mat-label>
+                                    <input matInput #idMembro placeholder="123">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12 col-md-6 mb-2 mb-md-0">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Nome do Membro</mat-label>
+                                    <input matInput #nomeMembro placeholder="Fulano de Tal">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <button mat-raised-button color="accent" class="w-100"
+                                    (click)="addMembro(idMembro, nomeMembro)">
+                                    <mat-icon>add</mat-icon> Adicionar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="m-0">Lista de Votantes ({{ membrosElegiveisArr.length }})</h5>
+                            <div>
+                                <input type="file" (change)="onFileChange($event)" style="display: none" #fileInput
+                                    accept=".xlsx, .xls">
+                                <button mat-stroked-button color="primary" (click)="fileInput.click()">
+                                    <mat-icon>upload_file</mat-icon> Importar Planilha
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th width="20%" class="text-start">ID</th>
+                                        <th width="60%" class="text-start">Nome</th>
+                                        <th width="20%" class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let membro of membrosElegiveisArr.controls; let i = index">
+                                        <td class="text-start">{{ membro.value.id }}</td>
+                                        <td class="text-start">{{ membro.value.nome }}</td>
+                                        <td class="text-center">
+                                            <button mat-icon-button color="warn" (click)="removeMembro(i)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="membrosElegiveisArr.length === 0">
+                                        <td colspan="3" class="text-center text-muted">Nenhum membro adicionado.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-3">
+                            <button mat-button matStepperPrevious>Voltar</button>
+                            <button mat-raised-button color="primary" matStepperNext
+                                [disabled]="membrosElegiveisArr.invalid">Próximo</button>
+                        </div>
+                    </div>
+                </mat-step>
+
+                <!-- PASSO 3: Cargos -->
+                <mat-step label="Cargos">
+                    <div class="p-3">
+                        <mat-tab-group animationDuration="0ms">
+
+                            <!-- Tab Presbítero -->
+                            <mat-tab label="Presbítero">
+                                <div class="p-3">
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-md-6">
+                                            <mat-form-field appearance="outline" class="w-100">
+                                                <mat-label>Número de Vagas</mat-label>
+                                                <input matInput type="number"
+                                                    [formControl]="$any(eleicaoForm.get('presbítero.vagas'))" min="1">
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+
+                                    <div class="row align-items-end mb-3">
+                                        <div class="col-12 col-md-8 mb-2 mb-md-0">
+                                            <mat-form-field appearance="outline" class="w-100">
+                                                <mat-label>Selecionar Candidatos</mat-label>
+                                                <mat-select #presbiteroSelect multiple>
+                                                    <mat-option
+                                                        *ngFor="let membro of membrosElegiveisArr.value; let mIndex = index"
+                                                        [value]="mIndex">
+                                                        {{ membro.nome }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                <button mat-raised-button color="accent" class="flex-grow-1"
+                                                    (click)="addCandidatosSelecionados('presbítero', presbiteroSelect.value, presbiteroSelect)">
+                                                    Adicionar Selecionados
+                                                </button>
+                                                <button mat-stroked-button class="flex-grow-1"
+                                                    (click)="addAllMembrosAsCandidatos('presbítero')">
+                                                    Todos
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h6>Candidatos Inscritos ({{ presbiteroCandidatos.length }})</h6>
+                                    <mat-list class="border rounded">
+                                        <mat-list-item
+                                            *ngFor="let candidato of presbiteroCandidatos.controls; let cIndex = index">
+                                            <div matListItemTitle>{{ candidato.value.nome }}</div>
+                                            <button mat-icon-button matListItemMeta color="warn"
+                                                (click)="removeCandidato('presbítero', cIndex)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </mat-list-item>
+                                        <mat-list-item *ngIf="presbiteroCandidatos.length === 0">
+                                            <div matListItemTitle class="text-muted">Nenhum candidato adicionado.</div>
+                                        </mat-list-item>
+                                    </mat-list>
+                                </div>
+                            </mat-tab>
+
+                            <!-- Tab Diácono -->
+                            <mat-tab label="Diácono">
+                                <div class="p-3">
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-md-6">
+                                            <mat-form-field appearance="outline" class="w-100">
+                                                <mat-label>Número de Vagas</mat-label>
+                                                <input matInput type="number"
+                                                    [formControl]="$any(eleicaoForm.get('diácono.vagas'))" min="1">
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+
+                                    <div class="row align-items-end mb-3">
+                                        <div class="col-12 col-md-8 mb-2 mb-md-0">
+                                            <mat-form-field appearance="outline" class="w-100">
+                                                <mat-label>Selecionar Candidatos</mat-label>
+                                                <mat-select #diaconoSelect multiple>
+                                                    <mat-option
+                                                        *ngFor="let membro of membrosElegiveisArr.value; let mIndex = index"
+                                                        [value]="mIndex">
+                                                        {{ membro.nome }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                <button mat-raised-button color="accent" class="flex-grow-1"
+                                                    (click)="addCandidatosSelecionados('diácono', diaconoSelect.value, diaconoSelect)">
+                                                    Adicionar Selecionados
+                                                </button>
+                                                <button mat-stroked-button class="flex-grow-1"
+                                                    (click)="addAllMembrosAsCandidatos('diácono')">
+                                                    Todos
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h6>Candidatos Inscritos ({{ diaconoCandidatos.length }})</h6>
+                                    <mat-list class="border rounded">
+                                        <mat-list-item
+                                            *ngFor="let candidato of diaconoCandidatos.controls; let cIndex = index">
+                                            <div matListItemTitle>{{ candidato.value.nome }}</div>
+                                            <button mat-icon-button matListItemMeta color="warn"
+                                                (click)="removeCandidato('diácono', cIndex)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </mat-list-item>
+                                        <mat-list-item *ngIf="diaconoCandidatos.length === 0">
+                                            <div matListItemTitle class="text-muted">Nenhum candidato adicionado.</div>
+                                        </mat-list-item>
+                                    </mat-list>
+                                </div>
+                            </mat-tab>
+
+                        </mat-tab-group>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button mat-button matStepperPrevious>Voltar</button>
+                            <button mat-raised-button color="primary" (click)="onSubmit()"
+                                [disabled]="isSaving || eleicaoForm.invalid">
+                                <mat-icon *ngIf="isSaving">hourglass_empty</mat-icon>
+                                {{ isSaving ? 'Salvando...' : 'Salvar Eleição' }}
+                            </button>
+                        </div>
+                    </div>
+                </mat-step>
+
+            </mat-stepper>
+        </app-card>
+    </div>
+</div>

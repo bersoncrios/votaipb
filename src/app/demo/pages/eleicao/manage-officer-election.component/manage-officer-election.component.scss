@@ -1,0 +1,454 @@
+/* ==============================================================
+   Estilos do Manage Officer Election Component
+   (Baseado no Election Manager Component para consistência visual)
+   ============================================================== */
+
+/* Variáveis de Cor (Tema do Admin) */
+:host {
+    --primary-color: var(--primary-500);
+    --primary-dark: var(--primary-700);
+    --bg-color: var(--accent-100);
+    --card-bg-color: var(--accent-50);
+    --nested-card-bg: var(--accent-200);
+    --border-color: var(--accent-300);
+    --text-color: var(--accent-900);
+    --text-muted: var(--accent-600);
+
+    // Cores de Ação
+    --action-open: var(--primary-500);
+    --action-close: var(--warn-500);
+    --action-secondary: var(--accent-600);
+    --action-confirm: var(--success-500);
+
+    // Cores de Status
+    --status-aberto: var(--success-500);
+    --status-fechado: var(--accent-600);
+    --status-aguardando: var(--primary-500);
+    --status-em_votacao: var(--status-aberto);
+    --status-finalizado: var(--success-700);
+}
+
+/* Container Principal */
+:host {
+    display: block;
+    background-color: var(--bg-color);
+    min-height: 100vh;
+}
+
+.manage-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    font-family: inherit;
+    color: var(--text-color);
+}
+
+/* Header Principal (Título e Ações) */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+
+    h1 {
+        color: var(--primary-dark);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-top: 0;
+        margin-bottom: 0;
+        flex-grow: 1;
+    }
+}
+
+.header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.btn-header {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.btn-copiar-link {
+    background-color: var(--action-open);
+    color: white;
+
+    &:hover {
+        background-color: var(--primary-dark);
+    }
+}
+
+.manage-container p {
+    font-size: 1.1rem;
+
+    strong {
+        color: var(--text-muted);
+    }
+}
+
+.manage-container hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+}
+
+/* Aviso de Votação Aberta */
+.votacao-aberta-aviso {
+    background-color: var(--nested-card-bg);
+    border: 1px solid var(--warning-300);
+    border-left: 5px solid var(--warning-700);
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+/* Lista de Cargos (Card Principal) */
+.cargos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.cargo-card {
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+
+    h3 {
+        font-size: 1.75rem;
+        color: var(--primary-dark);
+        margin: 0;
+        padding: 1.5rem 2rem 0.5rem 2rem;
+        background-color: var(--nested-card-bg);
+    }
+
+    .cargo-status {
+        padding: 0 2rem 1.5rem 2rem;
+        background-color: var(--nested-card-bg);
+        font-weight: 600;
+        color: var(--text-muted);
+        font-size: 1rem;
+        border-bottom: 1px solid var(--border-color);
+
+        strong {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+    }
+}
+
+/* Controles Inicial (Aguardando) */
+.controles-inicial {
+    padding: 2rem;
+    text-align: center;
+
+    p {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-muted);
+    }
+
+    button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: var(--action-open);
+        color: white;
+
+        &:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &:disabled {
+            background-color: var(--accent-400);
+            cursor: not-allowed;
+        }
+    }
+}
+
+/* Lista de Escrutínios (Cards Aninhados) */
+.escrutinios-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.escrutinio-card {
+    background-color: var(--nested-card-bg);
+    border: 1px solid var(--accent-300);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    border-left: 5px solid var(--status-aberto);
+
+    h4 {
+        font-size: 1.25rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+}
+
+/* Bloco de Contagem de Votos */
+.contagem-votacao {
+    display: flex;
+    justify-content: space-around;
+    gap: 0.5rem;
+    background-color: var(--accent-100);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.contagem-item {
+    margin: 0 !important;
+    padding: 0;
+    font-size: 0.9rem !important;
+    color: var(--text-muted) !important;
+    font-weight: 600 !important;
+
+    strong {
+        display: block;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    &.total strong {
+        color: var(--primary-color);
+    }
+
+    &.faltam strong {
+        color: var(--action-close);
+    }
+}
+
+/* Botões de Controle */
+.controles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: auto;
+
+    button {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: var(--action-close);
+        color: white;
+
+        &:hover:not(:disabled) {
+            background-color: var(--warn-900);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &:disabled {
+            background-color: var(--accent-400);
+            cursor: not-allowed;
+        }
+    }
+}
+
+/* Bloco Vencedor (Finalizado) */
+.vencedor-bloco {
+    padding: 2rem 2.5rem;
+    background-color: var(--nested-card-bg);
+    text-align: center;
+    border: 1px solid var(--success-500);
+
+    h4 {
+        font-size: 1.5rem;
+        color: var(--success-500);
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+        margin: 0.25rem 0 1.5rem 0;
+        color: var(--text-color);
+    }
+}
+
+/* Botão Sanfona (Acordeão) */
+.btn-sanfona {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: var(--accent-100);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: var(--accent-200);
+    }
+
+    .sanfona-icon {
+        font-size: 0.9rem;
+    }
+}
+
+/* Container do conteúdo da sanfona */
+.sanfona-conteudo {
+    .apuracao-finalizada-container {
+        margin-top: 0.75rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+}
+
+/* Bloco de Apuração Final */
+.apuracao-finalizada-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border-color);
+    text-align: left;
+
+    h5 {
+        font-size: 1.3rem;
+        color: var(--primary-dark);
+        margin-top: 0;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+}
+
+/* Lista de Resultados da Apuração */
+.lista-resultados-apuracao {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 1rem 0;
+
+    li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+
+        .nome-candidato {
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            .badge-status {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+                border-radius: 12px;
+                font-weight: 600;
+            }
+        }
+
+        .votos-candidato {
+            font-size: 1.1rem;
+        }
+    }
+
+    li.vencedor-item {
+        background-color: var(--nested-card-bg);
+        border-left: 4px solid var(--action-confirm);
+
+        .nome-candidato {
+            color: var(--text-color);
+
+            .badge-status {
+                background-color: var(--success-500);
+                color: white;
+            }
+        }
+
+        .votos-candidato {
+            color: var(--action-confirm);
+            font-weight: 700;
+        }
+    }
+
+    li.outros-item {
+        background-color: var(--accent-50);
+        border-left: 4px solid var(--accent-200);
+
+        .badge-status {
+            background-color: var(--accent-400);
+            color: white;
+        }
+    }
+}
+
+/* Responsividade */
+@media (max-width: 767px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+
+        h1 {
+            font-size: 1.5rem;
+        }
+    }
+
+    .header-actions {
+        width: 100%;
+
+        .btn-header {
+            flex: 1;
+        }
+    }
+
+    .escrutinios-lista {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .contagem-votacao {
+        flex-direction: column;
+        text-align: center;
+    }
+}

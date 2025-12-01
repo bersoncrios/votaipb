@@ -25,6 +25,11 @@ export const routes: Routes = [
         loadComponent: () => import('./demo/pages/inscricao/inscricao.component/inscricao.component').then((m) => m.InscricaoComponent)
       },
       {
+        path: 'votar-oficial/:id',
+        loadComponent: () =>
+          import('./demo/pages/eleicao/votar-oficial.component/votar-oficial.component').then((m) => m.VotarOficialComponent)
+      },
+      {
         path: 'dash',
         redirectTo: '',
         pathMatch: 'full'
@@ -40,6 +45,24 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         loadComponent: () =>
           import('./demo/pages/eleicao/register-election.component/register-election.component').then((m) => m.RegisterElectionComponent)
+      },
+      {
+        path: 'eleicoes/oficiais/registrar',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/register-officer-election.component/register-officer-election.component').then((m) => m.RegisterOfficerElectionComponent)
+      },
+      {
+        path: 'eleicoes/oficiais/gerenciar/:id',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/manage-officer-election.component/manage-officer-election.component').then((m) => m.ManageOfficerElectionComponent)
+      },
+      {
+        path: 'eleicoes/oficiais/gerenciar',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/officer-election-list.component/officer-election-list.component').then((m) => m.OfficerElectionListComponent)
       },
       {
         path: 'eleicoes/gerenciar/:id',

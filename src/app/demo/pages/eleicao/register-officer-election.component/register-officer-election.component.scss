@@ -1,0 +1,68 @@
+.table-responsive {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+
+    table {
+        margin-bottom: 0;
+
+        th,
+        td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+        }
+
+        th {
+            font-weight: 600;
+            background-color: var(--bg-secondary, #f5f5f5);
+        }
+    }
+}
+
+.mat-mdc-tab-body-content {
+    padding: 16px;
+    margin-top: 16px; // Adiciona espaço entre tabs e conteúdo
+    overflow: visible !important; // Evita corte de dropdowns
+}
+
+// Garantir que mat-tab-group não corte conteúdo
+mat-tab-group {
+    .mat-mdc-tab-body-wrapper {
+        overflow: visible !important;
+    }
+}
+
+// Responsividade para botões
+.d-flex.gap-2 {
+    gap: 0.5rem !important;
+
+    button {
+        min-width: 0;
+        white-space: nowrap;
+    }
+}
+
+// Mobile
+@media (max-width: 767px) {
+    .d-flex.gap-2 {
+        flex-direction: column !important;
+
+        button {
+            width: 100%;
+        }
+    }
+
+    .mat-mdc-form-field {
+        margin-bottom: 0.5rem;
+    }
+
+    .table-responsive {
+        table {
+
+            th,
+            td {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+        }
+    }
+}

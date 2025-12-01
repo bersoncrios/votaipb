@@ -1,0 +1,292 @@
+/* Variáveis (Combine com seu tema) */
+:host {
+    --primary-color: var(--primary-500);
+    --primary-dark: var(--primary-700);
+    --bg-color: var(--accent-100);
+    --card-bg-color: var(--accent-50);
+    --border-color: var(--accent-300);
+    --text-color: var(--accent-900);
+    --text-muted: var(--accent-600);
+    --link-color: var(--primary-color);
+    --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+
+    // Cores de Status
+    --status-agendada-bg: var(--warning-50);
+    --status-agendada-text: var(--warning-900);
+    --status-agendada-border: var(--warning-200);
+
+    --status-em_andamento-bg: var(--success-50);
+    --status-em_andamento-text: var(--success-900);
+    --status-em_andamento-border: var(--success-200);
+
+    --status-finalizada-bg: var(--accent-200);
+    --status-finalizada-text: var(--accent-800);
+    --status-finalizada-border: var(--accent-300);
+
+    .list-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2.5rem 2rem;
+        font-family: inherit;
+        color: var(--text-color);
+
+        // Cabeçalho
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+
+            h1 {
+                color: var(--primary-dark);
+                margin: 0;
+                font-size: 1.8rem;
+            }
+        }
+
+        // Botão Criar Nova Eleição
+        .btn-criar-nova {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            cursor: pointer;
+
+            &::before {
+                content: '+';
+                font-weight: bold;
+                font-size: 1.2em;
+            }
+
+            &:hover {
+                background-color: var(--primary-dark);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid var(--border-color);
+            margin: 2.5rem 0;
+        }
+    }
+
+    // Estados (Carregando, Erro, Vazio)
+    .loading-message,
+    .error-message,
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        background-color: var(--card-bg-color);
+        border: 1px dashed var(--border-color);
+        border-radius: var(--border-radius);
+        margin-top: 2rem;
+
+        p {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .loading-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .error-message {
+        color: var(--warn-900);
+        background-color: var(--warn-50);
+        border-color: var(--warn-200);
+    }
+
+    .empty-state {
+        &::before {
+            content: '📄';
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        a {
+            @extend .btn-criar-nova;
+            margin-top: 1rem;
+        }
+    }
+
+    // Grid de Eleições
+    .eleicoes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    // Card Individual
+    .eleicao-card {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--card-bg-color);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-body {
+            padding: 1.5rem 1.75rem;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            border: 1px solid transparent;
+
+            &::before {
+                content: '';
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: currentColor;
+            }
+
+            &.agendada {
+                background-color: var(--status-agendada-bg);
+                color: var(--status-agendada-text);
+                border-color: var(--status-agendada-border);
+            }
+
+            &.em_andamento {
+                background-color: var(--status-em_andamento-bg);
+                color: var(--status-em_andamento-text);
+                border-color: var(--status-em_andamento-border);
+            }
+
+            &.finalizada {
+                background-color: var(--status-finalizada-bg);
+                color: var(--status-finalizada-text);
+                border-color: var(--status-finalizada-border);
+            }
+        }
+
+        .card-info {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+
+            &.info-cargos::before {
+                content: '🗳️';
+                opacity: 0.7;
+            }
+
+            &.info-membros::before {
+                content: '👥';
+                opacity: 0.7;
+            }
+        }
+
+        .card-footer {
+            background-color: var(--accent-100);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.75rem;
+            text-align: right;
+        }
+
+        .btn-gerenciar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+
+            &:hover {
+                background-color: var(--primary-dark);
+                transform: scale(1.03);
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+    }
+
+    // Paginação
+    .eleicao-paginator {
+        background-color: var(--card-bg-color);
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        margin-top: 2rem;
+        padding: 0 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+
+        .mat-mdc-form-field {
+
+            .mat-mdc-select-value,
+            .mat-mdc-select-arrow,
+            .mat-mdc-floating-label,
+            .mdc-line-ripple {
+                color: var(--primary-color) !important;
+            }
+
+            .mdc-line-ripple::after {
+                border-bottom-color: var(--primary-color) !important;
+            }
+        }
+
+        .mat-mdc-icon-button {
+            color: var(--text-muted);
+
+            &:not(:disabled):hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+        }
+
+        .mat-mdc-paginator-navigation-first,
+        .mat-mdc-paginator-navigation-last {
+            color: var(--primary-color);
+        }
+    }
+}
