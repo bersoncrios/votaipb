@@ -23,68 +23,51 @@
                 <!-- PASSO 2: Votantes -->
                 <mat-step label="Votantes" [completed]="membrosElegiveisArr.valid">
                     <div class="p-3">
-                        <div class="alert alert-info">
-                            <mat-icon class="align-middle">info</mat-icon>
-                            Adicione os membros que poderão votar nesta eleição.
+                        <h2>Adicionar Votantes (Total: {{ membrosElegiveisArr.length }})</h2>
+                        <p>Membros que poderão votar nesta eleição.</p>
+
+                        <div class="add-membro-actions">
+                            <button mat-stroked-button color="accent" type="button" (click)="fileInput.click()"
+                                class="import-button">
+                                <mat-icon>upload_file</mat-icon>
+                                Importar de Planilha
+                            </button>
+
+                            <input hidden type="file" #fileInput (change)="onFileChange($event)"
+                                accept=".xlsx, .xls, .csv" />
                         </div>
 
-                        <div class="row align-items-end mb-3">
-                            <div class="col-12 col-md-4 mb-2 mb-md-0">
-                                <mat-form-field appearance="outline" class="w-100">
-                                    <mat-label>ID / Matrícula</mat-label>
-                                    <input matInput #idMembro placeholder="123">
-                                </mat-form-field>
-                            </div>
-                            <div class="col-12 col-md-6 mb-2 mb-md-0">
-                                <mat-form-field appearance="outline" class="w-100">
-                                    <mat-label>Nome do Membro</mat-label>
-                                    <input matInput #nomeMembro placeholder="Fulano de Tal">
-                                </mat-form-field>
-                            </div>
-                            <div class="col-12 col-md-2">
-                                <button mat-raised-button color="accent" class="w-100"
-                                    (click)="addMembro(idMembro, nomeMembro)">
-                                    <mat-icon>add</mat-icon> Adicionar
+                        <div class="add-membro-form">
+                            <mat-form-field appearance="outline" class="membro-input">
+                                <mat-label>ID do Membro</mat-label>
+                                <input matInput #idMembro appOnlyNumbers placeholder="123">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="membro-input">
+                                <mat-label>Nome Completo</mat-label>
+                                <input matInput #nomeMembro (keyup.enter)="addMembro(idMembro, nomeMembro)"
+                                    placeholder="Fulano de Tal">
+                            </mat-form-field>
+                            <button mat-flat-button color="primary" type="button"
+                                (click)="addMembro(idMembro, nomeMembro)">Adicionar</button>
+                        </div>
+
+                        <mat-list>
+                            <mat-list-item *ngFor="let membro of membrosElegiveisArr.controls; let i = index">
+                                <span matListItemTitle>{{ membro.value.nome }}</span>
+                                <span matListItemLine>ID: {{ membro.value.id }}</span>
+                                <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)"
+                                    matListItemMeta aria-label="Remover membro">
+                                    <mat-icon>delete</mat-icon>
                                 </button>
-                            </div>
-                        </div>
+                            </mat-list-item>
+                            <mat-list-item *ngIf="membrosElegiveisArr.length === 0">
+                                <div matListItemTitle class="text-muted">Nenhum membro adicionado.</div>
+                            </mat-list-item>
+                        </mat-list>
 
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="m-0">Lista de Votantes ({{ membrosElegiveisArr.length }})</h5>
-                            <div>
-                                <input type="file" (change)="onFileChange($event)" style="display: none" #fileInput
-                                    accept=".xlsx, .xls">
-                                <button mat-stroked-button color="primary" (click)="fileInput.click()">
-                                    <mat-icon>upload_file</mat-icon> Importar Planilha
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th width="20%" class="text-start">ID</th>
-                                        <th width="60%" class="text-start">Nome</th>
-                                        <th width="20%" class="text-center">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let membro of membrosElegiveisArr.controls; let i = index">
-                                        <td class="text-start">{{ membro.value.id }}</td>
-                                        <td class="text-start">{{ membro.value.nome }}</td>
-                                        <td class="text-center">
-                                            <button mat-icon-button color="warn" (click)="removeMembro(i)">
-                                                <mat-icon>delete</mat-icon>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr *ngIf="membrosElegiveisArr.length === 0">
-                                        <td colspan="3" class="text-center text-muted">Nenhum membro adicionado.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <mat-error *ngIf="membrosElegiveisArr.length === 0 && membrosElegiveisArr.touched">
+                            Adicione pelo menos um membro elegível.
+                        </mat-error>
 
                         <div class="d-flex justify-content-between mt-3">
                             <button mat-button matStepperPrevious>Voltar</button>
