@@ -35,6 +35,7 @@ export class AuthService {
   private router: Router = inject(Router);
   public nome: string | undefined;
   public photoURL: string | undefined;
+  public role: string | undefined;
 
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -47,6 +48,7 @@ export class AuthService {
       } else {
         this.nome = undefined;
         this.photoURL = undefined;
+        this.role = undefined;
       }
     });
   }
@@ -207,6 +209,7 @@ export class AuthService {
       const userDoc = querySnapshot.docs[0].data() as SignUp;
       this.nome = userDoc.name;
       this.photoURL = userDoc.photoURL;
+      this.role = userDoc.role;
       return this.nome;
     }
     return null;

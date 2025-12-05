@@ -13,6 +13,7 @@ export interface NavigationItem {
   external?: boolean;
   target?: boolean;
   breadcrumbs?: boolean;
+  adminOnly?: boolean;
   badge?: {
     title?: string;
     type?: string;

@@ -26,6 +26,23 @@ export const menus: Navigation[] = [
     ]
   },
   {
+    id: 'adminOnly',
+    title: 'Administração',
+    type: 'group',
+    icon: 'ti ti-shield',
+    adminOnly: true,
+    children: [
+      {
+        id: 'Mensagens',
+        title: 'Mensagens',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/mensagens',
+        icon: 'ti ti-mail'
+      }
+    ]
+  },
+  {
     id: 'eleicoesDiretorias',
     title: 'Eleições de Diretorias',
     type: 'group',
@@ -88,5 +105,5 @@ export const menus: Navigation[] = [
         icon: 'ti ti-list-details'
       }
     ]
-  },
+  }
 ];

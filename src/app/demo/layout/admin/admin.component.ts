@@ -9,6 +9,8 @@ import { SharedModule } from '../../../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { NavBarComponent } from 'src/app/@theme/layouts/toolbar/toolbar.component';
 import { VerticalMenuComponent } from 'src/app/@theme/layouts/menu/vertical-menu';
+import { AuthService } from 'src/app/services/auth.service';
+import { Navigation } from 'src/app/@theme/types/navigation';
 
 @Component({
   selector: 'app-admin',
@@ -19,13 +21,17 @@ import { VerticalMenuComponent } from 'src/app/@theme/layouts/menu/vertical-menu
 export class AdminComponent implements OnInit {
   private breakpointObserver = inject(BreakpointObserver);
   private layoutService = inject(LayoutService);
+  private authService = inject(AuthService);
 
   sidebar = viewChild<MatDrawer>('sidebar');
-  menus = menus;
+  menus: Navigation[] = [];
   modeValue: MatDrawerMode = 'side';
   currentApplicationVersion = environment.appVersion;
 
   ngOnInit() {
+    // Filtra menus baseado na role do usuário
+    this.updateMenus();
+
     this.breakpointObserver.observe(['(min-width: 1025px)', '(max-width: 1024.98px)']).subscribe((result) => {
       if (result.breakpoints['(max-width: 1024.98px)']) {
         this.modeValue = 'over';
@@ -37,5 +43,10 @@ export class AdminComponent implements OnInit {
     this.layoutService.layoutState.subscribe(() => {
       this.sidebar()?.toggle();
     });
+  }
+
+  private updateMenus() {
+    const isAdmin = this.authService.role === 'admin';
+    this.menus = menus.filter(menu => !menu.adminOnly || isAdmin);
   }
 }

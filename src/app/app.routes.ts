@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AdminComponent } from './demo/layout/admin';
 import { EmptyComponent } from './demo/layout/empty';
 import { AuthGuard } from './auth/auth-guard';
+import { AdminGuard } from './auth/admin-guard';
 
 export const routes: Routes = [
   {
@@ -90,6 +91,11 @@ export const routes: Routes = [
         path: 'sobre',
         canActivate: [AuthGuard],
         loadComponent: () => import('./demo/pages/sobre/sobre.component/sobre.component').then((m) => m.SobreComponent)
+      },
+      {
+        path: 'mensagens',
+        canActivate: [AdminGuard],
+        loadComponent: () => import('./demo/pages/mensagens/admin-inbox.component/admin-inbox.component').then((m) => m.AdminInboxComponent)
       }
     ]
   }

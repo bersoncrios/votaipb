@@ -6,8 +6,13 @@ import {
   query,
   getCountFromServer,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  collectionData,
+  orderBy,
+  doc,
+  updateDoc
 } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 export interface EleicaoStats {
   total: number;
@@ -18,10 +23,13 @@ export interface EleicaoStats {
 }
 
 export interface ContactMessage {
+  id?: string;
   name: string;
   email: string;
   phone: string;
   message: string;
+  read?: boolean;
+  createdAt?: any;
 }
 
 @Injectable({
@@ -36,8 +44,19 @@ export class DashboardService {
   async saveMessage(msg: ContactMessage): Promise<void> {
     await addDoc(this.mensagensColRef, {
       ...msg,
+      read: false,
       createdAt: serverTimestamp()
     });
+  }
+
+  getMessages(): Observable<ContactMessage[]> {
+    const q = query(this.mensagensColRef, orderBy('createdAt', 'desc'));
+    return collectionData(q, { idField: 'id' }) as Observable<ContactMessage[]>;
+  }
+
+  async markAsRead(id: string, read: boolean = true): Promise<void> {
+    const docRef = doc(this.db, 'mensagens_contato', id);
+    await updateDoc(docRef, { read });
   }
 
   async getEstatisticasEleicoes(): Promise<EleicaoStats> {

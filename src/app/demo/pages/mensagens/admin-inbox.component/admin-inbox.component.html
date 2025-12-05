@@ -1,0 +1,100 @@
+<div class="inbox-container">
+
+    <!-- Header -->
+    <div class="inbox-header">
+        <div class="header-title">
+            <fa-icon [icon]="faInbox"></fa-icon>
+            <h1>Caixa de Entrada</h1>
+        </div>
+        <div class="header-badge" *ngIf="getUnreadCount() > 0">
+            {{ getUnreadCount() }} não lida(s)
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Carregando mensagens...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && messages.length === 0">
+        <fa-icon [icon]="faEnvelope"></fa-icon>
+        <h2>Nenhuma mensagem</h2>
+        <p>As mensagens enviadas pelo formulário de contato aparecerão aqui.</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="inbox-content" *ngIf="!isLoading && messages.length > 0">
+
+        <!-- Messages List -->
+        <div class="messages-list" [class.hidden-mobile]="selectedMessage">
+            <div class="message-item" *ngFor="let msg of messages" [class.unread]="!msg.read"
+                [class.selected]="selectedMessage?.id === msg.id" (click)="selectMessage(msg)">
+
+                <div class="message-avatar">
+                    <span>{{ getInitials(msg.name) }}</span>
+                </div>
+
+                <div class="message-preview">
+                    <div class="message-header">
+                        <span class="sender-name">{{ msg.name }}</span>
+                        <span class="message-date">{{ formatDate(msg.createdAt) }}</span>
+                    </div>
+                    <div class="sender-email">{{ msg.email }}</div>
+                    <div class="message-snippet">{{ msg.message }}</div>
+                </div>
+
+                <div class="unread-indicator" *ngIf="!msg.read">
+                    <fa-icon [icon]="faCircle"></fa-icon>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Detail -->
+        <div class="message-detail" *ngIf="selectedMessage" [class.active]="selectedMessage">
+            <div class="detail-header">
+                <button class="back-btn" (click)="closeDetail()">
+                    <fa-icon [icon]="faArrowLeft"></fa-icon>
+                    <span>Voltar</span>
+                </button>
+            </div>
+
+            <div class="detail-content">
+                <div class="detail-avatar">
+                    <span>{{ getInitials(selectedMessage.name) }}</span>
+                </div>
+
+                <div class="detail-info">
+                    <h2>{{ selectedMessage.name }}</h2>
+
+                    <div class="info-row">
+                        <fa-icon [icon]="faEnvelope"></fa-icon>
+                        <a href="mailto:{{ selectedMessage.email }}">{{ selectedMessage.email }}</a>
+                    </div>
+
+                    <div class="info-row" *ngIf="selectedMessage.phone">
+                        <fa-icon [icon]="faPhone"></fa-icon>
+                        <span>{{ selectedMessage.phone }}</span>
+                    </div>
+
+                    <div class="info-row">
+                        <fa-icon [icon]="faCalendar"></fa-icon>
+                        <span>{{ formatDate(selectedMessage.createdAt) }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-message">
+                    <h3>Mensagem</h3>
+                    <p>{{ selectedMessage.message }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty Detail State (Desktop) -->
+        <div class="message-detail empty-detail" *ngIf="!selectedMessage">
+            <fa-icon [icon]="faEnvelopeOpen"></fa-icon>
+            <p>Selecione uma mensagem para visualizar</p>
+        </div>
+    </div>
+</div>
