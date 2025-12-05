@@ -215,6 +215,46 @@
     }
 }
 
+/* Action Buttons */
+.message-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.message-item:hover .message-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    border: none;
+    background-color: var(--inbox-bg);
+    color: var(--text-body);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+
+    &:hover {
+        background-color: var(--primary-light);
+        color: var(--primary);
+    }
+
+    &.delete-btn:hover {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+    span {
+        white-space: nowrap;
+    }
+}
+
 /* Message Detail */
 .message-detail {
     padding: 32px;
@@ -239,6 +279,9 @@
 }
 
 .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 32px;
 
     .back-btn {
@@ -255,6 +298,15 @@
         &:hover {
             text-decoration: underline;
         }
+    }
+}
+
+.detail-actions {
+    display: flex;
+    gap: 12px;
+
+    .action-btn {
+        padding: 8px 16px;
     }
 }
 

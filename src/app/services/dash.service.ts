@@ -10,7 +10,8 @@ import {
   collectionData,
   orderBy,
   doc,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
@@ -57,6 +58,11 @@ export class DashboardService {
   async markAsRead(id: string, read: boolean = true): Promise<void> {
     const docRef = doc(this.db, 'mensagens_contato', id);
     await updateDoc(docRef, { read });
+  }
+
+  async deleteMessage(id: string): Promise<void> {
+    const docRef = doc(this.db, 'mensagens_contato', id);
+    await deleteDoc(docRef);
   }
 
   async getEstatisticasEleicoes(): Promise<EleicaoStats> {

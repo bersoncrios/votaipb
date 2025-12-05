@@ -9,10 +9,14 @@ import {
     faCalendar,
     faInbox,
     faCircle,
-    faArrowLeft
+    faArrowLeft,
+    faTrash,
+    faEye,
+    faEyeSlash
 } from '@fortawesome/free-solid-svg-icons';
 import { DashboardService, ContactMessage } from '../../../../services/dash.service';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-admin-inbox',
@@ -31,6 +35,9 @@ export class AdminInboxComponent implements OnInit, OnDestroy {
     faInbox = faInbox;
     faCircle = faCircle;
     faArrowLeft = faArrowLeft;
+    faTrash = faTrash;
+    faEye = faEye;
+    faEyeSlash = faEyeSlash;
 
     private dashboardService = inject(DashboardService);
     private subscription?: Subscription;
@@ -71,6 +78,36 @@ export class AdminInboxComponent implements OnInit, OnDestroy {
         return this.messages.filter(m => !m.read).length;
     }
 
+    async toggleRead(msg: ContactMessage, event: Event) {
+        event.stopPropagation();
+        if (msg.id) {
+            await this.dashboardService.markAsRead(msg.id, !msg.read);
+        }
+    }
+
+    async deleteMessage(msg: ContactMessage, event?: Event) {
+        event?.stopPropagation();
+
+        const result = await Swal.fire({
+            title: 'Excluir mensagem?',
+            text: `Mensagem de "${msg.name}" será excluída permanentemente.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Excluir',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed && msg.id) {
+            await this.dashboardService.deleteMessage(msg.id);
+            if (this.selectedMessage?.id === msg.id) {
+                this.selectedMessage = null;
+            }
+            Swal.fire('Excluída!', 'Mensagem excluída com sucesso.', 'success');
+        }
+    }
+
     formatDate(timestamp: any): string {
         if (!timestamp) return '';
         const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
@@ -88,3 +125,4 @@ export class AdminInboxComponent implements OnInit, OnDestroy {
         return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
     }
 }
+

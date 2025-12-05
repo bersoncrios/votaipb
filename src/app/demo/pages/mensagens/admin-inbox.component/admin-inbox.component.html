@@ -45,6 +45,16 @@
                     <div class="message-snippet">{{ msg.message }}</div>
                 </div>
 
+                <div class="message-actions">
+                    <button class="action-btn" (click)="toggleRead(msg, $event)"
+                        [title]="msg.read ? 'Marcar como não lida' : 'Marcar como lida'">
+                        <fa-icon [icon]="msg.read ? faEyeSlash : faEye"></fa-icon>
+                    </button>
+                    <button class="action-btn delete-btn" (click)="deleteMessage(msg, $event)" title="Excluir">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                </div>
+
                 <div class="unread-indicator" *ngIf="!msg.read">
                     <fa-icon [icon]="faCircle"></fa-icon>
                 </div>
@@ -58,6 +68,17 @@
                     <fa-icon [icon]="faArrowLeft"></fa-icon>
                     <span>Voltar</span>
                 </button>
+                <div class="detail-actions">
+                    <button class="action-btn" (click)="toggleRead(selectedMessage, $event)"
+                        [title]="selectedMessage.read ? 'Marcar como não lida' : 'Marcar como lida'">
+                        <fa-icon [icon]="selectedMessage.read ? faEyeSlash : faEye"></fa-icon>
+                        <span>{{ selectedMessage.read ? 'Marcar não lida' : 'Marcar lida' }}</span>
+                    </button>
+                    <button class="action-btn delete-btn" (click)="deleteMessage(selectedMessage)" title="Excluir">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                        <span>Excluir</span>
+                    </button>
+                </div>
             </div>
 
             <div class="detail-content">
