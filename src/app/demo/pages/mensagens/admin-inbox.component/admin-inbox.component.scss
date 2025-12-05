@@ -12,9 +12,26 @@
     --text-light: #94a3b8;
     --border-color: #e2e8f0;
     --unread-indicator: #3b82f6;
+    --unread-bg: #fefce8;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --radius: 12px;
+}
+
+/* Dark Theme Support */
+:host-context(body.dark-theme) {
+    --inbox-bg: #18181b;
+    --card-bg: #27272a;
+    --primary: #3b82f6;
+    --primary-light: rgba(59, 130, 246, 0.15);
+    --text-heading: #fafafa;
+    --text-body: #a1a1aa;
+    --text-light: #71717a;
+    --border-color: #3f3f46;
+    --unread-indicator: #60a5fa;
+    --unread-bg: rgba(250, 204, 21, 0.1);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 .inbox-container {
@@ -140,7 +157,7 @@
     }
 
     &.unread {
-        background-color: #fefce8;
+        background-color: var(--unread-bg);
 
         .sender-name {
             font-weight: 700;
