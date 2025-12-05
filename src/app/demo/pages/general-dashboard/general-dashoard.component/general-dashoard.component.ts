@@ -16,7 +16,11 @@ import {
   faBolt,
   faMobileAlt,
   faFileInvoice,
-  faArrowRight
+  faArrowRight,
+  faUsers,
+  faHandHoldingHeart,
+  faGavel,
+  faUserTie
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -45,6 +49,10 @@ export class DashboardPublicoComponent implements OnInit {
   faMobileAlt = faMobileAlt;
   faFileInvoice = faFileInvoice;
   faArrowRight = faArrowRight;
+  faUsers = faUsers;
+  faHandHoldingHeart = faHandHoldingHeart;
+  faGavel = faGavel;
+  faUserTie = faUserTie;
 
   private dashboardService = inject(DashboardService);
   public stats: EleicaoStats | null = null;

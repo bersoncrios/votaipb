@@ -285,6 +285,39 @@
     font-size: 1.1rem;
   }
 }
+ 
+ /* =========================================
+    5.1 FUNCTIONALITIES SECTION
+    ========================================= */
+ .functionalities-section {
+   background-color: var(--color-bg-main);
+   position: relative;
+ 
+   &::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     height: 1px;
+     background: linear-gradient(90deg, transparent, rgba(0,0,0,0.05), transparent);
+   }
+ }
+ 
+ .functionality-card {
+   background-color: var(--color-bg-white);
+   border: 1px solid rgba(0,0,0,0.05);
+ 
+   &:hover {
+     border-color: var(--color-primary);
+     transform: translateY(-5px);
+ 
+     .feature-icon {
+       background-color: var(--color-primary);
+       color: white;
+     }
+   }
+ }
 
 /* =========================================
    6. STATS SECTION (MODERNIZADA)
