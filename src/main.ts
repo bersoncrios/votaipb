@@ -11,9 +11,10 @@ import { routes } from './app/app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
-import { LOCALE_ID } from '@angular/core';
+import { LOCALE_ID, isDevMode } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
+import { provideServiceWorker } from '@angular/service-worker';
 
 registerLocaleData(localePt);
 
@@ -31,6 +32,9 @@ bootstrapApplication(AppComponent, {
     provideDatabase(() => getDatabase()),
     provideAnalytics(() => getAnalytics()),
     ScreenTrackingService,
-    UserTrackingService
+    UserTrackingService, provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
   ]
 });
