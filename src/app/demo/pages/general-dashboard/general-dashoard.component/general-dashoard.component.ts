@@ -6,6 +6,8 @@ import {
   EleicaoStats,
 } from '../../../../services/dash.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 import {
   faArchive,
   faCalendarAlt,
@@ -20,7 +22,11 @@ import {
   faUsers,
   faHandHoldingHeart,
   faGavel,
-  faUserTie
+  faUserTie,
+  faPaperPlane,
+  faEnvelope,
+  faPhone,
+  faUser
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -31,7 +37,8 @@ import {
   imports: [
     CommonModule,
     FontAwesomeModule,
-    RouterModule // Adicionado aos imports
+    RouterModule,
+    FormsModule
   ]
 })
 export class DashboardPublicoComponent implements OnInit {
@@ -53,6 +60,18 @@ export class DashboardPublicoComponent implements OnInit {
   faHandHoldingHeart = faHandHoldingHeart;
   faGavel = faGavel;
   faUserTie = faUserTie;
+  faPaperPlane = faPaperPlane;
+  faEnvelope = faEnvelope;
+  faPhone = faPhone;
+  faUser = faUser;
+
+  public contactForm = {
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  };
+  public isSending = false;
 
   private dashboardService = inject(DashboardService);
   public stats: EleicaoStats | null = null;
@@ -130,5 +149,30 @@ export class DashboardPublicoComponent implements OnInit {
         this.displayStats.desconhecido = Math.round(increments.desconhecido * currentStep);
       }
     }, intervalTime);
+  }
+
+  async onSubmit() {
+    if (!this.contactForm.name || !this.contactForm.email || !this.contactForm.message) {
+      Swal.fire('Atenção', 'Preencha todos os campos obrigatórios.', 'warning');
+      return;
+    }
+
+    this.isSending = true;
+
+    try {
+      await this.dashboardService.saveMessage(this.contactForm);
+      Swal.fire({
+        title: 'Sucesso!',
+        text: 'Sua mensagem foi enviada. Entraremos em contato em breve.',
+        icon: 'success',
+        confirmButtonColor: '#2563eb'
+      });
+
+      this.contactForm = { name: '', email: '', phone: '', message: '' };
+    } catch (error) {
+      Swal.fire('Erro', 'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.', 'error');
+    } finally {
+      this.isSending = false;
+    }
   }
 }

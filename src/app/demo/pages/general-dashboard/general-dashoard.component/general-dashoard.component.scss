@@ -285,39 +285,39 @@
     font-size: 1.1rem;
   }
 }
- 
- /* =========================================
+
+/* =========================================
     5.1 FUNCTIONALITIES SECTION
     ========================================= */
- .functionalities-section {
-   background-color: var(--color-bg-main);
-   position: relative;
- 
-   &::before {
-     content: '';
-     position: absolute;
-     top: 0;
-     left: 0;
-     right: 0;
-     height: 1px;
-     background: linear-gradient(90deg, transparent, rgba(0,0,0,0.05), transparent);
-   }
- }
- 
- .functionality-card {
-   background-color: var(--color-bg-white);
-   border: 1px solid rgba(0,0,0,0.05);
- 
-   &:hover {
-     border-color: var(--color-primary);
-     transform: translateY(-5px);
- 
-     .feature-icon {
-       background-color: var(--color-primary);
-       color: white;
-     }
-   }
- }
+.functionalities-section {
+  background-color: var(--color-bg-main);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+  }
+}
+
+.functionality-card {
+  background-color: var(--color-bg-white);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-5px);
+
+    .feature-icon {
+      background-color: var(--color-primary);
+      color: white;
+    }
+  }
+}
 
 /* =========================================
    6. STATS SECTION (MODERNIZADA)
@@ -480,9 +480,159 @@
   }
 }
 
-.pulse-animation {
-  // Aplicar no card se desejar, ou manter no ícone
-  // Fix lint: removed empty ruleset if not used, but keeping for potential future use or if applied in HTML
+/* =========================================
+   6.5 CONTACT SECTION
+   ========================================= */
+.contact-section {
+  background-color: var(--color-bg-white);
+  position: relative;
+}
+
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.contact-info {
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-text-heading);
+    margin-bottom: 24px;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    font-size: 1.125rem;
+    color: var(--color-text-body);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 90%;
+  }
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  fa-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: 12px;
+    font-size: 1.25rem;
+  }
+
+  span {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-text-heading);
+  }
+}
+
+.contact-form-wrapper {
+  background: white;
+  padding: 40px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.contact-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &.full-width {
+      grid-column: span 2;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color-text-heading);
+    }
+  }
+
+  .input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      color: var(--color-text-light);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px 16px 12px 48px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      font-size: 1rem;
+      color: var(--color-text-heading);
+      background-color: var(--color-bg-main);
+      transition: all 0.2s;
+      font-family: inherit;
+
+      &::placeholder {
+        color: #cbd5e1;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background-color: white;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    textarea {
+      padding-left: 16px;
+      resize: vertical;
+      min-height: 120px;
+    }
+  }
+
+  .full-width textarea {
+    padding-left: 16px;
+  }
+
+  button[type="submit"] {
+    grid-column: span 2;
+    margin-top: 16px;
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 /* =========================================
@@ -568,6 +718,23 @@
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .contact-form {
+    grid-template-columns: 1fr;
+
+    .form-group.full-width {
+      grid-column: span 1;
+    }
+
+    button[type="submit"] {
+      grid-column: span 1;
+    }
   }
 
   .cta-section {

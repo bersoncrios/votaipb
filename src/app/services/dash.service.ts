@@ -5,6 +5,8 @@ import {
   where,
   query,
   getCountFromServer,
+  addDoc,
+  serverTimestamp
 } from '@angular/fire/firestore';
 
 export interface EleicaoStats {
@@ -15,6 +17,13 @@ export interface EleicaoStats {
   desconhecido: number;
 }
 
+export interface ContactMessage {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,6 +31,14 @@ export class DashboardService {
   private db = inject(Firestore);
 
   private eleicoesColRef = collection(this.db, 'eleicoes');
+  private mensagensColRef = collection(this.db, 'mensagens_contato');
+
+  async saveMessage(msg: ContactMessage): Promise<void> {
+    await addDoc(this.mensagensColRef, {
+      ...msg,
+      createdAt: serverTimestamp()
+    });
+  }
 
   async getEstatisticasEleicoes(): Promise<EleicaoStats> {
 

@@ -176,6 +176,64 @@
     </div>
   </section>
 
+  <section class="lp-section contact-section" id="contato">
+    <div class="contact-container">
+      <div class="contact-info">
+        <h2>Entre em Contato</h2>
+        <p>Tem dúvidas ou quer saber mais sobre como o VotaIPB pode ajudar sua igreja? Mande uma mensagem!</p>
+
+        <div class="contact-details">
+          <div class="contact-item">
+            <fa-icon [icon]="faEnvelope"></fa-icon>
+            <span>guilhermeberson001&#64;gmail.com</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrapper">
+        <form (ngSubmit)="onSubmit()" class="contact-form">
+          <div class="form-group">
+            <label for="name">Nome</label>
+            <div class="input-group">
+              <span class="input-icon"><fa-icon [icon]="faUser"></fa-icon></span>
+              <input type="text" id="name" name="name" [(ngModel)]="contactForm.name" placeholder="Seu nome completo"
+                required [disabled]="isSending">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <div class="input-group">
+              <span class="input-icon"><fa-icon [icon]="faEnvelope"></fa-icon></span>
+              <input type="email" id="email" name="email" [(ngModel)]="contactForm.email"
+                placeholder="seu&#64;email.com" required [disabled]="isSending">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Telefone (Opcional)</label>
+            <div class="input-group">
+              <span class="input-icon"><fa-icon [icon]="faPhone"></fa-icon></span>
+              <input type="tel" id="phone" name="phone" [(ngModel)]="contactForm.phone" placeholder="(00) 00000-0000"
+                [disabled]="isSending">
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="message">Mensagem</label>
+            <textarea id="message" name="message" [(ngModel)]="contactForm.message" rows="4"
+              placeholder="Como podemos ajudar?" required [disabled]="isSending"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--block" [disabled]="isSending">
+            <span *ngIf="!isSending">Enviar Mensagem <fa-icon [icon]="faPaperPlane"></fa-icon></span>
+            <span *ngIf="isSending">Enviando...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <section class="lp-section cta-section">
     <div class="cta-overlay"></div>
     <div class="cta-content">
