@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment files (contain sensitive credentials)
+.env
+.env.prod
+src/environments/environment.ts
+src/environments/environment.prod.ts
