@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/votaipb/browser",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/(.*)",
