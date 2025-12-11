@@ -1,5 +1,10 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/votaipb/browser",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
