@@ -1,128 +1,203 @@
 <div class="lp-container">
 
+  <!-- 1. HERO SECTION DINÂMICO -->
   <header class="hero-section">
+    <div class="hero-bg-glow"></div>
     <div class="hero-container">
       <div class="hero-content">
+        <div class="hero-badge-pill">
+          <span class="pulse-dot"></span>
+          <span>⚡ ATUALIZAÇÃO v2.0 • Sistema Completo para a IPB</span>
+        </div>
+
         <img src="assets/images/logo.png" alt="Logo VotaIPB" class="hero-logo" />
-        <h1>Votações seguras e transparentes para a sua Igreja</h1>
+
+        <h1>Votações seguras, rápidas e transparentes para a sua Igreja</h1>
+
         <p class="hero-subtitle">
-          Modernize assembleias, reuniões plenárias e eleições com o VotaIPB.<br>
-          Simples para quem vota, auditável para quem administra.
+          Modernize assembleias, eleições pastorais, oficiais e de diretorias no VotaIPB.<br>
+          Simplicidade total para os membros e segurança auditável para a liderança.
         </p>
+
         <div class="hero-actions">
-          <a routerLink="/auth/login" class="btn btn--primary">
-            Começar Agora <fa-icon [icon]="faArrowRight"></fa-icon>
+          <a routerLink="/auth/login" class="btn btn--primary btn--hero">
+            Acessar Painel <fa-icon [icon]="faArrowRight"></fa-icon>
           </a>
-          <a href="#numeros" class="btn btn--text">Ver nossos números</a>
+          <a href="#novidades" class="btn btn--glass-outline">
+            <fa-icon [icon]="faStar" class="text-warning"></fa-icon> Ver Novidades
+          </a>
+          <a href="#numeros" class="btn btn--text">Nossos Números</a>
+        </div>
+
+        <div class="hero-trust-badges">
+          <div class="trust-item">
+            <fa-icon [icon]="faShieldAlt"></fa-icon> <span>100% Imutável & Sigiloso</span>
+          </div>
+          <div class="trust-item">
+            <fa-icon [icon]="faBolt"></fa-icon> <span>Apuração em Tempo Real</span>
+          </div>
         </div>
       </div>
 
       <div class="hero-image-wrapper">
         <img
           src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1632&q=80"
-          alt="Interior de Igreja" class="hero-image" />
-        <!-- Elemento decorativo -->
-        <div class="hero-decoration"></div>
+          alt="Assembleia VotaIPB" class="hero-image" />
+        
+        <!-- Floating Glass Cards Decorativos -->
+        <div class="floating-glass-card float-card-1">
+          <div class="float-icon icon-purple">
+            <fa-icon [icon]="faUserTie"></fa-icon>
+          </div>
+          <div class="float-text">
+            <strong>Eleição Pastoral</strong>
+            <span>Pastor Titular & Auxiliar</span>
+          </div>
+        </div>
+
+        <div class="floating-glass-card float-card-2">
+          <div class="float-icon icon-cyan">
+            <fa-icon [icon]="faCheckCircle"></fa-icon>
+          </div>
+          <div class="float-text">
+            <strong>Apuração Instantânea</strong>
+            <span>Resultados ao Vivo</span>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
-  <section class="lp-section features-section">
+  <!-- 2. SEÇÃO DE NOVIDADES & ATUALIZAÇÕES RECENTES -->
+  <section class="lp-section updates-section" id="novidades">
     <div class="section-header">
-      <h2>Por que escolher o VotaIPB?</h2>
-      <p>Desenvolvido pensando nas necessidades específicas das eleições da IPB.</p>
+      <div class="section-tag-badge">🚀 NOVIDADES RECENTES</div>
+      <h2>O que há de novo no VotaIPB?</h2>
+      <p>Conheça as últimas melhorias desenvolvidas para atender 100% do estatuto e prática da IPB.</p>
     </div>
 
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">
-          <fa-icon [icon]="faLock"></fa-icon>
+    <div class="updates-grid">
+      <!-- Novidade 1: Eleições Pastorais -->
+      <div class="update-card highlight-card-pastores">
+        <div class="update-badge tag-purple">NOVO</div>
+        <div class="update-icon-box icon-pastores">
+          <fa-icon [icon]="faUserTie"></fa-icon>
         </div>
-        <h3>Segurança Total</h3>
-        <p>Criptografia de ponta a ponta garante que cada voto seja secreto e imutável.</p>
+        <h3>Eleições para Pastores</h3>
+        <p>Cadastre individualmente os pastores candidatos por cargo (Titular e Auxiliar). O sistema garante automaticamente que o pastor candidato não possui direito a voto na eleição.</p>
+        <ul class="feature-bullets">
+          <li><fa-icon [icon]="faCheck"></fa-icon> Cadastro individual de pastores candidatos</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Bloqueio automático de voto para candidatos</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Votos em Branco e Nulos inclusos</li>
+        </ul>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <fa-icon [icon]="faBolt"></fa-icon>
+      <!-- Novidade 2: Edição de Eleições Agendadas -->
+      <div class="update-card">
+        <div class="update-badge tag-blue">NOVO</div>
+        <div class="update-icon-box icon-blue">
+          <fa-icon [icon]="faEdit"></fa-icon>
         </div>
-        <h3>Apuração Instantânea</h3>
-        <p>Fim da contagem manual. Resultados precisos disponíveis segundos após o encerramento.</p>
+        <h3>Edição de Eleições Agendadas</h3>
+        <p>Precisa ajustar a lista de votantes ou candidatos de última hora? Altere eleições agendadas com total flexibilidade antes do início oficial da votação.</p>
+        <ul class="feature-bullets">
+          <li><fa-icon [icon]="faCheck"></fa-icon> Adicione ou remova votantes facilmente</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Altere vagas e candidatos</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Válido para Oficiais, Sociedades e Pastores</li>
+        </ul>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <fa-icon [icon]="faFileInvoice"></fa-icon>
+      <!-- Novidade 3: Importação via Excel -->
+      <div class="update-card">
+        <div class="update-badge tag-green">RECURSO</div>
+        <div class="update-icon-box icon-green">
+          <fa-icon [icon]="faFileExcel"></fa-icon>
         </div>
-        <h3>Auditável</h3>
-        <p>Geração automática de relatórios e atas para total transparência do processo.</p>
+        <h3>Importação de Votantes via Excel</h3>
+        <p>Agilize o cadastro dos membros da sua igreja. Importe listas completas com nomes e IDs diretamente de planilhas `.xlsx` ou `.csv` em segundos.</p>
+        <ul class="feature-bullets">
+          <li><fa-icon [icon]="faCheck"></fa-icon> Leitura automática de colunas</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Detecção e prevenção de duplicados</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Suporte a grandes assembleias</li>
+        </ul>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <fa-icon [icon]="faMobileAlt"></fa-icon>
+      <!-- Novidade 4: Eleições de Oficiais -->
+      <div class="update-card">
+        <div class="update-badge tag-cyan">RECURSO</div>
+        <div class="update-icon-box icon-cyan">
+          <fa-icon [icon]="faGavel"></fa-icon>
         </div>
-        <h3>Acessível</h3>
-        <p>Vote pelo celular, tablet ou computador, presencialmente ou à distância.</p>
+        <h3>Eleições de Presbíteros & Diáconos</h3>
+        <p>Votação estruturada por múltiplos turnos ou vagas para a eleição solene de oficiais da igreja local com quórum ao vivo.</p>
+        <ul class="feature-bullets">
+          <li><fa-icon [icon]="faCheck"></fa-icon> Múltiplos candidatos por vaga</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Painel de controle do Conselho ao vivo</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> Emissão de ata detalhada</li>
+        </ul>
       </div>
     </div>
   </section>
 
+  <!-- 3. FUNCIONALIDADES DA PLATAFORMA -->
   <section class="lp-section functionalities-section">
     <div class="section-header">
-      <h2>Funcionalidades Abrangentes</h2>
-      <p>Gerencie todos os tipos de eleições da sua igreja em um só lugar.</p>
+      <h2>Módulos Especializados</h2>
+      <p>Gerencie todas as instâncias de votação da sua igreja em um só sistema unificado.</p>
     </div>
 
     <div class="features-grid">
       <div class="feature-card functionality-card">
+        <span class="card-type-tag tag-diretoria">Sociedades Internas</span>
         <div class="feature-icon">
           <fa-icon [icon]="faUsers"></fa-icon>
         </div>
         <h3>Diretorias de Sociedades</h3>
-        <p>Eleições para UMP, UPH, SAF, UPA e UCP com configuração flexível de cargos e candidatos.</p>
+        <p>Eleições para UMP, UPH, SAF, UPA e UCP com configuração de cargos e controle de membros votantes.</p>
       </div>
 
       <div class="feature-card functionality-card">
-        <div class="feature-icon">
-          <fa-icon [icon]="faHandHoldingHeart"></fa-icon>
-        </div>
-        <h3>Juntas Diaconais</h3>
-        <p>Processo simplificado para eleição da mesa diretora da Junta Diaconal.</p>
-      </div>
-
-      <div class="feature-card functionality-card">
+        <span class="card-type-tag tag-oficiais">Oficiais da Igreja</span>
         <div class="feature-icon">
           <fa-icon [icon]="faGavel"></fa-icon>
         </div>
-        <h3>Conselhos</h3>
-        <p>Gestão eficiente das votações do Conselho, com registro de atas e apuração segura.</p>
+        <h3>Presbíteros & Diáconos</h3>
+        <p>Eleições solenes respeitando os trâmites constitucionais e litúrgicos da IPB.</p>
       </div>
 
       <div class="feature-card functionality-card">
+        <span class="card-type-tag tag-pastores">Corpo Pastoral</span>
         <div class="feature-icon">
           <fa-icon [icon]="faUserTie"></fa-icon>
         </div>
-        <h3>Oficiais da Igreja</h3>
-        <p>Eleições solenes para Presbíteros e Diáconos, respeitando os trâmites litúrgicos e constitucionais.</p>
+        <h3>Eleição para Pastores</h3>
+        <p>Módulo exclusivo para eleição de Pastor Titular e Auxiliares com voto individualizado.</p>
+      </div>
+
+      <div class="feature-card functionality-card">
+        <span class="card-type-tag tag-conselho">Conselho & Junta</span>
+        <div class="feature-icon">
+          <fa-icon [icon]="faHandHoldingHeart"></fa-icon>
+        </div>
+        <h3>Reuniões & Plenárias</h3>
+        <p>Votações rápidas para a mesa diretora do Conselho ou da Junta Diaconal.</p>
       </div>
     </div>
   </section>
 
+  <!-- 4. ESTATÍSTICAS E NÚMEROS -->
   <section class="lp-section stats-section" id="numeros">
     <div class="section-header">
       <h2>A confiança da Igreja em números</h2>
-      <p>Junte-se as igrejas e concílios que já modernizaram suas eleições.</p>
+      <p>Números atualizados em tempo real do ecossistema VotaIPB.</p>
     </div>
 
-    <!-- Removido o loading spinner e ng-template -->
     <div *ngIf="stats" class="stats-grid">
-
       <div class="stat-card stat-card--total">
         <div class="stat-content">
-          <span class="stat-label">Total Processado</span>
+          <span class="stat-label">Total Registrado</span>
           <p class="stat-number">{{ displayStats.total | number }}</p>
-          <p class="stat-description">Eleições já registradas em nossa base.</p>
+          <p class="stat-description">Eleições processadas na plataforma.</p>
         </div>
         <div class="stat-icon-bg">
           <fa-icon [icon]="faArchive"></fa-icon>
@@ -131,9 +206,9 @@
 
       <div class="stat-card stat-card--finalizada">
         <div class="stat-content">
-          <span class="stat-label">Sucesso</span>
+          <span class="stat-label">Concluídas com Sucesso</span>
           <p class="stat-number">{{ displayStats.finalizada | number }}</p>
-          <p class="stat-description">Eleições finalizadas e apuradas com sucesso.</p>
+          <p class="stat-description">Eleições apuradas e finalizadas.</p>
         </div>
         <div class="stat-icon-bg">
           <fa-icon [icon]="faCheckCircle"></fa-icon>
@@ -142,9 +217,9 @@
 
       <div class="stat-card stat-card--em-andamento">
         <div class="stat-content">
-          <span class="stat-label">Acontecendo Agora</span>
+          <span class="stat-label">Votações ao Vivo</span>
           <p class="stat-number">{{ displayStats.emAndamento | number }}</p>
-          <p class="stat-description">Eleições em andamento neste exato momento.</p>
+          <p class="stat-description">Eleições acontecendo neste momento.</p>
         </div>
         <div class="stat-icon-bg pulse-animation">
           <fa-icon [icon]="faSyncAlt"></fa-icon>
@@ -153,39 +228,32 @@
 
       <div class="stat-card stat-card--agendada">
         <div class="stat-content">
-          <span class="stat-label">Futuro</span>
+          <span class="stat-label">Programadas</span>
           <p class="stat-number">{{ displayStats.agendada | number }}</p>
-          <p class="stat-description">Próximas eleições já programadas.</p>
+          <p class="stat-description">Próximas eleições agendadas.</p>
         </div>
         <div class="stat-icon-bg">
           <fa-icon [icon]="faCalendarAlt"></fa-icon>
         </div>
       </div>
-
-      <div *ngIf="displayStats.desconhecido > 0" class="stat-card stat-card--desconhecido">
-        <div class="stat-content">
-          <span class="stat-label">Atenção</span>
-          <p class="stat-number">{{ displayStats.desconhecido | number }}</p>
-          <p class="stat-description">Status não identificado.</p>
-        </div>
-        <div class="stat-icon-bg">
-          <fa-icon [icon]="faExclamationTriangle"></fa-icon>
-        </div>
-      </div>
-
     </div>
   </section>
 
+  <!-- 5. FORMULÁRIO DE CONTATO -->
   <section class="lp-section contact-section" id="contato">
     <div class="contact-container">
       <div class="contact-info">
         <h2>Entre em Contato</h2>
-        <p>Tem dúvidas ou quer saber mais sobre como o VotaIPB pode ajudar sua igreja? Mande uma mensagem!</p>
+        <p>Tem dúvidas ou quer implantar o VotaIPB na sua igreja local ou concílio? Fale conosco!</p>
 
         <div class="contact-details">
           <div class="contact-item">
             <fa-icon [icon]="faEnvelope"></fa-icon>
-            <span>Preencha o formulário e entraremos em contato em breve!</span>
+            <span>Preencha o formulário para agendar uma demonstração!</span>
+          </div>
+          <div class="contact-item">
+            <fa-icon [icon]="faShieldAlt"></fa-icon>
+            <span>Suporte dedicado para secretários e presidentes de assembleia.</span>
           </div>
         </div>
       </div>
@@ -193,7 +261,7 @@
       <div class="contact-form-wrapper">
         <form (ngSubmit)="onSubmit()" class="contact-form">
           <div class="form-group">
-            <label for="name">Nome</label>
+            <label for="name">Nome Completo</label>
             <div class="input-group">
               <span class="input-icon"><fa-icon [icon]="faUser"></fa-icon></span>
               <input type="text" id="name" name="name" [(ngModel)]="contactForm.name" placeholder="Seu nome completo"
@@ -202,7 +270,7 @@
           </div>
 
           <div class="form-group">
-            <label for="email">E-mail</label>
+            <label for="email">E-mail corporativo / pessoal</label>
             <div class="input-group">
               <span class="input-icon"><fa-icon [icon]="faEnvelope"></fa-icon></span>
               <input type="email" id="email" name="email" [(ngModel)]="contactForm.email"
@@ -211,7 +279,7 @@
           </div>
 
           <div class="form-group">
-            <label for="phone">Telefone (Opcional)</label>
+            <label for="phone">Telefone / WhatsApp</label>
             <div class="input-group">
               <span class="input-icon"><fa-icon [icon]="faPhone"></fa-icon></span>
               <input type="tel" id="phone" name="phone" [(ngModel)]="contactForm.phone" placeholder="(00) 00000-0000"
@@ -220,10 +288,14 @@
           </div>
 
           <div class="form-group full-width">
-            <label for="message">Mensagem</label>
-            <textarea id="message" name="message" [(ngModel)]="contactForm.message" rows="4"
-              placeholder="Como podemos ajudar?" required [disabled]="isSending"></textarea>
+            <label for="message">Sua Mensagem</label>
+            <div class="input-group has-textarea">
+              <span class="input-icon"><fa-icon [icon]="faEnvelope"></fa-icon></span>
+              <textarea id="message" name="message" [(ngModel)]="contactForm.message" rows="4"
+                placeholder="Descreva a necessidade da sua igreja..." required [disabled]="isSending"></textarea>
+            </div>
           </div>
+
 
           <button type="submit" class="btn btn--primary btn--block" [disabled]="isSending">
             <span *ngIf="!isSending">Enviar Mensagem <fa-icon [icon]="faPaperPlane"></fa-icon></span>
@@ -234,13 +306,14 @@
     </div>
   </section>
 
+  <!-- 6. CTA FINAL -->
   <section class="lp-section cta-section">
     <div class="cta-overlay"></div>
     <div class="cta-content">
-      <h2>Pronto para modernizar sua próxima assembleia?</h2>
-      <p>Crie sua conta hoje mesmo e experimente a simplicidade do VotaIPB.</p>
+      <h2>Pronto para modernizar as eleições da sua Igreja?</h2>
+      <p>Acesse o painel do VotaIPB e experimente a nova era das assembleias digitais.</p>
       <a routerLink="/auth/login" class="btn btn--large btn--white">
-        Criar Eleição Agora
+        Acessar VotaIPB Agora
       </a>
     </div>
   </section>

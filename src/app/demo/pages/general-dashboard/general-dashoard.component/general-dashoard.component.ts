@@ -26,7 +26,14 @@ import {
   faPaperPlane,
   faEnvelope,
   faPhone,
-  faUser
+  faUser,
+  faStar,
+  faFileExcel,
+  faEdit,
+  faChartLine,
+  faShieldAlt,
+  faCheck,
+  faCross
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -64,6 +71,14 @@ export class DashboardPublicoComponent implements OnInit {
   faEnvelope = faEnvelope;
   faPhone = faPhone;
   faUser = faUser;
+  faStar = faStar;
+  faFileExcel = faFileExcel;
+  faEdit = faEdit;
+  faChartLine = faChartLine;
+  faShieldAlt = faShieldAlt;
+  faCheck = faCheck;
+  faCross = faCross;
+
 
   public contactForm = {
     name: '',
