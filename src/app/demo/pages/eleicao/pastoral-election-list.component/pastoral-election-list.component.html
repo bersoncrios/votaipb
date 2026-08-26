@@ -1,0 +1,72 @@
+<div class="list-container">
+    <div class="list-header">
+        <h1>Gerenciar Eleições para Pastores</h1>
+        <a [routerLink]="['/eleicoes/pastores/registrar']" class="btn-criar-nova">
+            Cadastrar Nova Eleição Pastoral
+        </a>
+    </div>
+    <p>Aqui estão as eleições de pastores da igreja que você cadastrou.</p>
+
+    <hr />
+
+    @if (isLoading()) {
+    <div class="loading-message">
+        <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+        <p>Carregando eleições pastorais...</p>
+    </div>
+    } @else if (error()) {
+    <div class="error-message">
+        <p>{{ error() }}</p>
+    </div>
+    } @else if (allEleicoes().length === 0) {
+    <div class="empty-state">
+        <div class="empty-icon-circle">
+            <mat-icon>person</mat-icon>
+        </div>
+        <h3>Nenhuma eleição pastoral encontrada</h3>
+        <p>Cadastre a eleição de Pastor Titular ou Pastor Auxiliar para iniciar o processo de votação.</p>
+        <a [routerLink]="['/eleicoes/pastores/registrar']" class="btn-criar-nova">
+            ✦ Cadastrar Nova Eleição Pastoral
+        </a>
+    </div>
+    } @else {
+    <div class="eleicoes-grid">
+        @for (eleicao of paginatedEleicoes(); track eleicao.id) {
+        <div class="eleicao-card">
+            <div class="card-body">
+                <h3 class="card-title">{{ eleicao.titulo }}</h3>
+
+                <div class="card-status" [ngClass]="eleicao.status">
+                    {{ eleicao.status === 'em_andamento' ? 'Em Andamento' : (eleicao.status === 'agendada' ? 'Agendada' : 'Finalizada') }}
+                </div>
+
+                <p class="card-info info-cargos">
+                    {{ eleicao.cargos.length }}
+                    {{ eleicao.cargos.length === 1 ? 'cargo pastoral' : 'cargos pastorais' }}
+                </p>
+                <p class="card-info info-membros">
+                    {{ eleicao.membrosElegiveis.length }}
+                    {{ eleicao.membrosElegiveis.length === 1 ? 'membro votante' : 'membros votantes' }}
+                </p>
+            </div>
+
+            <div class="card-footer d-flex gap-2 justify-content-end">
+                <a *ngIf="eleicao.status === 'agendada'"
+                    [routerLink]="['/eleicoes/pastores/editar', eleicao.id]"
+                    class="btn-gerenciar btn-editar-link" title="Editar Eleição">
+                    <mat-icon class="icon-18 me-1">edit</mat-icon> Editar
+                </a>
+                <a [routerLink]="['/eleicoes/pastores/gerenciar', eleicao.id]" class="btn-gerenciar">
+                    Gerenciar
+                </a>
+            </div>
+        </div>
+        }
+    </div>
+
+    <mat-paginator class="eleicao-paginator" [length]="allEleicoes().length" [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()" [pageSizeOptions]="[4, 6, 9, 12, 24]" (page)="onPageChange($event)"
+        aria-label="Selecionar página de eleições pastorais" showFirstLastButtons>
+    </mat-paginator>
+    }
+</div>

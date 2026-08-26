@@ -1,0 +1,144 @@
+<div class="votacao-publica-container" *ngIf="eleicao$ | async as eleicao; else loading">
+
+    <!-- Card de Cabeçalho da Votação Pastoral -->
+    <div class="votacao-hero-card">
+        <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            <span>✦ VotaIPB • Eleição Pastoral</span>
+        </div>
+        <h1>{{ eleicao.titulo }}</h1>
+        <p>Igreja Presbiteriana do Brasil</p>
+    </div>
+
+    <!-- PASSO 1: IDENTIFICAÇÃO -->
+    <div *ngIf="passo === 'identificacao'" class="votacao-glass-card">
+        <h2>Identificação do Votante</h2>
+        <p>Insira seu ID ou Matrícula fornecida para validar sua participação.</p>
+
+        <div class="identificacao-form">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>ID / Matrícula do Membro</mat-label>
+                <input matInput [(ngModel)]="eleitorId" (keyup.enter)="validarIdentificacao(eleicao)" placeholder="Ex: 101">
+            </mat-form-field>
+
+            <div *ngIf="erroValidacao" class="alert-erro-badge">
+                <mat-icon class="me-1">error_outline</mat-icon>
+                <span>{{ erroValidacao }}</span>
+            </div>
+
+            <button mat-flat-button color="primary" class="btn-continuar-votacao w-100 mt-3" (click)="validarIdentificacao(eleicao)">
+                Entrar na Votação Pastoral
+                <mat-icon>arrow_forward</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- PASSO 2: VOTAÇÃO NO CARGO ABERTO -->
+    <div *ngIf="passo === 'votacao'" class="votacao-glass-card">
+        <div *ngIf="getCargoAberto(eleicao) as cargo; else semCargo">
+            <div class="cargo-header">
+                <span class="cargo-tag">Cargo Pastoral em Votação</span>
+                <h2>{{ cargo.titulo }}</h2>
+                <p>Selecione até <strong>{{ cargo.vagas }}</strong> pastor(es) candidato(s) ou escolha seu voto especial.</p>
+            </div>
+
+            <!-- BARRA DE VOTOS ESPECIAIS -->
+            <div class="votos-especiais-bar mb-3">
+                <button type="button" class="btn-voto-especial branco" [class.active]="votoEspecial === 'BRANCO'" (click)="selecionarVotoBranco()">
+                    ⚪ Votar em Branco
+                </button>
+                <button type="button" class="btn-voto-especial nulo" [class.active]="votoEspecial === 'NULO'" (click)="selecionarVotoNulo()">
+                    🔴 Votar Nulo
+                </button>
+            </div>
+
+            <!-- GRID DE PASTORES CANDIDATOS -->
+            <div class="candidatos-grid-votacao">
+                <div *ngFor="let cand of cargo.candidatos" class="candidato-card-select"
+                    [class.selected]="candidatosSelecionados.has(cand.userId)"
+                    (click)="toggleCandidato(cand.userId, cargo)">
+
+                    <div class="card-checkbox">
+                        <ng-container *ngIf="cargo.vagas === 1; else multiCheck">
+                            <mat-radio-button [checked]="candidatosSelecionados.has(cand.userId)" color="primary" (click)="$event.stopPropagation()"></mat-radio-button>
+                        </ng-container>
+                        <ng-template #multiCheck>
+                            <mat-checkbox [checked]="candidatosSelecionados.has(cand.userId)" color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                        </ng-template>
+                    </div>
+                    <div class="candidato-avatar">
+                        <span>{{ getInitials(cand.nome) }}</span>
+                    </div>
+                    <div class="candidato-info">
+                        <span class="candidato-nome">{{ cand.nome }}</span>
+                        <span class="candidato-sub">Pastor Candidato</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="nav-actions-footer mt-4">
+                <button mat-flat-button color="primary" class="btn-continuar-votacao w-100"
+                    [disabled]="!podeAvancar(cargo)"
+                    (click)="irParaConfirmacao()">
+                    Revisar e Votar
+                    <mat-icon>check_circle</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <ng-template #semCargo>
+            <div class="p-4 text-center">
+                <mat-icon class="text-warning icon-large">amber</mat-icon>
+                <p>Nenhuma votação pastoral está aberta no momento.</p>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- PASSO 3: CONFIRMAÇÃO DO VOTO -->
+    <div *ngIf="passo === 'confirmacao'" class="votacao-glass-card">
+        <div *ngIf="getCargoAberto(eleicao) as cargo">
+            <h2>Confirme seu Voto Pastoral</h2>
+            <p>Confira a sua escolha antes de confirmar o registro do seu voto.</p>
+
+            <div class="resumo-voto-box my-3">
+                <span class="resumo-label">Cargo Pastoral:</span>
+                <strong class="resumo-cargo">{{ cargo.titulo }}</strong>
+
+                <hr class="my-2">
+
+                <span class="resumo-label">Sua Escolha:</span>
+                <div class="escolhas-lista mt-1">
+                    <span *ngFor="let item of getCandidatosSelecionadosNomes(cargo)" class="badge-escolha">
+                        {{ item }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="actions-group-confirm d-flex gap-2 mt-4">
+                <button mat-stroked-button color="basic" (click)="voltarParaVotacao()" class="w-50">
+                    Alterar Escolha
+                </button>
+                <button mat-flat-button color="primary" (click)="confirmarEVotar(eleicao, cargo)" [disabled]="isEnviando" class="w-50">
+                    <mat-icon *ngIf="!isEnviando">how_to_vote</mat-icon>
+                    {{ isEnviando ? 'Gravando Voto...' : 'Confirmar Voto' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSO 4: SUCESSO -->
+    <div *ngIf="passo === 'sucesso'" class="votacao-glass-card text-center py-5">
+        <mat-icon class="icon-sucesso-grandioso mb-3">check_circle</mat-icon>
+        <h2>Voto Computado com Sucesso!</h2>
+        <p>Obrigado, <strong>{{ membroValidado?.nome }}</strong>. Seu voto foi gravado com total sigilo e segurança.</p>
+    </div>
+
+</div>
+
+<ng-template #loading>
+    <div class="p-5 text-center">
+        <mat-progress-spinner mode="indeterminate" diameter="50" class="mx-auto mb-3"></mat-progress-spinner>
+        <p>Carregando votação pastoral...</p>
+    </div>
+</ng-template>

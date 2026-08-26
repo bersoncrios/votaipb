@@ -1,0 +1,209 @@
+<div class="row">
+    <div class="col-sm-12">
+        <app-card [cardTitle]="isEditMode ? 'Editar Eleição para Pastores' : 'Registrar Eleição para Pastores'">
+            <form [formGroup]="eleicaoForm">
+                <mat-stepper [linear]="true" #stepper>
+
+                <!-- PASSO 1: Título -->
+                <mat-step label="Título" [completed]="eleicaoForm.get('titulo')?.valid">
+                    <div class="p-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Título da Eleição Pastoral</mat-label>
+                            <input matInput formControlName="titulo" [formControl]="$any(eleicaoForm.get('titulo'))"
+                                placeholder="Ex: Eleição de Pastor Titular 2025 - IPB">
+                            <mat-error *ngIf="eleicaoForm.get('titulo')?.hasError('required')">
+                                O título é obrigatório.
+                            </mat-error>
+                        </mat-form-field>
+                        <div class="step-nav-footer single-right">
+                            <button mat-flat-button color="primary" matStepperNext type="button" class="btn-step-next">
+                                Próximo
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </mat-step>
+
+                <!-- PASSO 2: Votantes (Membros Elegíveis) -->
+                <mat-step label="Votantes" [completed]="membrosElegiveisArr.valid">
+                    <div class="p-3">
+                        <div class="votantes-header-box mb-4">
+                            <h2 class="step-section-title">Adicionar Membros Votantes (Total: {{ membrosElegiveisArr.length }})</h2>
+                            <p class="text-muted mb-2">Membros da igreja que possuem direito a voto nesta eleição.</p>
+
+                            <div class="notice-badge-pastor">
+                                <mat-icon class="icon-small me-2">info</mat-icon>
+                                <span>Os pastores candidatos cadastrados no próximo passo serão impedidos de votar automaticamente.</span>
+                            </div>
+                        </div>
+
+                        <div class="add-membro-actions mt-3">
+
+                            <button mat-stroked-button color="accent" type="button" (click)="fileInput.click()" class="import-button">
+                                <mat-icon>upload_file</mat-icon>
+                                Importar Votantes de Planilha Excel
+                            </button>
+
+                            <input hidden type="file" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls, .csv" />
+                        </div>
+
+                        <div class="add-membro-form mt-3">
+                            <mat-form-field appearance="outline" class="membro-input">
+                                <mat-label>ID / Matrícula do Votante</mat-label>
+                                <input matInput #idMembro appOnlyNumbers placeholder="123">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="membro-input">
+                                <mat-label>Nome Completo do Votante</mat-label>
+                                <input matInput #nomeMembro (keyup.enter)="addMembro(idMembro, nomeMembro)" placeholder="Fulano de Tal">
+                            </mat-form-field>
+                            <button mat-flat-button color="primary" type="button" class="btn-add-membro-pill" (click)="addMembro(idMembro, nomeMembro)">
+                                <mat-icon>person_add</mat-icon> Adicionar Votante
+                            </button>
+                        </div>
+
+                        <div class="membros-glass-grid mt-3">
+                            <div *ngFor="let membro of membrosElegiveisArr.controls; let i = index" class="membro-card-glass">
+                                <div class="membro-avatar">
+                                    <span>{{ getInitials(membro.value.nome) }}</span>
+                                </div>
+                                <div class="membro-details">
+                                    <span class="membro-nome">{{ membro.value.nome }}</span>
+                                    <span class="membro-id-tag">ID: <strong>{{ membro.value.id }}</strong></span>
+                                </div>
+                                <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)" class="btn-remove-membro" aria-label="Remover membro">
+                                    <mat-icon>delete_outline</mat-icon>
+                                </button>
+                            </div>
+                            <div *ngIf="membrosElegiveisArr.length === 0" class="empty-membros-hint">
+                                Nenhum votante adicionado ainda. Preencha os campos acima ou importe uma planilha.
+                            </div>
+                        </div>
+
+                        <mat-error *ngIf="membrosElegiveisArr.length === 0 && membrosElegiveisArr.touched" class="mt-2">
+                            Adicione pelo menos um membro elegível para votar.
+                        </mat-error>
+
+                        <div class="step-nav-footer mt-4">
+                            <button mat-stroked-button matStepperPrevious type="button" class="btn-step-prev">
+                                <mat-icon>arrow_back</mat-icon>
+                                Voltar
+                            </button>
+                            <button mat-flat-button color="primary" matStepperNext type="button" class="btn-step-next" [disabled]="membrosElegiveisArr.invalid">
+                                Próximo
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </mat-step>
+
+                <!-- PASSO 3: Pastores Candidatos (Cadastrados Individualmente) -->
+                <mat-step label="Pastores Candidatos">
+                    <div class="p-3">
+                        <div class="cargos-header-actions mb-3">
+                            <h2 class="step-section-title">Cargos Pastorais & Pastores Candidatos</h2>
+                            <button mat-stroked-button color="primary" type="button" (click)="addCargo()" class="add-cargo-button">
+                                <mat-icon>add_circle_outline</mat-icon> Adicionar Novo Cargo Pastoral
+                            </button>
+                        </div>
+
+                        <div formArrayName="cargos" class="lista-cargos-tabs">
+                            <mat-tab-group [(selectedIndex)]="selectedCargoIndex" animationDuration="0ms" *ngIf="cargosArr.length > 0; else noCargosWarning">
+                                <mat-tab *ngFor="let cargoCtrl of cargosArr.controls; let i = index" [formGroupName]="i">
+                                    <ng-template mat-tab-label>
+                                        <div class="custom-tab-label">
+                                            {{ cargoCtrl.get('titulo')?.value || 'Cargo Pastoral ' + (i + 1) }}
+                                        </div>
+                                    </ng-template>
+
+                                    <div class="cargo-tab-wrapper p-3">
+                                        <div class="cargo-header-row">
+                                            <mat-form-field appearance="outline" class="field-titulo-cargo">
+                                                <mat-label>Título do Cargo Pastoral</mat-label>
+                                                <input matInput formControlName="titulo" placeholder="Ex: Pastor Titular, Pastor Auxiliar" required>
+                                            </mat-form-field>
+
+                                            <mat-form-field appearance="outline" class="field-vagas-cargo">
+                                                <mat-label>Número de Vagas</mat-label>
+                                                <input matInput type="number" formControlName="vagas" min="1" [max]="membrosElegiveisArr.length || 1">
+                                            </mat-form-field>
+
+                                            <button mat-stroked-button color="warn" type="button" class="btn-remove-cargo-pill" (click)="removeCargo(i)">
+                                                <mat-icon>delete_outline</mat-icon> Remover Cargo
+                                            </button>
+                                        </div>
+
+                                        <!-- CADASTRO INDIVIDUAL DO PASTOR CANDIDATO -->
+                                        <div class="cargo-config-card mt-3">
+                                            <h4>Cadastrar Pastor Candidato Individualmente</h4>
+                                            <p class="text-muted small">Insira o Nome e ID do pastor candidato. Ele <strong>não terá direito a voto</strong> na eleição.</p>
+
+                                            <div class="add-pastor-form">
+                                                <mat-form-field appearance="outline" class="pastor-input-id">
+                                                    <mat-label>ID / Matrícula do Pastor</mat-label>
+                                                    <input matInput #idPastor appOnlyNumbers placeholder="Ex: 901">
+                                                </mat-form-field>
+                                                <mat-form-field appearance="outline" class="pastor-input-nome">
+                                                    <mat-label>Nome Completo do Pastor</mat-label>
+                                                    <input matInput #nomePastor (keyup.enter)="addCandidatoPastor(i, idPastor, nomePastor)" placeholder="Rev. Fulano de Tal">
+                                                </mat-form-field>
+                                                <button mat-flat-button color="primary" type="button" class="btn-add-pastor-pill" (click)="addCandidatoPastor(i, idPastor, nomePastor)">
+                                                    <mat-icon>person_add</mat-icon> Adicionar Pastor
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- LISTA DE PASTORES CANDIDATOS CADASTRADOS -->
+                                        <div class="candidatos-section mt-4">
+                                            <h3>Pastores Candidatos Inscritos ({{ getCandidatosDoCargo(i).length }})</h3>
+
+                                            <div class="candidatos-glass-grid">
+                                                <div *ngFor="let candidato of getCandidatosDoCargo(i).controls; let cIndex = index" class="candidato-card-glass">
+                                                    <div class="candidato-avatar">
+                                                        <span>{{ getInitials(candidato.value.nome) }}</span>
+                                                    </div>
+                                                    <div class="candidato-details">
+                                                        <span class="candidato-nome">{{ candidato.value.nome }}</span>
+                                                        <span class="candidato-tag">ID: <strong>{{ candidato.value.userId }}</strong> (Pastor Candidato)</span>
+                                                    </div>
+                                                    <button mat-icon-button color="warn" type="button" (click)="removeCandidatoPastor(i, cIndex)" class="btn-remove-candidato" aria-label="Remover pastor candidato">
+                                                        <mat-icon>delete_outline</mat-icon>
+                                                    </button>
+                                                </div>
+                                                <div *ngIf="getCandidatosDoCargo(i).length === 0" class="empty-candidatos-hint">
+                                                    Nenhum pastor candidato adicionado a este cargo ainda.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                            </mat-tab-group>
+
+                            <ng-template #noCargosWarning>
+                                <div class="no-cargos-warning p-4 text-center">
+                                    <mat-icon>info</mat-icon>
+                                    <p>Nenhum cargo pastoral adicionado. Clique no botão acima para adicionar.</p>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                        <div class="step-nav-footer mt-4">
+                            <button mat-stroked-button matStepperPrevious type="button" class="btn-step-prev">
+                                <mat-icon>arrow_back</mat-icon>
+                                Voltar
+                            </button>
+                            <button mat-flat-button color="primary" type="button" (click)="onSubmit()" class="btn-step-next" [disabled]="isSaving || eleicaoForm.invalid">
+                                <mat-icon *ngIf="isSaving">hourglass_empty</mat-icon>
+                                <mat-icon *ngIf="!isSaving">check_circle</mat-icon>
+                                {{ isSaving ? 'Salvando...' : (isEditMode ? 'Atualizar Eleição Pastoral' : 'Salvar Eleição Pastoral') }}
+                            </button>
+                        </div>
+                    </div>
+                </mat-step>
+
+                </mat-stepper>
+            </form>
+        </app-card>
+    </div>
+</div>
+
+

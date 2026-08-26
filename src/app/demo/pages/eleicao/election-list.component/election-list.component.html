@@ -1,89 +1,87 @@
 <div class="list-container">
   <div class="list-header">
-    <h1>Gerenciar Eleições</h1>
-    <a [routerLink]="['/eleicoes/registrar']" class="btn-criar-nova">
-      Cadastrar Nova Eleição
-    </a>
+    <div>
+      <h1>Gerenciar Todas as Eleições</h1>
+      <p class="subtitle-text">Histórico completo e eleições ativas (Diretorias, Oficiais & Pastores).</p>
+    </div>
+
+    <div class="actions-header-group">
+      <a [routerLink]="['/eleicoes/registrar']" class="btn-criar-nova">
+        ✦ Nova Eleição Diretoria
+      </a>
+      <a [routerLink]="['/eleicoes/oficiais/registrar']" class="btn-criar-nova btn-oficiais">
+        ✦ Nova Eleição Oficiais
+      </a>
+      <a [routerLink]="['/eleicoes/pastores/registrar']" class="btn-criar-nova btn-pastores">
+        ✦ Nova Eleição Pastoral
+      </a>
+    </div>
   </div>
-  <p>Aqui estão as eleições que você cadastrou.</p>
 
-  <hr />
+  <hr class="header-divider" />
 
-  <!--
-    Nova lógica de template usando @if / @else
-    Isso lida com todos os estados: Carregando, Erro, Vazio, e Dados.
-  -->
   @if (isLoading()) {
   <div class="loading-message">
-    <!-- Usando o spinner do Material para um visual melhor -->
-    <mat-progress-spinner
-      mode="indeterminate"
-      diameter="50"
-    ></mat-progress-spinner>
-    <p>Carregando eleições...</p>
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    <p>Carregando todas as eleições...</p>
   </div>
   } @else if (error()) {
   <div class="error-message">
     <p>{{ error() }}</p>
   </div>
   } @else if (allEleicoes().length === 0) {
-  <!-- Estado Vazio -->
   <div class="empty-state">
     <div class="empty-icon-circle">
       <mat-icon>how_to_vote</mat-icon>
     </div>
     <h3>Nenhuma eleição encontrada</h3>
-    <p>Crie sua primeira eleição de diretoria para a assembleia da igreja com cargos e eleitores.</p>
+    <p>Crie sua primeira eleição de diretoria, oficiais ou pastores para a assembleia da igreja.</p>
     <a [routerLink]="['/eleicoes/registrar']" class="btn-criar-nova">
       ✦ Cadastrar Nova Eleição
     </a>
   </div>
   } @else {
-  <!-- Grid de Eleições (Estado com Dados) -->
   <div class="eleicoes-grid">
-    <!--
-      O @for agora itera sobre o signal COMPUTADO `paginatedEleicoes()`
-      em vez de `eleicoes$ | async`
-    -->
     @for (eleicao of paginatedEleicoes(); track eleicao.id) {
     <div class="eleicao-card">
       <div class="card-body">
-        <h3 class="card-title">{{ eleicao.titulo }}</h3>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="tipo-tag" [ngClass]="eleicao.isPastoral ? 'tag-pastores' : (eleicao.isOficial ? 'tag-oficiais' : 'tag-diretoria')">
+            {{ eleicao.tipoRotulo }}
+          </span>
 
-        <div class="card-status" [ngClass]="eleicao.status">
-          {{ eleicao.status === 'em_andamento' ? 'Em Andamento' : (eleicao.status === 'agendada' ? 'Agendada' : 'Finalizada') }}
+          <div class="card-status" [ngClass]="eleicao.status">
+            {{ eleicao.status === 'em_andamento' ? 'Em Andamento' : (eleicao.status === 'agendada' ? 'Agendada' : 'Finalizada') }}
+          </div>
         </div>
 
+        <h3 class="card-title">{{ eleicao.titulo }}</h3>
 
         <p class="card-info info-cargos">
-          {{ eleicao.cargos.length }}
-          {{ eleicao.cargos.length === 1 ? 'cargo' : 'cargos' }}
+          <mat-icon class="icon-small me-1">format_list_bulleted</mat-icon>
+          {{ eleicao.cargosCount }}
+          {{ eleicao.cargosCount === 1 ? 'cargo' : 'cargos' }}
         </p>
         <p class="card-info info-membros">
-          {{ eleicao.membrosElegiveis.length }}
-          {{
-            eleicao.membrosElegiveis.length === 1
-              ? 'membro total'
-              : 'membros totais'
-          }}
+          <mat-icon class="icon-small me-1">people_outline</mat-icon>
+          {{ eleicao.membrosCount }}
+          {{ eleicao.membrosCount === 1 ? 'membro total' : 'membros totais' }}
         </p>
       </div>
 
       <div class="card-footer d-flex gap-2 justify-content-end">
         <a *ngIf="eleicao.status === 'agendada'"
-          [routerLink]="['/eleicoes/editar', eleicao.id]"
+          [routerLink]="eleicao.editRoute"
           class="btn-gerenciar btn-editar-link" title="Editar Eleição">
           <mat-icon class="icon-18 me-1">edit</mat-icon> Editar
         </a>
         <a
-          [routerLink]="['/eleicoes/gerenciar', eleicao.id]"
+          [routerLink]="eleicao.manageRoute"
           class="btn-gerenciar"
         >
           Gerenciar
         </a>
       </div>
-
-
     </div>
     }
   </div>
@@ -93,7 +91,7 @@
     [length]="allEleicoes().length"
     [pageSize]="pageSize()"
     [pageIndex]="pageIndex()"
-    [pageSizeOptions]="[4, 6, 9, 12, 24]"
+    [pageSizeOptions]="[6, 12, 18, 24]"
     (page)="onPageChange($event)"
     aria-label="Selecionar página de eleições"
     showFirstLastButtons

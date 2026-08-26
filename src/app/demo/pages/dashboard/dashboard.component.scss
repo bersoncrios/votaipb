@@ -134,8 +134,10 @@
 
   &.launch-card-indigo .launch-icon { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
   &.launch-card-cyan .launch-icon { background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%); }
+  &.launch-card-purple .launch-icon { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
   &.launch-card-amber .launch-icon { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
   &.launch-card-emerald .launch-icon { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+
 
   .launch-info {
     flex: 1;
@@ -308,11 +310,18 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 
+  &.tag-pastores {
+    background: rgba(168, 85, 247, 0.12);
+    color: #7e22ce;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+  }
+
   &.tag-oficiais {
     background: rgba(14, 165, 233, 0.12);
     color: #0284c7;
     border: 1px solid rgba(14, 165, 233, 0.25);
   }
+
 
   &.tag-diretoria {
     background: rgba(99, 102, 241, 0.12);

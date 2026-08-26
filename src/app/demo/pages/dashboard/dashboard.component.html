@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <!-- 2. Launchpad de Ações Rápidas (4 Cards Ilustrados) -->
+  <!-- 2. Launchpad de Ações Rápidas (Cards Ilustrados) -->
   <div class="launchpad-grid">
     <div class="launch-card launch-card-indigo" (click)="irParaCriarEleicao()">
       <div class="launch-icon">
@@ -43,6 +43,17 @@
       <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
     </div>
 
+    <div class="launch-card launch-card-purple" [routerLink]="['/eleicoes/pastores/gerenciar']">
+      <div class="launch-icon">
+        <i-tabler name="user" class="icon-32"></i-tabler>
+      </div>
+      <div class="launch-info">
+        <h3>Eleição para Pastores</h3>
+        <p>Pastor Titular & Auxiliar</p>
+      </div>
+      <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
+    </div>
+
     <div class="launch-card launch-card-amber" (click)="irParaListaEleicoes()">
       <div class="launch-icon">
         <i-tabler name="list-details" class="icon-32"></i-tabler>
@@ -50,17 +61,6 @@
       <div class="launch-info">
         <h3>Ver Todas as Eleições</h3>
         <p>Histórico & Ativas</p>
-      </div>
-      <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
-    </div>
-
-    <div class="launch-card launch-card-emerald" [routerLink]="['/inscricoes/lista']">
-      <div class="launch-icon">
-        <i-tabler name="forms" class="icon-32"></i-tabler>
-      </div>
-      <div class="launch-info">
-        <h3>Gerenciar Inscrições</h3>
-        <p>Candidatos & Formulários</p>
       </div>
       <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
     </div>
@@ -107,8 +107,8 @@
             <td mat-cell *matCellDef="let eleicao">
               <div class="d-flex align-items-center gap-2">
                 <strong class="eleicao-title-text">{{eleicao.titulo}}</strong>
-                <span class="tipo-tag" [ngClass]="eleicao.isOficial ? 'tag-oficiais' : 'tag-diretoria'">
-                  {{ eleicao.isOficial ? 'Oficiais' : 'Diretoria' }}
+                <span class="tipo-tag" [ngClass]="eleicao.isPastoral ? 'tag-pastores' : (eleicao.isOficial ? 'tag-oficiais' : 'tag-diretoria')">
+                  {{ eleicao.tipoRotulo }}
                 </span>
               </div>
             </td>
@@ -171,12 +171,13 @@
             <td mat-cell *matCellDef="let eleicao">
               <div class="d-flex align-items-center gap-2">
                 <strong class="eleicao-title-text">{{eleicao.titulo}}</strong>
-                <span class="tipo-tag" [ngClass]="eleicao.isOficial ? 'tag-oficiais' : 'tag-diretoria'">
-                  {{ eleicao.isOficial ? 'Oficiais' : 'Diretoria' }}
+                <span class="tipo-tag" [ngClass]="eleicao.isPastoral ? 'tag-pastores' : (eleicao.isOficial ? 'tag-oficiais' : 'tag-diretoria')">
+                  {{ eleicao.tipoRotulo }}
                 </span>
               </div>
             </td>
           </ng-container>
+
 
           <ng-container matColumnDef="acoes">
             <th mat-header-cell *matHeaderCellDef> </th>

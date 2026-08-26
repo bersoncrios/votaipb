@@ -1,0 +1,204 @@
+.votacao-publica-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.votacao-hero-card {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    color: white;
+    text-align: center;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.25);
+    margin-bottom: 1.5rem;
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.35rem 0.85rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin: 0 0 0.25rem 0;
+        color: white;
+    }
+
+    p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+}
+
+.votacao-glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(31, 38, 135, 0.07);
+
+    h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 0.25rem 0;
+    }
+
+    p {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+    }
+}
+
+.alert-erro-badge {
+    display: flex;
+    align-items: center;
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+}
+
+.votos-especiais-bar {
+    display: flex;
+    gap: 0.75rem;
+
+    .btn-voto-especial {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(203, 213, 225, 0.8);
+        background: #f8fafc;
+        color: #475569;
+
+        &.active {
+            &.branco {
+                background: #ffffff;
+                color: #0f172a;
+                border-color: #3b82f6;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            }
+            &.nulo {
+                background: #fef2f2;
+                color: #dc2626;
+                border-color: #ef4444;
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+            }
+        }
+    }
+}
+
+.candidatos-grid-votacao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .candidato-card-select {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-radius: 16px;
+        background: white;
+        border: 2px solid rgba(226, 232, 240, 0.8);
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.selected {
+            border-color: #3b82f6;
+            background: rgba(239, 246, 255, 0.6);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.15);
+        }
+
+        .candidato-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .candidato-info {
+            display: flex;
+            flex-direction: column;
+
+            .candidato-nome {
+                font-weight: 700;
+                color: #0f172a;
+                font-size: 1rem;
+            }
+
+            .candidato-sub {
+                font-size: 0.8rem;
+                color: #64748b;
+            }
+        }
+    }
+}
+
+.resumo-voto-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.25rem;
+
+    .resumo-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        display: block;
+    }
+
+    .resumo-cargo {
+        font-size: 1.2rem;
+        color: #0f172a;
+    }
+
+    .badge-escolha {
+        display: inline-block;
+        background: rgba(59, 130, 246, 0.12);
+        color: #1d4ed8;
+        padding: 0.4rem 0.85rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.icon-sucesso-grandioso {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    color: #10b981;
+}

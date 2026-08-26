@@ -1,0 +1,240 @@
+:host {
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-blur: blur(20px) saturate(180%);
+  --glass-radius: 24px;
+  --glass-shadow: 0 10px 30px rgba(31, 38, 135, 0.07);
+
+  .manage-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 1.5rem 0;
+  }
+
+  .control-hero-card {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.95) 0%, rgba(37, 99, 235, 0.9) 100%);
+    backdrop-filter: blur(24px);
+    border-radius: var(--glass-radius);
+    padding: 2.25rem 2.5rem;
+    color: white;
+    box-shadow: 0 16px 36px rgba(79, 70, 229, 0.22);
+    margin-bottom: 2rem;
+
+    .hero-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 0.35rem 0.9rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0;
+      color: white;
+    }
+
+    .hero-actions-bar {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+
+      .btn-hero {
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+
+        &.btn-hero-primary {
+          background: white;
+          color: #4f46e5;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+          &:hover {
+            transform: translateY(-2px);
+            background: #f8fafc;
+          }
+        }
+
+        &.btn-hero-secondary {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+          }
+        }
+      }
+    }
+  }
+
+  .cargos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .cargo-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    box-shadow: var(--glass-shadow);
+    padding: 1.75rem;
+
+    .cargo-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+      margin-bottom: 1.25rem;
+
+      h3 {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 0.35rem 0;
+      }
+
+      .cargo-meta-badges {
+        display: flex;
+        gap: 0.75rem;
+
+        .meta-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.82rem;
+          color: #64748b;
+          background: rgba(241, 245, 249, 0.8);
+          padding: 0.25rem 0.75rem;
+          border-radius: 50px;
+
+          .meta-icon {
+            font-size: 1rem;
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+      }
+    }
+
+    .cargo-body-state {
+      padding: 1rem 0;
+    }
+
+    .contagem-votacao-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+
+      .contagem-card {
+        padding: 1rem;
+        border-radius: 16px;
+        background: rgba(248, 250, 252, 0.8);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        display: flex;
+        flex-direction: column;
+
+        .contagem-label {
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+        }
+
+        .contagem-value {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #0f172a;
+          margin-top: 0.25rem;
+        }
+
+        &.item-votaram .contagem-value { color: #16a34a; }
+        &.item-faltam .contagem-value { color: #d97706; }
+      }
+    }
+  }
+
+  .kpi-votos-resumo {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .badge-voto-resumo {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+
+      &.branco {
+        background: rgba(241, 245, 249, 0.9);
+        color: #475569;
+        border: 1px solid rgba(203, 213, 225, 0.8);
+      }
+
+      &.nulo {
+        background: rgba(254, 242, 242, 0.9);
+        color: #dc2626;
+        border: 1px solid rgba(254, 202, 202, 0.8);
+      }
+    }
+  }
+
+  .lista-resultados-apuracao {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 0.5rem;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+
+      &.vencedor-item {
+        border-color: rgba(16, 185, 129, 0.4);
+        background: rgba(236, 253, 245, 0.6);
+      }
+
+      .badge-status {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        margin-left: 0.5rem;
+        background: rgba(100, 116, 139, 0.1);
+        color: #64748b;
+
+        &.eleito {
+          background: rgba(16, 185, 129, 0.15);
+          color: #047857;
+        }
+      }
+    }
+  }
+}

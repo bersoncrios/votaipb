@@ -31,10 +31,16 @@ export const routes: Routes = [
           import('./demo/pages/eleicao/votar-oficial.component/votar-oficial.component').then((m) => m.VotarOficialComponent)
       },
       {
+        path: 'votar-pastor/:id',
+        loadComponent: () =>
+          import('./demo/pages/eleicao/votar-pastor.component/votar-pastor.component').then((m) => m.VotarPastorComponent)
+      },
+      {
         path: 'dash',
         redirectTo: '',
         pathMatch: 'full'
       }
+
     ]
   },
   {
@@ -78,6 +84,37 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./demo/pages/eleicao/officer-election-list.component/officer-election-list.component').then((m) => m.OfficerElectionListComponent)
       },
+      {
+        path: 'eleicoes/pastores/registrar',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/register-pastoral-election.component/register-pastoral-election.component').then((m) => m.RegisterPastoralElectionComponent)
+      },
+      {
+        path: 'eleicoes/pastores/editar/:id',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/register-pastoral-election.component/register-pastoral-election.component').then((m) => m.RegisterPastoralElectionComponent)
+      },
+      {
+        path: 'eleicoes/pastores/gerenciar/:id',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/manage-pastoral-election.component/manage-pastoral-election.component').then((m) => m.ManagePastoralElectionComponent)
+      },
+      {
+        path: 'eleicoes/pastores/gerenciar',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/pastoral-election-list.component/pastoral-election-list.component').then((m) => m.PastoralElectionListComponent)
+      },
+      {
+        path: 'eleicoes/pastores/lista',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/pastoral-election-list.component/pastoral-election-list.component').then((m) => m.PastoralElectionListComponent)
+      },
+
       {
         path: 'eleicoes/gerenciar/:id',
         canActivate: [AuthGuard],

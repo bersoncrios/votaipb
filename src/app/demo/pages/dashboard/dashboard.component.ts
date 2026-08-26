@@ -7,6 +7,7 @@ import { combineLatest, map } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { EleicaoAdminService } from '../../../services/eleicao-admin.service';
 import { EleicaoOficialService } from '../../../services/eleicao-oficial.service';
+import { EleicaoPastoralService } from '../../../services/eleicao-pastoral.service';
 import { AuthService } from '../../../services/auth.service';
 
 // Material & Icons
@@ -23,7 +24,8 @@ export interface DashboardEleicaoItem {
   status: 'agendada' | 'em_andamento' | 'finalizada';
   adminUid: string;
   isOficial?: boolean;
-  tipoRotulo?: string;
+  isPastoral?: boolean;
+  tipoRotulo?: 'Diretoria' | 'Oficiais' | 'Pastores';
 }
 
 interface KpiCard {
@@ -54,6 +56,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public authService = inject(AuthService);
   private eleicaoAdminService = inject(EleicaoAdminService);
   private eleicaoOficialService = inject(EleicaoOficialService);
+  private eleicaoPastoralService = inject(EleicaoPastoralService);
   private router = inject(Router);
 
 
@@ -84,7 +87,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             status: e.status,
             adminUid: e.adminUid,
             isOficial: false,
-            tipoRotulo: 'Diretoria'
+            isPastoral: false,
+            tipoRotulo: 'Diretoria' as const
           }))
         )
       );
@@ -97,13 +101,28 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             status: e.status,
             adminUid: e.adminUid,
             isOficial: true,
-            tipoRotulo: 'Oficiais'
+            isPastoral: false,
+            tipoRotulo: 'Oficiais' as const
           }))
         )
       );
 
-      const todasEleicoes$ = combineLatest([eleicoesDiretoria$, eleicoesOficiais$]).pipe(
-        map(([diretorias, oficiais]) => [...diretorias, ...oficiais])
+      const eleicoesPastorais$ = this.eleicaoPastoralService.getEleicoesPastoraisDoAdmin(adminUid).pipe(
+        map(list =>
+          list.map(e => ({
+            id: e.id,
+            titulo: e.titulo,
+            status: e.status,
+            adminUid: e.adminUid,
+            isOficial: false,
+            isPastoral: true,
+            tipoRotulo: 'Pastores' as const
+          }))
+        )
+      );
+
+      const todasEleicoes$ = combineLatest([eleicoesDiretoria$, eleicoesOficiais$, eleicoesPastorais$]).pipe(
+        map(([diretorias, oficiais, pastorais]) => [...diretorias, ...oficiais, ...pastorais])
       );
 
       this.eleicoes = toSignal(todasEleicoes$, { initialValue: [] });
@@ -168,7 +187,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   irParaDetalhes(eleicao: DashboardEleicaoItem) {
-    if (eleicao.isOficial) {
+    if (eleicao.isPastoral) {
+      this.router.navigate(['/eleicoes/pastores/gerenciar', eleicao.id]);
+    } else if (eleicao.isOficial) {
       this.router.navigate(['/eleicoes/oficiais/gerenciar', eleicao.id]);
     } else {
       this.router.navigate(['/eleicoes/gerenciar', eleicao.id]);
@@ -176,12 +197,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   irParaEditar(eleicao: DashboardEleicaoItem) {
-    if (eleicao.isOficial) {
+    if (eleicao.isPastoral) {
+      this.router.navigate(['/eleicoes/pastores/editar', eleicao.id]);
+    } else if (eleicao.isOficial) {
       this.router.navigate(['/eleicoes/oficiais/editar', eleicao.id]);
     } else {
       this.router.navigate(['/eleicoes/editar', eleicao.id]);
     }
   }
 }
+
 
 

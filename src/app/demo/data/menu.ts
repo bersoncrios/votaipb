@@ -91,6 +91,31 @@ export const menus: Navigation[] = [
     ]
   },
   {
+    id: 'eleicaoPastores',
+    title: 'Eleições de Pastores',
+    type: 'group',
+    icon: 'ti ti-menu-2',
+    children: [
+      {
+        id: 'Registrar Eleição Pastoral',
+        title: 'Registrar Eleições',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/eleicoes/pastores/registrar',
+        icon: 'ti ti-file-plus'
+      },
+      {
+        id: 'Gerenciar Eleições Pastorais',
+        title: 'Gerenciar Eleições',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/eleicoes/pastores/gerenciar',
+        icon: 'ti ti-adjustments-check'
+      }
+    ]
+  },
+
+  {
     id: 'inscricoes',
     title: 'Inscrições',
     type: 'group',

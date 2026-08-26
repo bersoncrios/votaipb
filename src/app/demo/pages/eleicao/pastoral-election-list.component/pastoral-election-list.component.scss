@@ -1,7 +1,6 @@
 :host {
   --primary-color: #3b82f6;
-  --primary-dark: #1d4ed8;
-  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg: rgba(255, 255, 255, 0.75);
   --glass-border: rgba(255, 255, 255, 0.4);
   --glass-blur: blur(20px) saturate(180%);
   --glass-radius: 24px;
@@ -11,7 +10,6 @@
     max-width: 1350px;
     margin: 0 auto;
     padding: 1.5rem 0;
-    font-family: inherit;
 
     .list-header {
       display: flex;
@@ -26,92 +24,33 @@
         margin: 0;
         font-size: 2rem;
         font-weight: 800;
-        letter-spacing: -0.02em;
       }
     }
 
-    .actions-header-group {
-      display: flex;
+    .btn-criar-nova {
+      display: inline-flex;
       align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      color: white;
+      padding: 0.85rem 1.75rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+      transition: all 0.25s ease;
 
-      .btn-criar-nova {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
-        padding: 0.65rem 1.25rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 0.88rem;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        transition: all 0.25s ease;
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
-        }
-
-        &.btn-oficiais {
-          background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
-          box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
-
-          &:hover {
-            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.38);
-          }
-        }
-
-        &.btn-pastores {
-          background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
-          box-shadow: 0 4px 14px rgba(126, 34, 206, 0.25);
-
-          &:hover {
-            box-shadow: 0 6px 18px rgba(126, 34, 206, 0.38);
-          }
-        }
+      &:hover {
+        transform: translateY(-2px);
       }
     }
 
-    hr.header-divider {
+    hr {
       border: 0;
       border-top: 1px solid rgba(203, 213, 225, 0.6);
-      margin: 1.5rem 0 2rem;
+      margin: 1.75rem 0 2.25rem;
     }
   }
-
-  .tipo-tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-
-    &.tag-diretoria {
-      background: rgba(59, 130, 246, 0.12);
-      color: #1d4ed8;
-      border: 1px solid rgba(59, 130, 246, 0.25);
-    }
-
-    &.tag-oficiais {
-      background: rgba(6, 182, 212, 0.12);
-      color: #0284c7;
-      border: 1px solid rgba(6, 182, 212, 0.25);
-    }
-
-    &.tag-pastores {
-      background: rgba(168, 85, 247, 0.12);
-      color: #7e22ce;
-      border: 1px solid rgba(168, 85, 247, 0.25);
-    }
-  }
-
 
   .eleicoes-grid {
     display: grid;
@@ -124,17 +63,14 @@
     flex-direction: column;
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     border-radius: var(--glass-radius);
     box-shadow: var(--glass-shadow);
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s ease;
 
     &:hover {
       transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(31, 38, 135, 0.13);
-      border-color: rgba(99, 102, 241, 0.3);
     }
 
     .card-body {
@@ -159,7 +95,6 @@
       font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
       margin-bottom: 1.25rem;
 
       &.agendada {
@@ -185,9 +120,6 @@
       font-size: 0.95rem;
       color: #475569;
       margin: 0.5rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
       font-weight: 500;
     }
 
@@ -205,7 +137,6 @@
       background: rgba(241, 245, 249, 0.95) !important;
       color: #475569 !important;
       border: 1px solid rgba(203, 213, 225, 0.8) !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
       padding: 0.55rem 1.1rem !important;
       font-size: 0.875rem !important;
       font-weight: 600 !important;
@@ -213,22 +144,18 @@
       display: inline-flex !important;
       align-items: center !important;
       gap: 0.35rem !important;
-      transition: all 0.2s ease !important;
 
       mat-icon {
         font-size: 1.1rem;
         width: 1.1rem;
         height: 1.1rem;
         color: #64748b;
-        transition: color 0.2s ease;
       }
 
       &:hover {
         background: #ffffff !important;
         color: #1e293b !important;
         border-color: #94a3b8 !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-        transform: translateY(-1px) !important;
 
         mat-icon {
           color: #3b82f6;
@@ -244,29 +171,23 @@
       text-decoration: none;
       font-weight: 600;
       font-size: 0.875rem;
-      border: none;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
       transition: all 0.2s ease;
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.45);
       }
     }
-
   }
 
   .empty-state {
     text-align: center;
     background: rgba(255, 255, 255, 0.78);
-    backdrop-filter: blur(24px) saturate(190%);
+    backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 28px;
     padding: 4rem 2rem;
-    box-shadow: 0 14px 35px rgba(31, 38, 135, 0.06);
     grid-column: 1 / -1;
 
     .empty-icon-circle {
@@ -291,7 +212,6 @@
       font-size: 1.5rem;
       font-weight: 800;
       color: #0f172a;
-      margin: 0 0 0.5rem 0;
     }
 
     p {
@@ -299,7 +219,6 @@
       font-size: 1rem;
       max-width: 480px;
       margin: 0 auto 1.75rem;
-      line-height: 1.5;
     }
   }
 
