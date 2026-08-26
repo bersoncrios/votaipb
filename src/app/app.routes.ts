@@ -48,11 +48,24 @@ export const routes: Routes = [
           import('./demo/pages/eleicao/register-election.component/register-election.component').then((m) => m.RegisterElectionComponent)
       },
       {
+        path: 'eleicoes/editar/:id',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/register-election.component/register-election.component').then((m) => m.RegisterElectionComponent)
+      },
+      {
         path: 'eleicoes/oficiais/registrar',
         canActivate: [AuthGuard],
         loadComponent: () =>
           import('./demo/pages/eleicao/register-officer-election.component/register-officer-election.component').then((m) => m.RegisterOfficerElectionComponent)
       },
+      {
+        path: 'eleicoes/oficiais/editar/:id',
+        canActivate: [AuthGuard],
+        loadComponent: () =>
+          import('./demo/pages/eleicao/register-officer-election.component/register-officer-election.component').then((m) => m.RegisterOfficerElectionComponent)
+      },
+
       {
         path: 'eleicoes/oficiais/gerenciar/:id',
         canActivate: [AuthGuard],

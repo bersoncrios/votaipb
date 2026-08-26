@@ -1,88 +1,163 @@
 <div class="manage-container" *ngIf="eleicao$ | async as eleicao; else loading">
 
-    <div class="header-container">
-        <h1>{{ eleicao.titulo }}</h1>
-        <div class="header-actions">
-            <button (click)="onCopiarLink(eleicao.id)" class="btn-header btn-copiar-link">
-                🔗 Copiar Link
+    <!-- Control Room Hero Glass Card -->
+    <div class="control-hero-card">
+        <div class="hero-top-row">
+            <div class="hero-title-group">
+                <span class="hero-badge">✦ Sala de Controle de Oficiais ao Vivo</span>
+                <h1>{{ eleicao.titulo }}</h1>
+            </div>
+
+            <div class="hero-status-pill" [ngClass]="eleicao.status">
+                <span class="status-dot"></span>
+                <span>{{ formatStatus(eleicao.status) }}</span>
+            </div>
+        </div>
+
+        <div class="hero-actions-bar">
+            <a *ngIf="eleicao.status === 'agendada'" [routerLink]="['/eleicoes/oficiais/editar', eleicao.id]" class="btn-hero btn-hero-secondary text-decoration-none">
+                <span>✏️ Editar Eleição</span>
+            </a>
+            <button (click)="onCopiarLink(eleicao.id)" class="btn-hero btn-hero-primary">
+                <span>🔗 Copiar Link de Votação</span>
             </button>
         </div>
+
+
+
+        <!-- Active Voting Glass Banner -->
+        <div *ngIf="eleicao.cargoAbertoId" class="live-voting-banner">
+            <div class="banner-pulse">
+                <span class="pulse-core"></span>
+            </div>
+            <div class="banner-content">
+                <span class="banner-tag">● VOTAÇÃO EM ANDAMENTO</span>
+                <span class="banner-title">
+                    Cargo: <strong>{{ getCargoTitulo(eleicao, eleicao.cargoAbertoId) }}</strong>
+                </span>
+            </div>
+        </div>
     </div>
-    <p><strong>Status:</strong> {{ eleicao.status | titlecase }}</p>
 
-    <div *ngIf="eleicao.cargoAbertoId" class="votacao-aberta-aviso">
-        ⚠️ VOTAÇÃO ABERTA: Cargo ID {{ eleicao.cargoAbertoId }}
+    <div class="section-title-bar">
+        <h2>Cargos & Candidatos</h2>
+        <p>Gerencie a votação de Oficiais da Igreja em tempo real</p>
     </div>
 
-    <hr>
-
-    <h2>Cargos</h2>
     <div class="cargos-lista">
-
         <div *ngFor="let cargo of eleicao.cargos" class="cargo-card">
-            <h3>{{ cargo.titulo }}</h3>
-            <p class="cargo-status">Status do Cargo: <strong>{{ cargo.status | uppercase }}</strong></p>
+
+            <!-- Card Header -->
+            <div class="cargo-card-header">
+                <div class="header-left">
+                    <h3>{{ cargo.titulo }}</h3>
+                    <div class="cargo-meta-badges">
+                        <span class="meta-badge">
+                            <mat-icon class="meta-icon">how_to_reg</mat-icon>
+                            <strong>{{ cargo.candidatos?.length || 0 }}</strong> Candidato(s)
+                        </span>
+                        <span class="meta-badge">
+                            <mat-icon class="meta-icon">card_membership</mat-icon>
+                            <strong>{{ cargo.vagas }}</strong> Vaga(s)
+                        </span>
+                    </div>
+                </div>
+
+                <div class="status-pill" [ngClass]="cargo.status">
+                    <span class="status-dot"></span>
+                    <span>{{ formatStatus(cargo.status) }}</span>
+                </div>
+            </div>
 
             <!-- CARGO AGUARDANDO -->
-            <div *ngIf="cargo.status === 'aguardando'" class="controles-inicial">
-                <p>A votação para este cargo ainda não foi iniciada.</p>
-                <button (click)="onAbrirVotacao(eleicao, cargo)" [disabled]="!!eleicao.cargoAbertoId">
-                    Iniciar Votação
-                </button>
+            <div *ngIf="cargo.status === 'aguardando'" class="cargo-body-state state-waiting">
+                <div class="waiting-icon-box">
+                    <mat-icon>hourglass_top</mat-icon>
+                </div>
+                <div class="waiting-info">
+                    <h4>Votação Não Iniciada</h4>
+                    <p>
+                        Este cargo possui <strong>{{ cargo.vagas }} vaga(s)</strong> para <strong>{{ cargo.candidatos.length }} candidato(s)</strong> inscritos.
+                        Ao iniciar, os votantes poderão votar através do link gerado.
+                    </p>
+                </div>
+                <div class="waiting-action">
+                    <button mat-flat-button color="primary" class="btn-start-voting-pill"
+                        (click)="onAbrirVotacao(eleicao, cargo)"
+                        [disabled]="!!eleicao.cargoAbertoId">
+                        <mat-icon>play_circle_filled</mat-icon>
+                        <span>Iniciar Votação</span>
+                    </button>
+                </div>
             </div>
 
             <!-- CARGO EM VOTAÇÃO -->
-            <div *ngIf="cargo.status === 'em_votacao'" class="escrutinios-lista">
-                <div class="escrutinio-card">
-                    <h4>Votação em Andamento</h4>
-
-                    <div class="contagem-votacao">
-                        <div class="contagem-item">
-                            <strong>{{ cargo.votos.length }}</strong>
-                            <span>Votaram</span>
-                        </div>
-                        <div class="contagem-item faltam">
-                            <strong>{{ eleicao.membrosElegiveis.length - cargo.votos.length }}</strong>
-                            <span>Faltam</span>
-                        </div>
-                        <div class="contagem-item total">
-                            <strong>{{ eleicao.membrosElegiveis.length }}</strong>
-                            <span>Total</span>
-                        </div>
+            <div *ngIf="cargo.status === 'em_votacao'" class="cargo-body-state state-active">
+                <div class="live-status-header">
+                    <div class="live-indicator">
+                        <span class="live-pulse"></span>
+                        <span>Votação em Andamento ao Vivo</span>
                     </div>
+                </div>
 
-                    <div class="controles">
-                        <button (click)="onEncerrarVotacao(eleicao, cargo)">
-                            Fechar Votação e Apurar
-                        </button>
+                <div class="contagem-votacao-grid">
+                    <div class="contagem-card item-votaram">
+                        <span class="contagem-label">Já Votaram</span>
+                        <strong class="contagem-value">{{ cargo.votos.length }}</strong>
                     </div>
+                    <div class="contagem-card item-faltam">
+                        <span class="contagem-label">Faltam Votar</span>
+                        <strong class="contagem-value">{{ eleicao.membrosElegiveis.length - cargo.votos.length }}</strong>
+                    </div>
+                    <div class="contagem-card item-total">
+                        <span class="contagem-label">Total Elegíveis</span>
+                        <strong class="contagem-value">{{ eleicao.membrosElegiveis.length }}</strong>
+                    </div>
+                </div>
+
+                <div class="action-footer mt-3">
+                    <button mat-flat-button color="warn" class="btn-stop-voting-pill" (click)="onEncerrarVotacao(eleicao, cargo)">
+                        <mat-icon>stop_circle</mat-icon>
+                        Fechar Votação e Apurar Resultados
+                    </button>
                 </div>
             </div>
 
             <!-- CARGO FINALIZADO -->
-            <div *ngIf="cargo.status === 'finalizado'" class="vencedor-bloco">
-                <h4>Eleição Finalizada</h4>
-                <p>{{ cargo.votos.length }} voto(s) computado(s)</p>
+            <div *ngIf="cargo.status === 'finalizado'" class="cargo-body-state state-finished">
+                <div class="finished-header">
+                    <mat-icon class="finished-icon">verified</mat-icon>
+                    <div>
+                        <h4>Eleição Finalizada</h4>
+                        <p class="text-muted m-0">Total de <strong>{{ cargo.votos.length }}</strong> voto(s) computado(s)</p>
+                    </div>
+                </div>
 
-                <button class="btn-sanfona" (click)="toggleResultados(cargo.id)">
+                <div class="kpi-votos-resumo my-3">
+                    <span class="badge-voto-resumo branco">⚪ Votos em Branco: <strong>{{ getVotosBrancos(cargo) }}</strong></span>
+                    <span class="badge-voto-resumo nulo">🔴 Votos Nulos: <strong>{{ getVotosNulos(cargo) }}</strong></span>
+                </div>
+
+                <button mat-stroked-button color="primary" class="btn-toggle-results" (click)="toggleResultados(cargo.id)">
+                    <mat-icon>{{ isResultadosExpandidos(cargo.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
                     {{ isResultadosExpandidos(cargo.id) ? 'Recolher' : 'Ver' }} Resultados Detalhados
-                    <span class="sanfona-icon">{{ isResultadosExpandidos(cargo.id) ? '▲' : '▼' }}</span>
                 </button>
 
-                <div class="sanfona-conteudo" *ngIf="isResultadosExpandidos(cargo.id)">
+                <div class="sanfona-conteudo mt-3" *ngIf="isResultadosExpandidos(cargo.id)">
                     <div class="apuracao-finalizada-container">
-                        <h5>Resultado da Apuração</h5>
+                        <h5>Resultado Oficial da Apuração</h5>
 
                         <ul class="lista-resultados-apuracao">
                             <li *ngFor="let resultado of getResultadosOrdenados(cargo); let i = index"
                                 [class.vencedor-item]="i < cargo.vagas" [class.outros-item]="i >= cargo.vagas">
 
                                 <span class="nome-candidato">
-                                    {{ i + 1 }}. {{ resultado.nome }}
-                                    <span class="badge-status">{{ i < cargo.vagas ? '✅ ELEITO' : 'Não eleito' }}</span>
-                                    </span>
+                                    <span class="posicao-rank">#{{ i + 1 }}</span>
+                                    <strong class="nome-txt">{{ resultado.nome }}</strong>
+                                    <span class="badge-status" [class.eleito]="i < cargo.vagas">{{ i < cargo.vagas ? '✅ ELEITO' : 'Não eleito' }}</span>
+                                </span>
 
-                                    <strong class="votos-candidato">{{ resultado.votos }} votos</strong>
+                                <strong class="votos-candidato">{{ resultado.votos }} votos</strong>
                             </li>
                         </ul>
                     </div>
@@ -91,6 +166,7 @@
 
         </div>
     </div>
+
 </div>
 
 <ng-template #loading>

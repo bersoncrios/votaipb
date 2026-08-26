@@ -3,53 +3,60 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f0f2f5; // Cor de fundo suave
-  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
-  padding: 1.5rem;
+  padding: 2rem 1rem;
   box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+              radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+              #f8fafc;
 }
 
 .inscricao-container {
   width: 100%;
-  max-width: 480px; // Largura máxima do cartão
+  max-width: 520px;
 }
 
 .card-inscricao {
-  background: white;
-  padding: 2.5rem 2rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15); // Sombra moderna
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 3rem 2.25rem;
+  border-radius: 28px;
+  box-shadow: 0 20px 50px rgba(31, 38, 135, 0.12);
   text-align: center;
-  animation: slideUp 0.4s ease-out;
+  animation: glassSlideUp 0.4s ease-out;
 
   h2 {
-    color: #1a237e; // Azul escuro
+    color: #0f172a;
     margin-top: 0;
     margin-bottom: 0.5rem;
-    font-size: 1.8rem;
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
   h3 {
     margin-top: 0;
-    color: #333;
-    font-size: 1.5rem;
+    color: #3b82f6;
+    font-size: 1.4rem;
+    font-weight: 700;
   }
 
   .descricao {
-    color: #666;
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
+    color: #64748b;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
   }
 
   .instrucao {
-    font-weight: 500;
-    color: #444;
+    font-weight: 600;
+    color: #334155;
     margin-bottom: 2rem;
     font-size: 1.1rem;
   }
 }
 
-/* --- Formulário --- */
 .form-group {
   margin-bottom: 1.5rem;
   text-align: left;
@@ -58,26 +65,30 @@
     display: block;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #374151;
+    color: #334155;
   }
   input {
     width: 100%;
-    padding: 0.9rem 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 1.05rem 1.2rem;
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    font-size: 1.05rem;
     box-sizing: border-box;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
+    color: #0f172a;
 
     &:focus {
       outline: none;
-      border-color: #1a237e; // Azul primário no foco
-      box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
     }
 
     &.invalid {
-      border-color: #ef4444; // Vermelho para erro
-      background-color: #fef2f2;
+      border-color: #ef4444;
+      background: rgba(254, 242, 242, 0.8);
     }
   }
   .error-feedback {
@@ -90,27 +101,28 @@
 
 .btn-submit {
   width: 100%;
-  padding: 1rem;
-  background-color: #1a237e; // Azul primário
+  padding: 1.1rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
   color: white;
-  border: none;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 14px;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover:not(:disabled) {
-    background-color: #283593; // Azul um pouco mais claro no hover
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 }
 
-/* --- Estados (Loading, Sucesso, Erro) --- */
 .state-loading {
   display: flex;
   justify-content: center;
@@ -122,31 +134,24 @@
 }
 
 mat-icon {
-  // Garante tamanho grande para os ícones de estado
   font-size: 5rem;
   height: 5rem;
   width: 5rem;
   margin-bottom: 1.5rem;
 }
 
-.icon-success { color: #10b981; } // Verde esmeralda
-.icon-closed { color: #f59e0b; }  // Âmbar
-.icon-error { color: #ef4444; }   // Vermelho
+.icon-success { color: #10b981; }
+.icon-closed { color: #f59e0b; }
+.icon-error { color: #ef4444; }
 
-.lista-titulo {
-  font-weight: 600;
-  color: #666;
-  margin-top: 1.5rem;
-}
-
-@keyframes slideUp {
+@keyframes glassSlideUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Responsividade --- */
 @media (max-width: 480px) {
   :host { padding: 1rem; }
   .card-inscricao { padding: 2rem 1.5rem; }
   h2 { font-size: 1.5rem; }
 }
+

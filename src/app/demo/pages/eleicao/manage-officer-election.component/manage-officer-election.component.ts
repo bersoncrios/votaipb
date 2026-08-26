@@ -1,11 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+
 import { EleicaoOficialService } from '../../../../services/eleicao-oficial.service';
 import { EleicaoOficial } from '../../../../models/EleicaoOficial';
 import { CargoOficial } from '../../../../models/CargoOficial';
 import { Observable, of } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 
@@ -14,12 +17,17 @@ import Swal from 'sweetalert2';
     standalone: true,
     imports: [
         CommonModule,
+        RouterModule,
+        MatButtonModule,
+        MatIconModule,
         MatProgressSpinnerModule
     ],
     templateUrl: './manage-officer-election.component.html',
     styleUrls: ['./manage-officer-election.component.scss']
 })
 export class ManageOfficerElectionComponent implements OnInit {
+
+
     private route = inject(ActivatedRoute);
     private eleicaoService = inject(EleicaoOficialService);
 
@@ -44,6 +52,26 @@ export class ManageOfficerElectionComponent implements OnInit {
             })
         );
     }
+
+    formatStatus(status: string | undefined): string {
+        if (!status) return '';
+        const mapStatus: Record<string, string> = {
+            'em_andamento': 'Em Andamento',
+            'em_votacao': 'Em Votação',
+            'EM_VOTACAO': 'Em Votação',
+            'agendada': 'Agendada',
+            'finalizada': 'Finalizada',
+            'finalizado': 'Finalizada',
+            'aguardando': 'Aguardando Início'
+        };
+        return mapStatus[status] || mapStatus[status.toLowerCase()] || status;
+    }
+
+    getCargoTitulo(eleicao: EleicaoOficial, cargoId: string): string {
+        const cargo = eleicao.cargos?.find(c => c.id === cargoId);
+        return cargo ? cargo.titulo : 'Cargo em Votação';
+    }
+
 
     async onAbrirVotacao(eleicao: EleicaoOficial, cargo: CargoOficial) {
         if (eleicao.cargoAbertoId) {
@@ -90,7 +118,18 @@ export class ManageOfficerElectionComponent implements OnInit {
         }
     }
 
+    getVotosBrancos(cargo: CargoOficial): number {
+        if (!cargo || !cargo.votos) return 0;
+        return cargo.votos.filter(v => v.candidatosIds && v.candidatosIds.includes('BRANCO')).length;
+    }
+
+    getVotosNulos(cargo: CargoOficial): number {
+        if (!cargo || !cargo.votos) return 0;
+        return cargo.votos.filter(v => v.candidatosIds && v.candidatosIds.includes('NULO')).length;
+    }
+
     getResultadosOrdenados(cargo: CargoOficial): { nome: string; votos: number }[] {
+
         // Conta votos para cada candidato
         const contagemVotos = new Map<string, number>();
 

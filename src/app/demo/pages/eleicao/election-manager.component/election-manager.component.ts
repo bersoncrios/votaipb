@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { EleicaoAdminService } from '../../../../services/eleicao-admin.service';
 import { Eleicao } from '../../../../models/Eleicao';
 import { Cargo, CargoStatus } from '../../../../models/Cargo';
@@ -30,11 +30,12 @@ type ApuracaoOrdenadaItem = {
 @Component({
   selector: 'app-eleicao-manage',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './election-manager.component.html',
   styleUrls: ['./election-manager.component.scss']
 })
 export class EleicaoManageComponent implements OnInit {
+
 
   private route = inject(ActivatedRoute);
   private eleicaoAdminService = inject(EleicaoAdminService);
@@ -57,6 +58,31 @@ export class EleicaoManageComponent implements OnInit {
       map(eleicao => this.normalizarEleicao(eleicao))
     );
   }
+
+  formatStatus(status: string | undefined): string {
+    if (!status) return '';
+    const mapStatus: Record<string, string> = {
+      'em_andamento': 'Em Andamento',
+      'em_votacao': 'Em Votação',
+      'EM_VOTACAO': 'Em Votação',
+      'agendada': 'Agendada',
+      'finalizada': 'Finalizada',
+      'finalizado': 'Finalizada',
+      'aguardando': 'Aguardando Início',
+      'pendente_confirmacao': 'Pendente de Confirmação',
+      'pendente_desempate': 'Pendente de Desempate',
+      'nao_iniciado': 'Não Iniciado',
+      'aberto': 'Aberto',
+      'fechado': 'Fechado'
+    };
+    return mapStatus[status] || mapStatus[status.toLowerCase()] || status;
+  }
+
+  getCargoTitulo(eleicao: Eleicao, cargoId: string): string {
+    const cargo = eleicao.cargos?.find(c => c.id === cargoId);
+    return cargo ? cargo.titulo : 'Cargo em Votação';
+  }
+
 
 
   private normalizarEleicao(eleicao: Eleicao): Eleicao {

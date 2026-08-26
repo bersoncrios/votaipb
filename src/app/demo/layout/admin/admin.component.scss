@@ -1,55 +1,36 @@
-.app-container {
-  padding-left: 40px;
-  padding-right: 40px;
-  padding-top: 84px;
-  min-height: calc(100vh - 146px);
+.vota-app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+              #f8fafc;
 }
 
-::ng-deep {
-  @media only screen and (max-width: 1024px) {
-    .mat-drawer-content {
-      .app-container {
-        padding-left: 15px;
-        padding-right: 15px;
-      }
-    }
+.vota-main-content {
+  flex: 1;
+  padding: 100px 28px 48px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 88px 16px 32px;
   }
 }
 
-.pc-sidebar {
+.vota-page-wrapper {
+  animation: fadeIn 0.3s ease-out;
+}
 
-  // Contexto do seu sidebar
-  .navbar-wrapper {
-    .m-header {
-      // O div que envolve o logo e versão
-      padding: 20px 25px; // Espaçamento interno para o cabeçalho
-      text-align: center; // Centraliza o conteúdo (h1 e span)
-      background-color: var(--accent-100); // Was #f2f4f7
-      border-bottom: 1px solid var(--accent-300); // Was rgba(0, 0, 0, 0.05)
-
-      a {
-        text-decoration: none; // Remove sublinhado do link
-        display: block; // Garante que o link ocupe todo o espaço e permita alinhar os filhos
-
-        h1 {
-          font-family: 'Montserrat', sans-serif; // Uma fonte moderna (exemplo)
-          font-size: 1.8rem; // Tamanho ideal para logo no sidebar
-          font-weight: 800; // Extra Bold para destaque
-          color: var(--primary-500); // Was #004a98
-          margin: 0; // Remove margens padrão do h1
-          line-height: 1; // Ajusta altura da linha
-          text-transform: uppercase; // Letras maiúsculas
-          letter-spacing: 0.5px;
-        }
-
-        .version {
-          display: block; // Garante que a versão fique abaixo do logo
-          font-size: 0.75rem; // Tamanho menor para a versão
-          color: var(--accent-600); // Was #6c757d
-          margin-top: 5px; // Espaçamento acima
-          font-weight: 400;
-        }
-      }
-    }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

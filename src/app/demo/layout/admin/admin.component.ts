@@ -14,10 +14,11 @@ import { Navigation } from 'src/app/@theme/types/navigation';
 
 @Component({
   selector: 'app-admin',
-  imports: [FooterComponent, SharedModule, RouterModule, NavBarComponent, VerticalMenuComponent],
+  imports: [FooterComponent, SharedModule, RouterModule, NavBarComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
+
 export class AdminComponent implements OnInit, OnDestroy {
   private breakpointObserver = inject(BreakpointObserver);
   private layoutService = inject(LayoutService);

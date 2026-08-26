@@ -111,13 +111,28 @@ export class VotarOficialComponent implements OnInit {
         this.step = 'votacao';
     }
 
+    votoEspecial: 'NENHUM' | 'BRANCO' | 'NULO' = 'NENHUM';
+
+    selectVotoEmBranco() {
+        this.votoEspecial = 'BRANCO';
+        this.candidatos.controls.forEach(c => c.setValue(false));
+    }
+
+    selectVotoNulo() {
+        this.votoEspecial = 'NULO';
+        this.candidatos.controls.forEach(c => c.setValue(false));
+    }
+
     get candidatosSelecionados(): Candidato[] {
-        if (!this.cargoAberto) return [];
+        if (!this.cargoAberto || this.votoEspecial !== 'NENHUM') return [];
 
         return this.cargoAberto.candidatos.filter((_: Candidato, i: number) => this.candidatos.at(i).value);
     }
 
     get podeAvancar(): boolean {
+        if (this.votoEspecial === 'BRANCO' || this.votoEspecial === 'NULO') {
+            return true;
+        }
         const selecionados = this.candidatosSelecionados.length;
         const vagas = this.cargoAberto?.vagas || 0;
         return selecionados > 0 && selecionados <= vagas;
@@ -126,7 +141,7 @@ export class VotarOficialComponent implements OnInit {
     onAvancarParaConfirmacao() {
         if (!this.podeAvancar) {
             const vagas = this.cargoAberto?.vagas || 0;
-            Swal.fire('Atenção', `Você deve selecionar entre 1 e ${vagas} candidato(s).`, 'warning');
+            Swal.fire('Atenção', `Você deve selecionar entre 1 e ${vagas} candidato(s) ou optar por Voto em Branco/Nulo.`, 'warning');
             return;
         }
 
@@ -139,7 +154,14 @@ export class VotarOficialComponent implements OnInit {
         this.step = 'carregando';
 
         try {
-            const candidatosIds = this.candidatosSelecionados.map(c => c.userId);
+            let candidatosIds: string[] = [];
+            if (this.votoEspecial === 'BRANCO') {
+                candidatosIds = ['BRANCO'];
+            } else if (this.votoEspecial === 'NULO') {
+                candidatosIds = ['NULO'];
+            } else {
+                candidatosIds = this.candidatosSelecionados.map(c => c.userId);
+            }
 
             await this.eleicaoService.registrarVoto(
                 this.eleicao.id,
@@ -162,13 +184,15 @@ export class VotarOficialComponent implements OnInit {
     }
 
     isCandidatoSelecionado(index: number): boolean {
-        return this.candidatos.at(index).value;
+        return this.votoEspecial === 'NENHUM' && this.candidatos.at(index).value;
     }
 
     toggleCandidato(index: number) {
+        this.votoEspecial = 'NENHUM';
         const control = this.candidatos.at(index);
         control.setValue(!control.value);
     }
+
 
     reiniciar() {
         this.step = 'identificacao';

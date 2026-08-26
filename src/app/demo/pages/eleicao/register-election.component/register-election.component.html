@@ -1,5 +1,6 @@
 <div class="eleicao-wizard-container mat-app-background">
-  <h1>Cadastrar Nova Eleição</h1>
+  <h1>{{ isEditMode ? 'Editar Eleição' : 'Cadastrar Nova Eleição' }}</h1>
+
 
   <mat-stepper linear #stepper>
     <mat-step [stepControl]="formPassoTitulo" label="Detalhes da Eleição">
@@ -10,9 +11,13 @@
           <mat-error *ngIf="tituloCtrl?.hasError('required')"> Título é obrigatório. </mat-error>
         </mat-form-field>
 
-        <div class="step-nav-buttons">
-          <button mat-raised-button color="primary" matStepperNext>Próximo</button>
+        <div class="step-nav-footer single-right">
+          <button mat-flat-button color="primary" matStepperNext class="btn-step-next">
+            Próximo
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
         </div>
+
       </form>
     </mat-step>
 
@@ -44,23 +49,34 @@
             (click)="addMembro(idInput, nomeInput)">Adicionar</button>
         </div>
 
-        <mat-list formArrayName="membrosElegiveis">
-          <mat-list-item *ngFor="let membroCtrl of membrosElegiveisArr.controls; let i = index" [formGroupName]="i">
-            <span matListItemTitle>{{ membroCtrl.value.nome }}</span>
-            <span matListItemLine>ID: {{ membroCtrl.value.id }}</span>
-            <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)" matListItemMeta
-              aria-label="Remover membro">
-              <mat-icon>delete</mat-icon>
+        <div class="membros-glass-grid" formArrayName="membrosElegiveis">
+          <div *ngFor="let membroCtrl of membrosElegiveisArr.controls; let i = index" [formGroupName]="i" class="membro-card-glass">
+            <div class="membro-avatar">
+              <span>{{ getInitials(membroCtrl.value.nome) }}</span>
+            </div>
+            <div class="membro-details">
+              <span class="membro-nome">{{ membroCtrl.value.nome }}</span>
+              <span class="membro-id-tag">ID: <strong>{{ membroCtrl.value.id }}</strong></span>
+            </div>
+            <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)" class="btn-remove-membro" aria-label="Remover membro">
+              <mat-icon>delete_outline</mat-icon>
             </button>
-          </mat-list-item>
-        </mat-list>
+          </div>
+        </div>
+
         <mat-error *ngIf="membrosElegiveisArr.length === 0 && formPassoMembros.touched">
           Adicione pelo menos um membro elegível.
         </mat-error>
 
-        <div class="step-nav-buttons">
-          <button mat-button matStepperPrevious>Voltar</button>
-          <button mat-raised-button color="primary" matStepperNext>Próximo</button>
+        <div class="step-nav-footer">
+          <button mat-stroked-button matStepperPrevious class="btn-step-prev">
+            <mat-icon>arrow_back</mat-icon>
+            Voltar
+          </button>
+          <button mat-flat-button color="primary" matStepperNext class="btn-step-next" [disabled]="membrosElegiveisArr.invalid">
+            Próximo
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
         </div>
       </form>
     </mat-step>
@@ -108,42 +124,53 @@
                 <div class="candidatos-section" formArrayName="candidatosIniciais">
                   <h3>Candidatos ({{ getCandidatosIniciais(i).length }})</h3>
 
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Selecionar candidatos (da lista de membros)</mat-label>
-                    <mat-select #membroSelect multiple> <mat-option
-                        *ngFor="let membro of membrosElegiveisArr.value; let mIdx = index" [value]="mIdx">
-                        {{ membro.nome }} ({{ membro.id }})
-                      </mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="getCandidatosIniciais(i).invalid && getCandidatosIniciais(i).touched">
-                      É obrigatório adicionar pelo menos 1 candidato para este cargo.
-                    </mat-error>
-                  </mat-form-field>
+                  <div class="cargo-config-card">
+                    <div class="form-row-candidatos">
+                      <mat-form-field appearance="outline" class="select-candidatos-field">
+                        <mat-label>Selecionar Candidatos da Lista de Membros</mat-label>
+                        <mat-select #membroSelect multiple>
+                          <mat-option *ngFor="let membro of membrosElegiveisArr.value; let mIdx = index" [value]="mIdx">
+                            {{ membro.nome }} (ID: {{ membro.id }})
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="getCandidatosIniciais(i).invalid && getCandidatosIniciais(i).touched">
+                          É obrigatório adicionar pelo menos 1 candidato para este cargo.
+                        </mat-error>
+                      </mat-form-field>
 
-                  <div class="candidato-actions-wrapper">
-                    <button mat-stroked-button color="primary" type="button"
-                      (click)="addCandidatosSelecionados(i, membroSelect.value, membroSelect)"
-                      [disabled]="!membroSelect.value || membroSelect.value.length === 0">
-                      <mat-icon>add</mat-icon>
-                      Adicionar Selecionados
-                    </button>
-                    <button mat-stroked-button color="accent" type="button" (click)="addAllMembrosAsCandidatos(i)">
-                      <mat-icon>group_add</mat-icon>
-                      Adicionar Todos ({{ membrosElegiveisArr.length }})
-                    </button>
+                      <div class="action-buttons-group">
+                        <button mat-flat-button color="primary" type="button" class="btn-action-pill"
+                          (click)="addCandidatosSelecionados(i, membroSelect.value, membroSelect)"
+                          [disabled]="!membroSelect.value || membroSelect.value.length === 0">
+                          <mat-icon>person_add</mat-icon>
+                          Adicionar Selecionados
+                        </button>
+                        <button mat-stroked-button color="accent" type="button" class="btn-action-pill" (click)="addAllMembrosAsCandidatos(i)">
+                          <mat-icon>group_add</mat-icon>
+                          Adicionar Todos ({{ membrosElegiveisArr.length }})
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <mat-list class="candidatos-list">
-                    <mat-list-item *ngFor="let candCtrl of getCandidatosIniciais(i).controls; let cIdx = index"
-                      [formGroupName]="cIdx">
-                      <span matListItemTitle>{{ candCtrl.value.nome }}</span>
-                      <span matListItemLine>ID: {{ candCtrl.value.userId }}</span>
-                      <button mat-icon-button color="warn" type="button" (click)="removeCandidatoDoCargo(i, cIdx)"
-                        matListItemMeta aria-label="Remover candidato">
-                        <mat-icon>delete</mat-icon>
+                  <div class="candidatos-glass-grid">
+                    <div *ngFor="let candCtrl of getCandidatosIniciais(i).controls; let cIdx = index" [formGroupName]="cIdx" class="candidato-card-glass">
+                      <div class="candidato-avatar">
+                        <span>{{ getInitials(candCtrl.value.nome) }}</span>
+                      </div>
+                      <div class="candidato-details">
+                        <span class="candidato-nome">{{ candCtrl.value.nome }}</span>
+                        <span class="candidato-tag">ID: <strong>{{ candCtrl.value.userId }}</strong></span>
+                      </div>
+                      <button mat-icon-button color="warn" type="button" (click)="removeCandidatoDoCargo(i, cIdx)" class="btn-remove-candidato" aria-label="Remover candidato">
+                        <mat-icon>delete_outline</mat-icon>
                       </button>
-                    </mat-list-item>
-                  </mat-list>
+                    </div>
+                    <div *ngIf="getCandidatosIniciais(i).length === 0" class="empty-candidatos-hint">
+                      Nenhum candidato adicionado a este cargo ainda.
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </mat-tab>
@@ -160,9 +187,15 @@
           Adicione pelo menos um cargo, selecione seu título e adicione pelo menos um candidato a ele.
         </mat-error>
 
-        <div class="step-nav-buttons">
-          <button mat-button matStepperPrevious>Voltar</button>
-          <button mat-raised-button color="primary" matStepperNext>Próximo</button>
+        <div class="step-nav-footer">
+          <button mat-stroked-button matStepperPrevious class="btn-step-prev">
+            <mat-icon>arrow_back</mat-icon>
+            Voltar
+          </button>
+          <button mat-flat-button color="primary" matStepperNext class="btn-step-next">
+            Próximo
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
         </div>
       </form>
     </mat-step>
@@ -250,12 +283,19 @@
           </div>
         </div>
 
-        <div class="step-nav-buttons">
-          <button mat-button matStepperPrevious>Voltar</button>
-          <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isSaving || eleicaoForm.invalid">
-            {{ isSaving ? 'Salvando...' : 'Salvar Eleição' }}
+        <div class="step-nav-footer">
+          <button mat-stroked-button matStepperPrevious class="btn-step-prev">
+            <mat-icon>arrow_back</mat-icon>
+            Voltar
           </button>
+          <button mat-flat-button color="primary" (click)="onSubmit()" class="btn-step-next" [disabled]="isSaving || eleicaoForm.invalid">
+            <mat-icon *ngIf="isSaving">hourglass_empty</mat-icon>
+            <mat-icon *ngIf="!isSaving">check_circle</mat-icon>
+            {{ isSaving ? 'Salvando...' : (isEditMode ? 'Atualizar Eleição' : 'Salvar Eleição') }}
+          </button>
+
         </div>
+
         <mat-error *ngIf="eleicaoForm.invalid && eleicaoForm.touched">
           Existem erros nos passos anteriores. Verifique os campos marcados e tente novamente.
         </mat-error>

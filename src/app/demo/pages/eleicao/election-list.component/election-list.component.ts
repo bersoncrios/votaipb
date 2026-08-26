@@ -9,6 +9,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-eleicao-list',
@@ -18,7 +19,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     RouterModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatIconModule
   ],
+
   templateUrl: './election-list.component.html',
   styleUrls: ['./election-list.component.scss'],
 })

@@ -52,16 +52,32 @@
                     </div>
                 </div>
 
+                <!-- Opções de Voto Especial -->
+                <div class="votos-especiais-bar">
+                    <button type="button" class="btn-voto-especial branco" [class.selected]="votoEspecial === 'BRANCO'" (click)="selectVotoEmBranco()">
+                        <mat-icon>remove_circle_outline</mat-icon> Votar em Branco
+                    </button>
+                    <button type="button" class="btn-voto-especial nulo" [class.selected]="votoEspecial === 'NULO'" (click)="selectVotoNulo()">
+                        <mat-icon>block</mat-icon> Votar Nulo
+                    </button>
+                </div>
+
                 <div class="selecao-info" [class.limit-reached]="candidatosSelecionados.length > cargoAberto.vagas">
-                    <span *ngIf="candidatosSelecionados.length <= cargoAberto.vagas">
+                    <span *ngIf="votoEspecial === 'BRANCO'" class="text-primary">
+                        ⚪ Voto em Branco selecionado
+                    </span>
+                    <span *ngIf="votoEspecial === 'NULO'" class="text-danger">
+                        🔴 Voto Nulo selecionado
+                    </span>
+                    <span *ngIf="votoEspecial === 'NENHUM' && candidatosSelecionados.length <= cargoAberto.vagas">
                         {{ candidatosSelecionados.length }} de {{ cargoAberto.vagas }} selecionados
                     </span>
-                    <span *ngIf="candidatosSelecionados.length > cargoAberto.vagas">
+                    <span *ngIf="votoEspecial === 'NENHUM' && candidatosSelecionados.length > cargoAberto.vagas">
                         ⚠️ Você selecionou {{ candidatosSelecionados.length }}, o máximo é {{ cargoAberto.vagas }}.
                     </span>
                 </div>
 
-                <button class="btn btn-primary btn-avancar" (click)="onAvancarParaConfirmacao()"
+                <button class="btn btn-primary btn-avancar mt-3" (click)="onAvancarParaConfirmacao()"
                     [disabled]="!podeAvancar">
                     Avançar para Confirmação
                 </button>
@@ -74,12 +90,22 @@
             <p class="step-description">Você está votando para: <strong>{{ cargoAberto?.titulo }}</strong></p>
 
             <div class="voto-selecionado-card">
-                <h5>Candidatos Selecionados:</h5>
-                <ul>
-                    <li *ngFor="let candidato of candidatosSelecionados">
-                        {{ candidato.nome }}
-                    </li>
-                </ul>
+                <div *ngIf="votoEspecial === 'BRANCO'">
+                    <h5 class="text-primary">⚪ Voto em Branco</h5>
+                    <p class="m-0 text-muted">Você escolheu votar em branco neste cargo.</p>
+                </div>
+                <div *ngIf="votoEspecial === 'NULO'">
+                    <h5 class="text-danger">🔴 Voto Nulo</h5>
+                    <p class="m-0 text-muted">Você escolheu anular o seu voto neste cargo.</p>
+                </div>
+                <div *ngIf="votoEspecial === 'NENHUM'">
+                    <h5>Candidatos Selecionados:</h5>
+                    <ul>
+                        <li *ngFor="let candidato of candidatosSelecionados">
+                            {{ candidato.nome }}
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <div class="botoes-confirmacao">
@@ -91,6 +117,7 @@
                 </button>
             </div>
         </div>
+
 
         <!-- PASSO 4: CONCLUÍDO -->
         <div *ngSwitchCase="'concluido'" class="wizard-step step-concluido">

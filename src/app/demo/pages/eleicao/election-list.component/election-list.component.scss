@@ -1,311 +1,258 @@
-/* Variáveis (Combine com seu tema) */
 :host {
-  --primary-color: var(--primary-500);
-  --primary-dark: var(--primary-700);
-  --bg-color: var(--accent-100); // Was #f8f9fa
-  --card-bg-color: var(--accent-50); // Was #ffffff
-  --border-color: var(--accent-300); // Was #dee2e6
-  --text-color: var(--accent-900); // Was #212529
-  --text-muted: var(--accent-600); // Was #6c757d
-  --link-color: var(--primary-color);
-  --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); // Sombra mais pronunciada no hover
-  --border-radius: 8px; // Raio de borda padrão
-
-  // Cores de Status
-  --status-agendada-bg: var(--warning-50);
-  --status-agendada-text: var(--warning-900);
-  --status-agendada-border: var(--warning-200);
-
-  --status-em_andamento-bg: var(--success-50);
-  --status-em_andamento-text: var(--success-900);
-  --status-em_andamento-border: var(--success-200);
-
-  --status-finalizada-bg: var(--accent-200);
-  --status-finalizada-text: var(--accent-800);
-  --status-finalizada-border: var(--accent-300);
+  --primary-color: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-blur: blur(20px) saturate(180%);
+  --glass-radius: 24px;
+  --glass-shadow: 0 10px 30px rgba(31, 38, 135, 0.07);
 
   .list-container {
-    max-width: 1400px;
+    max-width: 1350px;
     margin: 0 auto;
-    padding: 2.5rem 2rem; // Aumenta padding
+    padding: 1.5rem 0;
     font-family: inherit;
-    color: var(--text-color);
 
-    // Cabeçalho
     .list-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap; // Quebra linha em telas menores
-      gap: 1rem; // Espaço entre título e botão
-      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
 
       h1 {
-        color: var(--primary-dark); // Cor mais escura para o título
+        color: #0f172a;
         margin: 0;
-        font-size: 1.8rem; // Tamanho ligeiramente maior
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
       }
     }
 
-    // Botão Criar Nova Eleição
     .btn-criar-nova {
-      display: inline-flex; // Para alinhar ícone e texto
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem; // Espaço entre ícone e texto
-      background-color: var(--primary-color);
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
       color: white;
-      padding: 0.75rem 1.5rem; // Padding ajustado
-      border-radius: var(--border-radius);
+      padding: 0.85rem 1.75rem;
+      border-radius: 50px;
       text-decoration: none;
       font-weight: 600;
-      transition: background-color 0.2s ease, box-shadow 0.2s ease;
-      border: none; // Remove borda se for link estilizado como botão
-      cursor: pointer;
-
-      // Ícone (pseudo-elemento, idealmente usar <mat-icon> ou <i>)
-      &::before {
-        content: '+'; // Simples sinal de mais
-        font-weight: bold;
-        font-size: 1.2em;
-      }
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
       &:hover {
-        background-color: var(--primary-dark);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
       }
     }
 
     hr {
       border: 0;
-      border-top: 1px solid var(--border-color);
-      margin: 2.5rem 0; // Aumenta margem
+      border-top: 1px solid rgba(203, 213, 225, 0.6);
+      margin: 1.75rem 0 2.25rem;
     }
   }
 
-  // Estados (Carregando, Erro, Vazio)
-  .loading-message,
-  .error-message,
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--text-muted);
-    font-size: 1.1rem;
-    background-color: var(--card-bg-color); // Fundo branco
-    border: 1px dashed var(--border-color); // Borda tracejada
-    border-radius: var(--border-radius);
-    margin-top: 2rem;
-
-    p {
-      margin-bottom: 1rem;
-    }
-  }
-
-  // Ajuste no loading-message para centralizar o spinner
-  .loading-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem; // Espaço entre spinner e texto
-  }
-
-  .error-message {
-    color: var(--warn-900); // Was #842029
-    background-color: var(--warn-50); // Was #f8d7da
-    border-color: var(--warn-200); // Was #f5c2c7
-  }
-
-  .empty-state {
-
-    // Adiciona um ícone simples via pseudo-elemento
-    &::before {
-      content: '📄'; // Ícone de documento
-      display: block;
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.5;
-    }
-
-    // Estiliza o link/botão dentro do empty state
-    a {
-      // Reutiliza estilo do .btn-criar-nova, mas talvez com cor secundária
-      @extend .btn-criar-nova;
-      margin-top: 1rem;
-    }
-  }
-
-  // Grid de Eleições
   .eleicoes-grid {
     display: grid;
-    // Colunas responsivas, mínimo de 320px
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem; // Aumenta espaçamento entre cards
+    gap: 1.75rem;
   }
 
-  // Card Individual
   .eleicao-card {
     display: flex;
     flex-direction: column;
-    background-color: var(--card-bg-color);
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); // Sombra sutil
-    border: 1px solid var(--border-color);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    box-shadow: var(--glass-shadow);
     overflow: hidden;
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; // Transição suave
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
     &:hover {
-      transform: translateY(-5px); // Efeito de levantar
-      box-shadow: var(--hover-shadow); // Sombra mais forte
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(31, 38, 135, 0.13);
+      border-color: rgba(99, 102, 241, 0.3);
     }
 
     .card-body {
-      padding: 1.5rem 1.75rem; // Padding ajustado
-      flex-grow: 1; // Faz o corpo ocupar o espaço antes do footer
+      padding: 1.75rem;
+      flex-grow: 1;
     }
 
     .card-title {
-      font-size: 1.4rem; // Ligeiramente menor
-      font-weight: 600;
-      color: var(--primary-dark);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f172a;
       margin-top: 0;
-      margin-bottom: 0.75rem; // Menos espaço abaixo do título
+      margin-bottom: 0.75rem;
     }
 
-    // Novo Estilo para Status (mais visual)
     .card-status {
-      display: inline-flex; // Para alinhar ícone/ponto e texto
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem; // Espaço entre ponto e texto
-      padding: 0.3rem 0.8rem;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1.25rem; // Mais espaço abaixo do status
-      border: 1px solid transparent; // Borda base
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
 
-      // Ponto colorido antes do texto
-      &::before {
-        content: '';
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: currentColor; // Usa a cor do texto do status
-      }
-
-      // Aplica cores de fundo, texto e borda por classe
       &.agendada {
-        background-color: var(--status-agendada-bg);
-        color: var(--status-agendada-text);
-        border-color: var(--status-agendada-border);
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+        border: 1px solid rgba(245, 158, 11, 0.3);
       }
 
       &.em_andamento {
-        background-color: var(--status-em_andamento-bg);
-        color: var(--status-em_andamento-text);
-        border-color: var(--status-em_andamento-border);
+        background: rgba(16, 185, 129, 0.15);
+        color: #047857;
+        border: 1px solid rgba(16, 185, 129, 0.3);
       }
 
       &.finalizada {
-        background-color: var(--status-finalizada-bg);
-        color: var(--status-finalizada-text);
-        border-color: var(--status-finalizada-border);
+        background: rgba(100, 116, 139, 0.15);
+        color: #475569;
+        border: 1px solid rgba(148, 163, 184, 0.3);
       }
     }
 
-    // Informações (Cargos, Membros) com Ícones
     .card-info {
-      font-size: 0.95rem; // Ligeiramente menor
-      color: var(--text-muted);
-      margin: 0.5rem 0; // Mais espaço vertical
-      display: flex; // Para alinhar ícone e texto
+      font-size: 0.95rem;
+      color: #475569;
+      margin: 0.5rem 0;
+      display: flex;
       align-items: center;
-      gap: 0.6rem; // Espaço entre ícone e texto
-
-      // Ícone (idealmente usar <mat-icon> ou <i>)
-      &.info-cargos::before {
-        content: '🗳️'; // Ícone urna (exemplo)
-        opacity: 0.7;
-      }
-
-      &.info-membros::before {
-        content: '👥'; // Ícone pessoas (exemplo)
-        opacity: 0.7;
-      }
+      gap: 0.6rem;
+      font-weight: 500;
     }
 
-    // Footer do Card
     .card-footer {
-      background-color: var(--accent-100); // Was #f9fafb
-      border-top: 1px solid var(--border-color);
+      background: rgba(248, 250, 252, 0.6);
+      border-top: 1px solid rgba(226, 232, 240, 0.8);
       padding: 1rem 1.75rem;
-      text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
     }
 
-    // Botão Gerenciar
-    .btn-gerenciar {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border-radius: var(--border-radius);
-      text-decoration: none;
-      font-weight: 600;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-      border: none;
-      cursor: pointer;
-      display: inline-block; // Garante que transform funcione
+    .btn-editar-link {
+      background: rgba(241, 245, 249, 0.95) !important;
+      color: #475569 !important;
+      border: 1px solid rgba(203, 213, 225, 0.8) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+      padding: 0.55rem 1.1rem !important;
+      font-size: 0.875rem !important;
+      font-weight: 600 !important;
+      border-radius: 12px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 0.35rem !important;
+      transition: all 0.2s ease !important;
+
+      mat-icon {
+        font-size: 1.1rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        color: #64748b;
+        transition: color 0.2s ease;
+      }
 
       &:hover {
-        background-color: var(--primary-dark);
-        transform: scale(1.03); // Leve aumento no hover
-      }
+        background: #ffffff !important;
+        color: #1e293b !important;
+        border-color: #94a3b8 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+        transform: translateY(-1px) !important;
 
-      &:active {
-        transform: scale(0.98); // Efeito de clique
+        mat-icon {
+          color: #3b82f6;
+        }
       }
+    }
+
+    .btn-gerenciar {
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      color: white;
+      padding: 0.55rem 1.25rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.45);
+      }
+    }
+
+  }
+
+  .empty-state {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(24px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 28px;
+    padding: 4rem 2rem;
+    box-shadow: 0 14px 35px rgba(31, 38, 135, 0.06);
+    grid-column: 1 / -1;
+
+    .empty-icon-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.1);
+      color: #4f46e5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+
+      mat-icon {
+        font-size: 2.2rem;
+        height: 2.2rem;
+        width: 2.2rem;
+      }
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 0.5rem 0;
+    }
+
+    p {
+      color: #64748b;
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto 1.75rem;
+      line-height: 1.5;
     }
   }
 
-  // ##########################################
-  // ## ESTILOS DO PAGINADOR (ADICIONADOS) ##
-  // ##########################################
   .eleicao-paginator {
-    background-color: var(--card-bg-color);
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    margin-top: 2rem; // Espaço acima
-    padding: 0 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
-
-    // Ajusta a cor dos dropdowns e labels
-    .mat-mdc-form-field {
-
-      .mat-mdc-select-value,
-      .mat-mdc-select-arrow,
-      .mat-mdc-floating-label,
-      .mdc-line-ripple {
-        color: var(--primary-color) !important;
-      }
-
-      .mdc-line-ripple::after {
-        border-bottom-color: var(--primary-color) !important;
-      }
-    }
-
-    // Botões de ícone (setas)
-    .mat-mdc-icon-button {
-      color: var(--text-muted);
-
-      &:not(:disabled):hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    }
-
-    // Botões de "Primeira" e "Última" página
-    .mat-mdc-paginator-navigation-first,
-    .mat-mdc-paginator-navigation-last {
-      color: var(--primary-color); // Destaca os botões de ponta
-    }
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    margin-top: 2rem;
+    padding: 0.5rem 1rem;
   }
 }

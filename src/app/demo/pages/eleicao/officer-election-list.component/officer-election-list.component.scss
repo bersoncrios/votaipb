@@ -1,292 +1,258 @@
-/* Variáveis (Combine com seu tema) */
 :host {
-    --primary-color: var(--primary-500);
-    --primary-dark: var(--primary-700);
-    --bg-color: var(--accent-100);
-    --card-bg-color: var(--accent-50);
-    --border-color: var(--accent-300);
-    --text-color: var(--accent-900);
-    --text-muted: var(--accent-600);
-    --link-color: var(--primary-color);
-    --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    --border-radius: 8px;
+  --primary-color: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-blur: blur(20px) saturate(180%);
+  --glass-radius: 24px;
+  --glass-shadow: 0 10px 30px rgba(31, 38, 135, 0.07);
 
-    // Cores de Status
-    --status-agendada-bg: var(--warning-50);
-    --status-agendada-text: var(--warning-900);
-    --status-agendada-border: var(--warning-200);
+  .list-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 1.5rem 0;
+    font-family: inherit;
 
-    --status-em_andamento-bg: var(--success-50);
-    --status-em_andamento-text: var(--success-900);
-    --status-em_andamento-border: var(--success-200);
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
 
-    --status-finalizada-bg: var(--accent-200);
-    --status-finalizada-text: var(--accent-800);
-    --status-finalizada-border: var(--accent-300);
-
-    .list-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2.5rem 2rem;
-        font-family: inherit;
-        color: var(--text-color);
-
-        // Cabeçalho
-        .list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-
-            h1 {
-                color: var(--primary-dark);
-                margin: 0;
-                font-size: 1.8rem;
-            }
-        }
-
-        // Botão Criar Nova Eleição
-        .btn-criar-nova {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.2s ease, box-shadow 0.2s ease;
-            border: none;
-            cursor: pointer;
-
-            &::before {
-                content: '+';
-                font-weight: bold;
-                font-size: 1.2em;
-            }
-
-            &:hover {
-                background-color: var(--primary-dark);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-        }
-
-        hr {
-            border: 0;
-            border-top: 1px solid var(--border-color);
-            margin: 2.5rem 0;
-        }
+      h1 {
+        color: #0f172a;
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
     }
 
-    // Estados (Carregando, Erro, Vazio)
-    .loading-message,
-    .error-message,
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: var(--text-muted);
+    .btn-criar-nova {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      color: white;
+      padding: 0.85rem 1.75rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+      }
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid rgba(203, 213, 225, 0.6);
+      margin: 1.75rem 0 2.25rem;
+    }
+  }
+
+  .eleicoes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.75rem;
+  }
+
+  .eleicao-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    box-shadow: var(--glass-shadow);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(31, 38, 135, 0.13);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .card-body {
+      padding: 1.75rem;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
+
+      &.agendada {
+        background: rgba(245, 158, 11, 0.15);
+        color: #b45309;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+
+      &.em_andamento {
+        background: rgba(16, 185, 129, 0.15);
+        color: #047857;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      &.finalizada {
+        background: rgba(100, 116, 139, 0.15);
+        color: #475569;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+      }
+    }
+
+    .card-info {
+      font-size: 0.95rem;
+      color: #475569;
+      margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 500;
+    }
+
+    .card-footer {
+      background: rgba(248, 250, 252, 0.6);
+      border-top: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 1rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .btn-editar-link {
+      background: rgba(241, 245, 249, 0.95) !important;
+      color: #475569 !important;
+      border: 1px solid rgba(203, 213, 225, 0.8) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+      padding: 0.55rem 1.1rem !important;
+      font-size: 0.875rem !important;
+      font-weight: 600 !important;
+      border-radius: 12px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 0.35rem !important;
+      transition: all 0.2s ease !important;
+
+      mat-icon {
         font-size: 1.1rem;
-        background-color: var(--card-bg-color);
-        border: 1px dashed var(--border-color);
-        border-radius: var(--border-radius);
-        margin-top: 2rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        color: #64748b;
+        transition: color 0.2s ease;
+      }
 
-        p {
-            margin-bottom: 1rem;
+      &:hover {
+        background: #ffffff !important;
+        color: #1e293b !important;
+        border-color: #94a3b8 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+        transform: translateY(-1px) !important;
+
+        mat-icon {
+          color: #3b82f6;
         }
+      }
     }
 
-    .loading-message {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1.5rem;
+    .btn-gerenciar {
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      color: white;
+      padding: 0.55rem 1.25rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.45);
+      }
     }
 
-    .error-message {
-        color: var(--warn-900);
-        background-color: var(--warn-50);
-        border-color: var(--warn-200);
+  }
+
+  .empty-state {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(24px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 28px;
+    padding: 4rem 2rem;
+    box-shadow: 0 14px 35px rgba(31, 38, 135, 0.06);
+    grid-column: 1 / -1;
+
+    .empty-icon-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.1);
+      color: #4f46e5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+
+      mat-icon {
+        font-size: 2.2rem;
+        height: 2.2rem;
+        width: 2.2rem;
+      }
     }
 
-    .empty-state {
-        &::before {
-            content: '📄';
-            display: block;
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        a {
-            @extend .btn-criar-nova;
-            margin-top: 1rem;
-        }
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 0.5rem 0;
     }
 
-    // Grid de Eleições
-    .eleicoes-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 2rem;
+    p {
+      color: #64748b;
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto 1.75rem;
+      line-height: 1.5;
     }
+  }
 
-    // Card Individual
-    .eleicao-card {
-        display: flex;
-        flex-direction: column;
-        background-color: var(--card-bg-color);
-        border-radius: var(--border-radius);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-        transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-
-        &:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
-        }
-
-        .card-body {
-            padding: 1.5rem 1.75rem;
-            flex-grow: 1;
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-top: 0;
-            margin-bottom: 0.75rem;
-        }
-
-        .card-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-            border: 1px solid transparent;
-
-            &::before {
-                content: '';
-                display: inline-block;
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background-color: currentColor;
-            }
-
-            &.agendada {
-                background-color: var(--status-agendada-bg);
-                color: var(--status-agendada-text);
-                border-color: var(--status-agendada-border);
-            }
-
-            &.em_andamento {
-                background-color: var(--status-em_andamento-bg);
-                color: var(--status-em_andamento-text);
-                border-color: var(--status-em_andamento-border);
-            }
-
-            &.finalizada {
-                background-color: var(--status-finalizada-bg);
-                color: var(--status-finalizada-text);
-                border-color: var(--status-finalizada-border);
-            }
-        }
-
-        .card-info {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-
-            &.info-cargos::before {
-                content: '🗳️';
-                opacity: 0.7;
-            }
-
-            &.info-membros::before {
-                content: '👥';
-                opacity: 0.7;
-            }
-        }
-
-        .card-footer {
-            background-color: var(--accent-100);
-            border-top: 1px solid var(--border-color);
-            padding: 1rem 1.75rem;
-            text-align: right;
-        }
-
-        .btn-gerenciar {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            border: none;
-            cursor: pointer;
-            display: inline-block;
-
-            &:hover {
-                background-color: var(--primary-dark);
-                transform: scale(1.03);
-            }
-
-            &:active {
-                transform: scale(0.98);
-            }
-        }
-    }
-
-    // Paginação
-    .eleicao-paginator {
-        background-color: var(--card-bg-color);
-        color: var(--text-muted);
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius);
-        margin-top: 2rem;
-        padding: 0 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
-
-        .mat-mdc-form-field {
-
-            .mat-mdc-select-value,
-            .mat-mdc-select-arrow,
-            .mat-mdc-floating-label,
-            .mdc-line-ripple {
-                color: var(--primary-color) !important;
-            }
-
-            .mdc-line-ripple::after {
-                border-bottom-color: var(--primary-color) !important;
-            }
-        }
-
-        .mat-mdc-icon-button {
-            color: var(--text-muted);
-
-            &:not(:disabled):hover {
-                background-color: rgba(0, 0, 0, 0.05);
-            }
-        }
-
-        .mat-mdc-paginator-navigation-first,
-        .mat-mdc-paginator-navigation-last {
-            color: var(--primary-color);
-        }
-    }
+  .eleicao-paginator {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    margin-top: 2rem;
+    padding: 0.5rem 1rem;
+  }
 }

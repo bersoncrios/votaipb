@@ -1,64 +1,123 @@
-::ng-deep.pc-header {
-  min-height: 0px;
-  box-shadow: none;
+.vota-header-nav {
   position: fixed;
-  z-index: 1025;
-  backdrop-filter: blur(8px);
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 20px rgba(31, 38, 135, 0.05);
 
-  .header-wrapper {
+  .vota-header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    height: 100%;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding: 10px 25px;
-    flex-grow: 1;
+    padding: 0 24px;
+  }
+}
+
+.vota-logo-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+
+  &:hover {
+    transform: scale(1.03);
   }
 
-  .header-button {
-    display: inline-flex;
-  }
-
-  .header-item {
-    min-height: 54px;
-    display: flex;
-    align-items: center;
-    position: relative;
-
-    &.mdc-button {
-      min-width: 54px;
-    }
-  }
-
-  .pc-head-link {
-    margin: 0 4px;
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
+  .vota-logo-img {
     height: 44px;
+    filter: drop-shadow(0 4px 10px rgba(99, 102, 241, 0.2));
+  }
 
-    > svg,
-    > i {
-      position: relative;
-      color: var(--accent-600);
+  .vota-brand-text {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.03em;
+
+    .highlight {
+      color: #4f46e5;
     }
-    > i {
-      font-size: 24px;
-    }
-    > svg {
-      width: 24px;
-      height: 24px;
+  }
+}
+
+.vota-nav-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(241, 245, 249, 0.7);
+  padding: 6px;
+  border-radius: 50px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  backdrop-filter: blur(12px);
+
+  .nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    i {
+      font-size: 1.1rem;
     }
 
-    &:focus,
     &:hover {
-      text-decoration: none;
-      color: var(--accent-600);
+      color: #4f46e5;
+      background: rgba(255, 255, 255, 0.8);
+    }
 
-      > svg,
-      > i {
-        color: var(--accent-600);
-        transform: scale(1.08);
+    &.active {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+
+      i {
+        color: #ffffff;
       }
     }
   }
 }
+
+.vota-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 920px) {
+  .vota-nav-pills {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+
+    .nav-pill span {
+      display: none;
+    }
+
+    .nav-pill {
+      padding: 10px 14px;
+    }
+  }
+}
+
+

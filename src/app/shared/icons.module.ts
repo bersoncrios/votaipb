@@ -10,7 +10,9 @@ import {
     IconHourglassHigh,
     IconCircleCheck,
     IconArrowRight,
-    IconEye
+    IconEye,
+    IconPencil,
+    IconEdit
 } from 'angular-tabler-icons/icons';
 
 const icons = {
@@ -23,8 +25,11 @@ const icons = {
     IconHourglassHigh,
     IconCircleCheck,
     IconArrowRight,
-    IconEye
+    IconEye,
+    IconPencil,
+    IconEdit
 };
+
 
 @NgModule({
     imports: [

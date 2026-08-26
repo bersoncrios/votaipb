@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-sm-12">
-        <app-card cardTitle="Registrar Eleição de Oficiais">
+        <app-card [cardTitle]="isEditMode ? 'Editar Eleição de Oficiais' : 'Registrar Eleição de Oficiais'">
+
             <mat-stepper [linear]="true" #stepper>
 
                 <!-- PASSO 1: Título -->
@@ -51,28 +52,39 @@
                                 (click)="addMembro(idMembro, nomeMembro)">Adicionar</button>
                         </div>
 
-                        <mat-list>
-                            <mat-list-item *ngFor="let membro of membrosElegiveisArr.controls; let i = index">
-                                <span matListItemTitle>{{ membro.value.nome }}</span>
-                                <span matListItemLine>ID: {{ membro.value.id }}</span>
-                                <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)"
-                                    matListItemMeta aria-label="Remover membro">
-                                    <mat-icon>delete</mat-icon>
+                        <div class="membros-glass-grid">
+                            <div *ngFor="let membro of membrosElegiveisArr.controls; let i = index" class="membro-card-glass">
+                                <div class="membro-avatar">
+                                    <span>{{ getInitials(membro.value.nome) }}</span>
+                                </div>
+                                <div class="membro-details">
+                                    <span class="membro-nome">{{ membro.value.nome }}</span>
+                                    <span class="membro-id-tag">ID: <strong>{{ membro.value.id }}</strong></span>
+                                </div>
+                                <button mat-icon-button color="warn" type="button" (click)="removeMembro(i)" class="btn-remove-membro" aria-label="Remover membro">
+                                    <mat-icon>delete_outline</mat-icon>
                                 </button>
-                            </mat-list-item>
-                            <mat-list-item *ngIf="membrosElegiveisArr.length === 0">
-                                <div matListItemTitle class="text-muted">Nenhum membro adicionado.</div>
-                            </mat-list-item>
-                        </mat-list>
+                            </div>
+                            <div *ngIf="membrosElegiveisArr.length === 0" class="empty-membros-hint">
+                                Nenhum votante adicionado ainda. Preencha os campos acima ou importe uma planilha.
+                            </div>
+                        </div>
+
 
                         <mat-error *ngIf="membrosElegiveisArr.length === 0 && membrosElegiveisArr.touched">
                             Adicione pelo menos um membro elegível.
                         </mat-error>
 
-                        <div class="d-flex justify-content-between mt-3">
-                            <button mat-button matStepperPrevious>Voltar</button>
-                            <button mat-raised-button color="primary" matStepperNext
-                                [disabled]="membrosElegiveisArr.invalid">Próximo</button>
+                        <div class="step-nav-footer">
+                            <button mat-stroked-button matStepperPrevious class="btn-step-prev">
+                                <mat-icon>arrow_back</mat-icon>
+                                Voltar
+                            </button>
+                            <button mat-flat-button color="primary" matStepperNext class="btn-step-next"
+                                [disabled]="membrosElegiveisArr.invalid">
+                                Próximo
+                                <mat-icon>arrow_forward</mat-icon>
+                            </button>
                         </div>
                     </div>
                 </mat-step>
@@ -84,127 +96,157 @@
 
                             <!-- Tab Presbítero -->
                             <mat-tab label="Presbítero">
-                                <div class="p-3">
-                                    <div class="row mb-3">
-                                        <div class="col-12 col-md-6">
-                                            <mat-form-field appearance="outline" class="w-100">
+                                <div class="cargo-tab-wrapper">
+                                    <div class="cargo-config-card">
+                                        <div class="form-row-config">
+                                            <mat-form-field appearance="outline" class="vagas-field">
                                                 <mat-label>Número de Vagas</mat-label>
                                                 <input matInput type="number"
-                                                    [formControl]="$any(eleicaoForm.get('presbítero.vagas'))" min="1">
+                                                    [formControl]="$any(eleicaoForm.get('presbítero.vagas'))" min="1" [max]="membrosElegiveisArr.length || 1">
+                                                <mat-error *ngIf="eleicaoForm.get('presbítero.vagas')?.hasError('max')">
+                                                    Máximo de {{ membrosElegiveisArr.length }} vaga(s) (total de votantes).
+                                                </mat-error>
                                             </mat-form-field>
                                         </div>
-                                    </div>
 
-                                    <div class="row align-items-end mb-3">
-                                        <div class="col-12 col-md-8 mb-2 mb-md-0">
-                                            <mat-form-field appearance="outline" class="w-100">
-                                                <mat-label>Selecionar Candidatos</mat-label>
+                                        <div class="form-row-candidatos">
+                                            <mat-form-field appearance="outline" class="select-candidatos-field">
+                                                <mat-label>Selecionar Candidatos da Lista</mat-label>
                                                 <mat-select #presbiteroSelect multiple>
                                                     <mat-option
                                                         *ngFor="let membro of membrosElegiveisArr.value; let mIndex = index"
-                                                        [value]="mIndex">
-                                                        {{ membro.nome }}
+                                                        [value]="mIndex"
+                                                        [disabled]="isCandidatoNoOutroCargo('presbítero', membro.id)">
+                                                        {{ membro.nome }} (ID: {{ membro.id }})
+                                                        <span *ngIf="isCandidatoNoOutroCargo('presbítero', membro.id)" class="text-danger small font-weight-bold"> — (Candidato a Diácono)</span>
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <div class="d-flex gap-2 flex-wrap">
-                                                <button mat-raised-button color="accent" class="flex-grow-1"
+
+                                            <div class="action-buttons-group">
+                                                <button mat-flat-button color="primary" type="button" class="btn-action-pill"
                                                     (click)="addCandidatosSelecionados('presbítero', presbiteroSelect.value, presbiteroSelect)">
+                                                    <mat-icon>person_add</mat-icon>
                                                     Adicionar Selecionados
                                                 </button>
-                                                <button mat-stroked-button class="flex-grow-1"
+                                                <button mat-stroked-button color="accent" type="button" class="btn-action-pill"
                                                     (click)="addAllMembrosAsCandidatos('presbítero')">
-                                                    Todos
+                                                    <mat-icon>group_add</mat-icon>
+                                                    Adicionar Todos ({{ membrosElegiveisArr.length }})
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <h6>Candidatos Inscritos ({{ presbiteroCandidatos.length }})</h6>
-                                    <mat-list class="border rounded">
-                                        <mat-list-item
-                                            *ngFor="let candidato of presbiteroCandidatos.controls; let cIndex = index">
-                                            <div matListItemTitle>{{ candidato.value.nome }}</div>
-                                            <button mat-icon-button matListItemMeta color="warn"
-                                                (click)="removeCandidato('presbítero', cIndex)">
-                                                <mat-icon>delete</mat-icon>
-                                            </button>
-                                        </mat-list-item>
-                                        <mat-list-item *ngIf="presbiteroCandidatos.length === 0">
-                                            <div matListItemTitle class="text-muted">Nenhum candidato adicionado.</div>
-                                        </mat-list-item>
-                                    </mat-list>
+                                    <div class="candidatos-section">
+                                        <h3>Candidatos Inscritos ({{ presbiteroCandidatos.length }})</h3>
+
+                                        <div class="candidatos-glass-grid">
+                                            <div *ngFor="let candidato of presbiteroCandidatos.controls; let cIndex = index" class="candidato-card-glass">
+                                                <div class="candidato-avatar">
+                                                    <span>{{ getInitials(candidato.value.nome) }}</span>
+                                                </div>
+                                                <div class="candidato-details">
+                                                    <span class="candidato-nome">{{ candidato.value.nome }}</span>
+                                                    <span class="candidato-tag">Candidato a Presbítero</span>
+                                                </div>
+                                                <button mat-icon-button color="warn" type="button" (click)="removeCandidato('presbítero', cIndex)" class="btn-remove-candidato" aria-label="Remover candidato">
+                                                    <mat-icon>delete_outline</mat-icon>
+                                                </button>
+                                            </div>
+                                            <div *ngIf="presbiteroCandidatos.length === 0" class="empty-candidatos-hint">
+                                                Nenhum candidato adicionado a este cargo ainda.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </mat-tab>
 
                             <!-- Tab Diácono -->
                             <mat-tab label="Diácono">
-                                <div class="p-3">
-                                    <div class="row mb-3">
-                                        <div class="col-12 col-md-6">
-                                            <mat-form-field appearance="outline" class="w-100">
+                                <div class="cargo-tab-wrapper">
+                                    <div class="cargo-config-card">
+                                        <div class="form-row-config">
+                                            <mat-form-field appearance="outline" class="vagas-field">
                                                 <mat-label>Número de Vagas</mat-label>
                                                 <input matInput type="number"
-                                                    [formControl]="$any(eleicaoForm.get('diácono.vagas'))" min="1">
+                                                    [formControl]="$any(eleicaoForm.get('diácono.vagas'))" min="1" [max]="membrosElegiveisArr.length || 1">
+                                                <mat-error *ngIf="eleicaoForm.get('diácono.vagas')?.hasError('max')">
+                                                    Máximo de {{ membrosElegiveisArr.length }} vaga(s) (total de votantes).
+                                                </mat-error>
                                             </mat-form-field>
                                         </div>
-                                    </div>
 
-                                    <div class="row align-items-end mb-3">
-                                        <div class="col-12 col-md-8 mb-2 mb-md-0">
-                                            <mat-form-field appearance="outline" class="w-100">
-                                                <mat-label>Selecionar Candidatos</mat-label>
+                                        <div class="form-row-candidatos">
+                                            <mat-form-field appearance="outline" class="select-candidatos-field">
+                                                <mat-label>Selecionar Candidatos da Lista</mat-label>
                                                 <mat-select #diaconoSelect multiple>
                                                     <mat-option
                                                         *ngFor="let membro of membrosElegiveisArr.value; let mIndex = index"
-                                                        [value]="mIndex">
-                                                        {{ membro.nome }}
+                                                        [value]="mIndex"
+                                                        [disabled]="isCandidatoNoOutroCargo('diácono', membro.id)">
+                                                        {{ membro.nome }} (ID: {{ membro.id }})
+                                                        <span *ngIf="isCandidatoNoOutroCargo('diácono', membro.id)" class="text-danger small font-weight-bold"> — (Candidato a Presbítero)</span>
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <div class="d-flex gap-2 flex-wrap">
-                                                <button mat-raised-button color="accent" class="flex-grow-1"
+
+
+                                            <div class="action-buttons-group">
+                                                <button mat-flat-button color="primary" type="button" class="btn-action-pill"
                                                     (click)="addCandidatosSelecionados('diácono', diaconoSelect.value, diaconoSelect)">
+                                                    <mat-icon>person_add</mat-icon>
                                                     Adicionar Selecionados
                                                 </button>
-                                                <button mat-stroked-button class="flex-grow-1"
+                                                <button mat-stroked-button color="accent" type="button" class="btn-action-pill"
                                                     (click)="addAllMembrosAsCandidatos('diácono')">
-                                                    Todos
+                                                    <mat-icon>group_add</mat-icon>
+                                                    Adicionar Todos ({{ membrosElegiveisArr.length }})
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <h6>Candidatos Inscritos ({{ diaconoCandidatos.length }})</h6>
-                                    <mat-list class="border rounded">
-                                        <mat-list-item
-                                            *ngFor="let candidato of diaconoCandidatos.controls; let cIndex = index">
-                                            <div matListItemTitle>{{ candidato.value.nome }}</div>
-                                            <button mat-icon-button matListItemMeta color="warn"
-                                                (click)="removeCandidato('diácono', cIndex)">
-                                                <mat-icon>delete</mat-icon>
-                                            </button>
-                                        </mat-list-item>
-                                        <mat-list-item *ngIf="diaconoCandidatos.length === 0">
-                                            <div matListItemTitle class="text-muted">Nenhum candidato adicionado.</div>
-                                        </mat-list-item>
-                                    </mat-list>
+                                    <div class="candidatos-section">
+                                        <h3>Candidatos Inscritos ({{ diaconoCandidatos.length }})</h3>
+
+                                        <div class="candidatos-glass-grid">
+                                            <div *ngFor="let candidato of diaconoCandidatos.controls; let cIndex = index" class="candidato-card-glass">
+                                                <div class="candidato-avatar">
+                                                    <span>{{ getInitials(candidato.value.nome) }}</span>
+                                                </div>
+                                                <div class="candidato-details">
+                                                    <span class="candidato-nome">{{ candidato.value.nome }}</span>
+                                                    <span class="candidato-tag">Candidato a Diácono</span>
+                                                </div>
+                                                <button mat-icon-button color="warn" type="button" (click)="removeCandidato('diácono', cIndex)" class="btn-remove-candidato" aria-label="Remover candidato">
+                                                    <mat-icon>delete_outline</mat-icon>
+                                                </button>
+                                            </div>
+                                            <div *ngIf="diaconoCandidatos.length === 0" class="empty-candidatos-hint">
+                                                Nenhum candidato adicionado a este cargo ainda.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </mat-tab>
 
                         </mat-tab-group>
 
-                        <div class="d-flex justify-content-between mt-4">
-                            <button mat-button matStepperPrevious>Voltar</button>
-                            <button mat-raised-button color="primary" (click)="onSubmit()"
+
+
+                        <div class="step-nav-footer">
+                            <button mat-stroked-button matStepperPrevious class="btn-step-prev">
+                                <mat-icon>arrow_back</mat-icon>
+                                Voltar
+                            </button>
+                            <button mat-flat-button color="primary" (click)="onSubmit()" class="btn-step-next"
                                 [disabled]="isSaving || eleicaoForm.invalid">
                                 <mat-icon *ngIf="isSaving">hourglass_empty</mat-icon>
-                                {{ isSaving ? 'Salvando...' : 'Salvar Eleição' }}
+                                <mat-icon *ngIf="!isSaving">check_circle</mat-icon>
+                                {{ isSaving ? 'Salvando...' : (isEditMode ? 'Atualizar Eleição' : 'Salvar Eleição') }}
                             </button>
+
                         </div>
                     </div>
                 </mat-step>

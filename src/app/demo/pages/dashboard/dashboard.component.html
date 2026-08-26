@@ -1,141 +1,208 @@
-<div class="dashboard-container">
-  <mat-card class="actions-card">
-    <mat-card-header>
-      <mat-card-title>Acesso Rápido</mat-card-title>
-      <mat-card-subtitle>O que você gostaria de fazer?</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content class="actions-buttons">
-      <button mat-flat-button color="primary" (click)="irParaCriarEleicao()">
+<div class="vota-dashboard-shell">
+  <!-- 1. Hero Welcome Banner -->
+  <div class="vota-hero-card">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>✦ VotaIPB • Painel ao Vivo da Igreja</span>
+      </div>
+      <h1 class="hero-title">Bem-vindo(a), {{ authService.nome || 'Administrador' }}!</h1>
+      <p class="hero-subtitle">
+        Gerencie votações com transparência, segurança e simplicidade para a sua comunidade.
+      </p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-launch-primary" (click)="irParaCriarEleicao()">
         <i-tabler name="plus" class="icon-20"></i-tabler>
-        Criar Nova Eleição
+        <span>Criar Eleição</span>
       </button>
-      <button mat-stroked-button color="accent" (click)="irParaListaEleicoes()">
-        <i-tabler name="list" class="icon-20"></i-tabler>
-        Ver Todas as Eleições
-      </button>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 
-  <!-- 2. Cartões de Estatística (KPIs) -->
+  <!-- 2. Launchpad de Ações Rápidas (4 Cards Ilustrados) -->
+  <div class="launchpad-grid">
+    <div class="launch-card launch-card-indigo" (click)="irParaCriarEleicao()">
+      <div class="launch-icon">
+        <i-tabler name="vote" class="icon-32"></i-tabler>
+      </div>
+      <div class="launch-info">
+        <h3>Diretorias & Sociedades</h3>
+        <p>UMP, SAF, UPH, UPA, Mocidade</p>
+      </div>
+      <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
+    </div>
+
+    <div class="launch-card launch-card-cyan" [routerLink]="['/eleicoes/oficiais/gerenciar']">
+      <div class="launch-icon">
+        <i-tabler name="user-check" class="icon-32"></i-tabler>
+      </div>
+      <div class="launch-info">
+        <h3>Eleições de Oficiais</h3>
+        <p>Presbíteros & Diáconos</p>
+      </div>
+      <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
+    </div>
+
+    <div class="launch-card launch-card-amber" (click)="irParaListaEleicoes()">
+      <div class="launch-icon">
+        <i-tabler name="list-details" class="icon-32"></i-tabler>
+      </div>
+      <div class="launch-info">
+        <h3>Ver Todas as Eleições</h3>
+        <p>Histórico & Ativas</p>
+      </div>
+      <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
+    </div>
+
+    <div class="launch-card launch-card-emerald" [routerLink]="['/inscricoes/lista']">
+      <div class="launch-icon">
+        <i-tabler name="forms" class="icon-32"></i-tabler>
+      </div>
+      <div class="launch-info">
+        <h3>Gerenciar Inscrições</h3>
+        <p>Candidatos & Formulários</p>
+      </div>
+      <i-tabler name="arrow-right" class="launch-arrow"></i-tabler>
+    </div>
+  </div>
+
+  <!-- 3. Cartões de Estatística (KPIs) -->
   <div class="stats-grid">
     @for (card of kpiCards(); track card.titulo) {
-    <mat-card class="stat-card" [ngClass]="'stat-card-' + card.cor">
-      <div class="stat-card-icon">
-        <i-tabler [name]="card.icon" class="icon-48"></i-tabler>
+      <div class="stat-glass-card" [ngClass]="'stat-' + card.cor">
+        <div class="stat-card-icon">
+          <i-tabler [name]="card.icon" class="icon-28"></i-tabler>
+        </div>
+        <div class="stat-card-details">
+          <div class="stat-value">{{ card.valor }}</div>
+          <div class="stat-title">{{ card.titulo }}</div>
+        </div>
       </div>
-      <div class="stat-card-content">
-        <div class="stat-value">{{ card.valor }}</div>
-        <div class="stat-title">{{ card.titulo }}</div>
-      </div>
-    </mat-card>
     }
   </div>
 
-  <!-- 3. Listas de Acesso Rápido (Tabelas Paginadas) -->
+  <!-- 4. Listas de Votações em Cards Visuais -->
   <div class="lists-grid">
     <!-- Coluna 1: Ativas/Agendadas -->
-    <mat-card class="list-card">
-      <mat-card-header>
-        <mat-card-title>Próximas Eleições e Em Andamento</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="table-container">
-          <table mat-table [dataSource]="dataSourceAtivas">
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef> Status </th>
-              <td mat-cell *matCellDef="let eleicao">
-                <i-tabler [name]="eleicao.status === 'agendada' ? 'calendar-event' : 'hourglass-high'"
-                  [class]="eleicao.status === 'agendada' ? 'text-primary' : 'text-accent'"></i-tabler>
-              </td>
-            </ng-container>
+    <div class="list-glass-card">
+      <div class="list-header">
+        <h2>⚡ Eleições Ativas & Agendadas</h2>
+        <span class="list-badge">{{ eleicoesAtivas().length }}</span>
+      </div>
+      
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSourceAtivas">
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let eleicao">
+              <span class="status-pill" [ngClass]="eleicao.status">
+                <span class="dot"></span>
+                {{ eleicao.status === 'agendada' ? 'Agendada' : 'Em Andamento' }}
+              </span>
+            </td>
+          </ng-container>
 
-            <!-- Titulo Column -->
-            <ng-container matColumnDef="titulo">
-              <th mat-header-cell *matHeaderCellDef> Título </th>
-              <td mat-cell *matCellDef="let eleicao"> {{eleicao.titulo}} </td>
-            </ng-container>
+          <ng-container matColumnDef="titulo">
+            <th mat-header-cell *matHeaderCellDef> Título </th>
+            <td mat-cell *matCellDef="let eleicao">
+              <div class="d-flex align-items-center gap-2">
+                <strong class="eleicao-title-text">{{eleicao.titulo}}</strong>
+                <span class="tipo-tag" [ngClass]="eleicao.isOficial ? 'tag-oficiais' : 'tag-diretoria'">
+                  {{ eleicao.isOficial ? 'Oficiais' : 'Diretoria' }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
 
-            <!-- Acoes Column -->
-            <ng-container matColumnDef="acoes">
-              <th mat-header-cell *matHeaderCellDef> </th>
-              <td mat-cell *matCellDef="let eleicao">
-                <button mat-icon-button color="primary" (click)="irParaDetalhes(eleicao.id)">
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef> </th>
+            <td mat-cell *matCellDef="let eleicao">
+              <div class="d-flex align-items-center gap-1">
+                <button *ngIf="eleicao.status === 'agendada' || eleicao.status === 'aguardando'" class="btn-action-round btn-action-edit me-1" (click)="irParaEditar(eleicao)" title="Editar Eleição">
+                  <i-tabler name="pencil" class="icon-18"></i-tabler>
+                </button>
+                <button class="btn-action-round" (click)="irParaDetalhes(eleicao)" title="Gerenciar Eleição">
                   <i-tabler name="arrow-right" class="icon-18"></i-tabler>
                 </button>
-              </td>
-            </ng-container>
+              </div>
+            </td>
+          </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
 
-          <mat-paginator #paginatorAtivas [pageSizeOptions]="[5, 10]" showFirstLastButtons
-            aria-label="Select page of active elections">
-          </mat-paginator>
 
-          @if (eleicoesAtivas().length === 0) {
-          <p class="empty-list-message">Nenhuma eleição ativa ou agendada.</p>
-          }
-        </div>
-      </mat-card-content>
-    </mat-card>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator #paginatorAtivas [pageSizeOptions]="[5, 10]" showFirstLastButtons
+          aria-label="Selecionar página de eleições ativas">
+        </mat-paginator>
+
+        @if (eleicoesAtivas().length === 0) {
+          <div class="empty-state-box">
+            <i-tabler name="calendar-off" class="icon-36"></i-tabler>
+            <p>Nenhuma eleição ativa no momento.</p>
+          </div>
+        }
+      </div>
+    </div>
 
     <!-- Coluna 2: Concluídas -->
-    <mat-card class="list-card">
-      <mat-card-header>
-        <mat-card-title>Eleições Concluídas Recentemente</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="table-container">
-          <table mat-table [dataSource]="dataSourceConcluidas">
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef> Status </th>
-              <td mat-cell *matCellDef="let eleicao">
-                <i-tabler name="circle-check" class="text-success"></i-tabler>
-              </td>
-            </ng-container>
+    <div class="list-glass-card">
+      <div class="list-header">
+        <h2>✓ Eleições Concluídas</h2>
+        <span class="list-badge badge-success">{{ eleicoesConcluidas().length }}</span>
+      </div>
 
-            <!-- Titulo Column -->
-            <ng-container matColumnDef="titulo">
-              <th mat-header-cell *matHeaderCellDef> Título </th>
-              <td mat-cell *matCellDef="let eleicao"> {{eleicao.titulo}} </td>
-            </ng-container>
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSourceConcluidas">
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let eleicao">
+              <span class="status-pill finalizada">
+                <span class="dot"></span>
+                Finalizada
+              </span>
+            </td>
+          </ng-container>
 
-            <!-- Acoes Column -->
-            <ng-container matColumnDef="acoes">
-              <th mat-header-cell *matHeaderCellDef> </th>
-              <td mat-cell *matCellDef="let eleicao">
-                <button mat-icon-button (click)="irParaDetalhes(eleicao.id)">
-                  <i-tabler name="eye" class="icon-18"></i-tabler>
-                </button>
-              </td>
-            </ng-container>
+          <ng-container matColumnDef="titulo">
+            <th mat-header-cell *matHeaderCellDef> Título </th>
+            <td mat-cell *matCellDef="let eleicao">
+              <div class="d-flex align-items-center gap-2">
+                <strong class="eleicao-title-text">{{eleicao.titulo}}</strong>
+                <span class="tipo-tag" [ngClass]="eleicao.isOficial ? 'tag-oficiais' : 'tag-diretoria'">
+                  {{ eleicao.isOficial ? 'Oficiais' : 'Diretoria' }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef> </th>
+            <td mat-cell *matCellDef="let eleicao">
+              <button class="btn-action-round" (click)="irParaDetalhes(eleicao)">
+                <i-tabler name="eye" class="icon-18"></i-tabler>
+              </button>
+            </td>
+          </ng-container>
 
-          <mat-paginator #paginatorConcluidas [pageSizeOptions]="[5, 10]" showFirstLastButtons
-            aria-label="Select page of completed elections">
-          </mat-paginator>
 
-          @if (eleicoesConcluidas().length === 0) {
-          <p class="empty-list-message">Nenhuma eleição concluída ainda.</p>
-          }
-        </div>
-      </mat-card-content>
-    </mat-card>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator #paginatorConcluidas [pageSizeOptions]="[5, 10]" showFirstLastButtons
+          aria-label="Selecionar página de eleições concluídas">
+        </mat-paginator>
+
+        @if (eleicoesConcluidas().length === 0) {
+          <div class="empty-state-box">
+            <i-tabler name="circle-check" class="icon-36"></i-tabler>
+            <p>Nenhuma eleição concluída ainda.</p>
+          </div>
+        }
+      </div>
+    </div>
   </div>
-
-  <!-- Opcional: Spinner de Carregamento enquanto o Signal inicial é vazio -->
-  @if (eleicoes().length === 0 && !kpiCards()[0].valor) {
-  <!-- Mostra o spinner se o valor do primeiro KPI (Total) ainda for 0 -->
-  <div class="loading-spinner">
-    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-    <p>Carregando dados do administrador...</p>
-  </div>
-  }
-
 </div>

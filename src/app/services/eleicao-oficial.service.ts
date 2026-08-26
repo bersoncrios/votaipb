@@ -61,7 +61,48 @@ export class EleicaoOficialService {
         return novoId;
     }
 
+    async updateEleicaoOficial(
+        id: string,
+        titulo: string,
+        membrosElegiveis: any[],
+        cargosNovos: { titulo: 'Presbítero' | 'Diácono'; vagas: number; candidatos: Candidato[] }[]
+    ): Promise<void> {
+        const eleicaoRef = doc(this.db, 'eleicoes-oficiais', id);
+
+        await runTransaction(this.db, async (transaction) => {
+            const eleicaoSnap = await transaction.get(eleicaoRef);
+            if (!eleicaoSnap.exists()) throw new Error('Eleição não encontrada.');
+
+            const eleicaoData = eleicaoSnap.data() as EleicaoOficial;
+
+            if (eleicaoData.status !== 'agendada' && (eleicaoData.status as string) !== 'aguardando') {
+                throw new Error('Apenas eleições não iniciadas podem ser alteradas.');
+            }
+
+
+            const cargosProcessados: CargoOficial[] = cargosNovos.map(cn => {
+                const cargoExistente = eleicaoData.cargos.find(c => c.titulo === cn.titulo);
+                return {
+                    id: cargoExistente ? cargoExistente.id : nanoid(8),
+                    titulo: cn.titulo,
+                    vagas: cn.vagas,
+                    candidatos: cn.candidatos,
+                    votos: cargoExistente ? cargoExistente.votos : [],
+                    status: cargoExistente ? cargoExistente.status : 'aguardando',
+                    vencedores: cargoExistente ? cargoExistente.vencedores : []
+                };
+            });
+
+            transaction.update(eleicaoRef, {
+                titulo,
+                membrosElegiveis,
+                cargos: cargosProcessados
+            });
+        });
+    }
+
     getEleicaoOficial(id: string): Observable<EleicaoOficial> {
+
         const docRef = doc(this.db, 'eleicoes-oficiais', id);
         return docData(docRef, { idField: 'id' }) as Observable<EleicaoOficial>;
     }
@@ -115,10 +156,12 @@ export class EleicaoOficialService {
             const jaVotou = cargo.votos.some(v => v.eleitorId === eleitorId);
             if (jaVotou) throw new Error('Você já votou neste cargo.');
 
-            // Valida número de candidatos
-            if (candidatosIds.length > cargo.vagas) {
+            // Valida número de candidatos (brancos ou nulos usam 1 ID especial 'BRANCO' ou 'NULO')
+            const isVotoEspecial = candidatosIds.length === 1 && (candidatosIds[0] === 'BRANCO' || candidatosIds[0] === 'NULO');
+            if (!isVotoEspecial && candidatosIds.length > cargo.vagas) {
                 throw new Error(`Você pode selecionar no máximo ${cargo.vagas} candidato(s).`);
             }
+
 
             const novoVoto: VotoOficial = {
                 eleitorId,

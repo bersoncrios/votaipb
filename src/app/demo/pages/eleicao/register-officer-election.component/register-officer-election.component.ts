@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { EleicaoOficialService } from '../../../../services/eleicao-oficial.service';
 import { Membro } from '../../../../models/Membro';
 import { Candidato } from '../../../../models/Candidato';
@@ -45,11 +45,14 @@ import * as XLSX from 'xlsx';
 export class RegisterOfficerElectionComponent implements OnInit {
     private fb = inject(FormBuilder);
     private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private eleicaoOficialService = inject(EleicaoOficialService);
     private snackBar = inject(MatSnackBar);
 
     eleicaoForm: FormGroup;
     isSaving = false;
+    isEditMode = false;
+    eleicaoId: string | null = null;
 
     constructor() {
         this.eleicaoForm = this.fb.group({
@@ -68,7 +71,90 @@ export class RegisterOfficerElectionComponent implements OnInit {
         });
     }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.eleicaoId = this.route.snapshot.paramMap.get('id');
+        if (this.eleicaoId) {
+            this.isEditMode = true;
+            this.carregarEleicaoParaEdicao(this.eleicaoId);
+        }
+    }
+
+    carregarEleicaoParaEdicao(id: string) {
+        this.eleicaoOficialService.getEleicaoOficial(id).subscribe({
+            next: (eleicao) => {
+                if (!eleicao) {
+                    this.snackBar.open('Eleição não encontrada.', 'Fechar', { duration: 3000 });
+                    this.router.navigate(['/eleicoes/oficiais/gerenciar']);
+                    return;
+                }
+
+                if (eleicao.status !== 'agendada' && (eleicao.status as string) !== 'aguardando') {
+                    this.snackBar.open('Apenas eleições agendadas ou não iniciadas podem ser editadas.', 'Aviso', { duration: 4000 });
+
+                    this.router.navigate(['/eleicoes/oficiais/gerenciar']);
+                    return;
+                }
+
+                // Preenche Titulo
+                this.eleicaoForm.patchValue({ titulo: eleicao.titulo });
+
+                // Preenche Membros Elegíveis
+                this.membrosElegiveisArr.clear();
+                (eleicao.membrosElegiveis || []).forEach(membro => {
+                    this.membrosElegiveisArr.push(this.createMembroGroup(membro));
+                });
+
+                // Preenche Cargos (Presbítero e Diácono)
+                const presb = eleicao.cargos?.find(c => c.titulo === 'Presbítero');
+                const diac = eleicao.cargos?.find(c => c.titulo === 'Diácono');
+
+                if (presb) {
+                    this.eleicaoForm.get('presbítero')?.patchValue({
+                        ativo: true,
+                        vagas: presb.vagas
+                    });
+                    this.presbiteroCandidatos.clear();
+                    (presb.candidatos || []).forEach(cand => {
+                        this.presbiteroCandidatos.push(this.fb.group({
+                            userId: [cand.userId, Validators.required],
+                            nome: [cand.nome, Validators.required]
+                        }));
+                    });
+                }
+
+                if (diac) {
+                    this.eleicaoForm.get('diácono')?.patchValue({
+                        ativo: true,
+                        vagas: diac.vagas
+                    });
+                    this.diaconoCandidatos.clear();
+                    (diac.candidatos || []).forEach(cand => {
+                        this.diaconoCandidatos.push(this.fb.group({
+                            userId: [cand.userId, Validators.required],
+                            nome: [cand.nome, Validators.required]
+                        }));
+                    });
+                }
+
+                this.updateVagasValidators();
+            },
+            error: (err) => {
+                console.error('Erro ao carregar eleição de oficiais:', err);
+                this.snackBar.open('Erro ao carregar dados da eleição.', 'Fechar', { duration: 3000 });
+            }
+        });
+    }
+
+
+    getInitials(name: string): string {
+        if (!name) return 'M';
+        const parts = name.trim().split(' ');
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.slice(0, 2).toUpperCase();
+    }
+
 
     get membrosElegiveisArr(): FormArray {
         return this.eleicaoForm.get('membrosElegiveis') as FormArray;
@@ -89,6 +175,27 @@ export class RegisterOfficerElectionComponent implements OnInit {
         });
     }
 
+    isCandidatoNoOutroCargo(tipo: 'presbítero' | 'diácono', memberId: string): boolean {
+
+        const outroArr = tipo === 'presbítero' ? this.diaconoCandidatos : this.presbiteroCandidatos;
+        return outroArr.value.some((c: Candidato) => c.userId === memberId);
+    }
+
+    updateVagasValidators() {
+        const maxVotantes = Math.max(1, this.membrosElegiveisArr.length);
+        const presbVagasCtrl = this.eleicaoForm.get('presbítero.vagas');
+        const diacVagasCtrl = this.eleicaoForm.get('diácono.vagas');
+
+        if (presbVagasCtrl) {
+            presbVagasCtrl.setValidators([Validators.required, Validators.min(1), Validators.max(maxVotantes)]);
+            presbVagasCtrl.updateValueAndValidity();
+        }
+        if (diacVagasCtrl) {
+            diacVagasCtrl.setValidators([Validators.required, Validators.min(1), Validators.max(maxVotantes)]);
+            diacVagasCtrl.updateValueAndValidity();
+        }
+    }
+
     addMembro(idInput: HTMLInputElement, nomeInput: HTMLInputElement) {
         const id = idInput.value.trim();
         const nome = nomeInput.value.trim();
@@ -101,6 +208,7 @@ export class RegisterOfficerElectionComponent implements OnInit {
             }
             const novoMembro: Membro = { id, nome };
             this.membrosElegiveisArr.push(this.createMembroGroup(novoMembro));
+            this.updateVagasValidators();
             idInput.value = '';
             nomeInput.value = '';
             idInput.focus();
@@ -111,20 +219,39 @@ export class RegisterOfficerElectionComponent implements OnInit {
     }
 
     removeMembro(index: number) {
-        const nomeRemovido = this.membrosElegiveisArr.at(index).value.nome;
+        const membroRemovido = this.membrosElegiveisArr.at(index).value;
         this.membrosElegiveisArr.removeAt(index);
-        this.snackBar.open(`Membro ${nomeRemovido} removido.`, 'OK', { duration: 2000 });
+        this.updateVagasValidators();
+
+        // Remove do Presbítero se presente
+        const pIndex = this.presbiteroCandidatos.controls.findIndex(c => c.value.userId === membroRemovido.id);
+        if (pIndex !== -1) this.presbiteroCandidatos.removeAt(pIndex);
+
+        // Remove do Diácono se presente
+        const dIndex = this.diaconoCandidatos.controls.findIndex(c => c.value.userId === membroRemovido.id);
+        if (dIndex !== -1) this.diaconoCandidatos.removeAt(dIndex);
+
+        this.snackBar.open(`Membro ${membroRemovido.nome} removido.`, 'OK', { duration: 2000 });
     }
 
     addCandidatosSelecionados(tipo: 'presbítero' | 'diácono', membroIndices: number[] | null, select: MatSelect) {
         if (!membroIndices || membroIndices.length === 0) return;
 
         const candidatosArr = tipo === 'presbítero' ? this.presbiteroCandidatos : this.diaconoCandidatos;
+        const outroTipo = tipo === 'presbítero' ? 'Diácono' : 'Presbítero';
         let adicionados = 0;
         let duplicados = 0;
+        let bloqueadosOutroCargo = 0;
 
         for (const membroIndex of membroIndices) {
             const membroSelecionado = this.membrosElegiveisArr.at(membroIndex).value as Membro;
+
+            // Regra 2: Impedir acumular Presbítero e Diácono
+            if (this.isCandidatoNoOutroCargo(tipo, membroSelecionado.id)) {
+                bloqueadosOutroCargo++;
+                continue;
+            }
+
             const jaExiste = candidatosArr.value.some((c: Candidato) => c.userId === membroSelecionado.id);
 
             if (jaExiste) {
@@ -141,7 +268,9 @@ export class RegisterOfficerElectionComponent implements OnInit {
 
         select.value = null;
 
-        if (adicionados > 0 && duplicados === 0) {
+        if (bloqueadosOutroCargo > 0) {
+            this.snackBar.open(`${bloqueadosOutroCargo} membro(s) não pode(m) concorrer porque já é(são) candidato(s) a ${outroTipo}.`, 'Aviso', { duration: 4000 });
+        } else if (adicionados > 0 && duplicados === 0) {
             this.snackBar.open(`${adicionados} candidato(s) adicionado(s).`, 'OK', { duration: 2000 });
         } else if (adicionados > 0 && duplicados > 0) {
             this.snackBar.open(`${adicionados} adicionado(s). ${duplicados} já existia(m).`, 'OK', { duration: 3000 });
@@ -153,10 +282,19 @@ export class RegisterOfficerElectionComponent implements OnInit {
     addAllMembrosAsCandidatos(tipo: 'presbítero' | 'diácono') {
         const todosOsIndices = Array.from(Array(this.membrosElegiveisArr.length).keys());
         const candidatosArr = tipo === 'presbítero' ? this.presbiteroCandidatos : this.diaconoCandidatos;
+        const outroTipo = tipo === 'presbítero' ? 'Diácono' : 'Presbítero';
         let adicionados = 0;
+        let bloqueadosOutroCargo = 0;
 
         for (const membroIndex of todosOsIndices) {
             const membroSelecionado = this.membrosElegiveisArr.at(membroIndex).value as Membro;
+
+            // Regra 2: Impedir acumular Presbítero e Diácono
+            if (this.isCandidatoNoOutroCargo(tipo, membroSelecionado.id)) {
+                bloqueadosOutroCargo++;
+                continue;
+            }
+
             const jaExiste = candidatosArr.value.some((c: Candidato) => c.userId === membroSelecionado.id);
 
             if (!jaExiste) {
@@ -169,8 +307,13 @@ export class RegisterOfficerElectionComponent implements OnInit {
             }
         }
 
-        this.snackBar.open(`${adicionados} candidato(s) adicionado(s).`, 'OK', { duration: 2000 });
+        if (bloqueadosOutroCargo > 0) {
+            this.snackBar.open(`${adicionados} adicionado(s). ${bloqueadosOutroCargo} ignorado(s) por já concorrer(em) a ${outroTipo}.`, 'OK', { duration: 4000 });
+        } else {
+            this.snackBar.open(`${adicionados} candidato(s) adicionado(s).`, 'OK', { duration: 2000 });
+        }
     }
+
 
     removeCandidato(tipo: 'presbítero' | 'diácono', candidatoIndex: number) {
         const candidatosArr = tipo === 'presbítero' ? this.presbiteroCandidatos : this.diaconoCandidatos;
@@ -183,11 +326,26 @@ export class RegisterOfficerElectionComponent implements OnInit {
         this.eleicaoForm.markAllAsTouched();
 
         if (this.eleicaoForm.invalid) {
-            this.snackBar.open('Formulário inválido. Verifique os campos.', 'Fechar', { duration: 4000 });
+            this.snackBar.open('Formulário inválido. Verifique os campos marcados.', 'Fechar', { duration: 4000 });
+            return;
+        }
+
+        const totalVotantes = this.membrosElegiveisArr.length;
+        const formData = this.eleicaoForm.value;
+        const vagasPresb = Number(formData.presbítero?.vagas) || 0;
+        const vagasDiac = Number(formData.diácono?.vagas) || 0;
+
+        if (vagasPresb > totalVotantes) {
+            this.snackBar.open(`O número de vagas para Presbítero (${vagasPresb}) não pode ser maior que o número de votantes (${totalVotantes}).`, 'Fechar', { duration: 5000 });
+            return;
+        }
+        if (vagasDiac > totalVotantes) {
+            this.snackBar.open(`O número de vagas para Diácono (${vagasDiac}) não pode ser maior que o número de votantes (${totalVotantes}).`, 'Fechar', { duration: 5000 });
             return;
         }
 
         this.isSaving = true;
+
 
         try {
             const formData = this.eleicaoForm.value;
@@ -217,13 +375,23 @@ export class RegisterOfficerElectionComponent implements OnInit {
                 return;
             }
 
-            await this.eleicaoOficialService.createEleicaoOficial(
-                formData.titulo,
-                formData.membrosElegiveis,
-                cargos
-            );
+            if (this.isEditMode && this.eleicaoId) {
+                await this.eleicaoOficialService.updateEleicaoOficial(
+                    this.eleicaoId,
+                    formData.titulo,
+                    formData.membrosElegiveis,
+                    cargos
+                );
+                this.snackBar.open('Eleição de oficiais atualizada com sucesso!', 'OK', { duration: 4000 });
+            } else {
+                await this.eleicaoOficialService.createEleicaoOficial(
+                    formData.titulo,
+                    formData.membrosElegiveis,
+                    cargos
+                );
+                this.snackBar.open('Eleição criada com sucesso!', 'OK', { duration: 4000 });
+            }
 
-            this.snackBar.open('Eleição criada com sucesso!', 'OK', { duration: 4000 });
             this.router.navigate(['/dashboard']);
         } catch (e: any) {
             console.error('Erro ao salvar eleição:', e);
@@ -231,6 +399,7 @@ export class RegisterOfficerElectionComponent implements OnInit {
         } finally {
             this.isSaving = false;
         }
+
     }
 
     async onFileChange(event: any) {
@@ -282,7 +451,9 @@ export class RegisterOfficerElectionComponent implements OnInit {
                     }
                 }
 
+                this.updateVagasValidators();
                 this.snackBar.open(`Importação concluída: ${adicionados} membros adicionados, ${duplicados} duplicados ignorados.`, 'OK', { duration: 5000 });
+
 
             } catch (err: any) {
                 console.error(err);

@@ -1,6 +1,36 @@
-<mat-toolbar class="pc-header">
-  <div class="header-wrapper">
-    <app-nav-left></app-nav-left>
-    <app-nav-right></app-nav-right>
+<header class="vota-header-nav">
+  <div class="vota-header-container">
+    <a routerLink="/dashboard" class="vota-logo-brand">
+      <img src="assets/images/logo.png" alt="Vota IPB" class="vota-logo-img" />
+      <span class="vota-brand-text">Vota<span class="highlight">IPB</span></span>
+    </a>
+
+    <nav class="vota-nav-pills">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-pill">
+        <i class="ti ti-layout-grid"></i> <span>Dashboard</span>
+      </a>
+      <a routerLink="/eleicoes/lista" routerLinkActive="active" class="nav-pill">
+        <i class="ti ti-vote"></i> <span>Eleições</span>
+      </a>
+      <a routerLink="/eleicoes/oficiais/gerenciar" routerLinkActive="active" class="nav-pill">
+        <i class="ti ti-user-check"></i> <span>Oficiais</span>
+      </a>
+      <a routerLink="/inscricoes/lista" routerLinkActive="active" class="nav-pill">
+        <i class="ti ti-forms"></i> <span>Inscrições</span>
+      </a>
+      <a routerLink="/sobre" routerLinkActive="active" class="nav-pill">
+        <i class="ti ti-info-circle"></i> <span>Sobre</span>
+      </a>
+      @if (authService.role === 'admin') {
+        <a routerLink="/mensagens" routerLinkActive="active" class="nav-pill admin-pill">
+          <i class="ti ti-mail"></i> <span>Mensagens</span>
+        </a>
+      }
+    </nav>
+
+    <div class="vota-header-right">
+      <app-nav-right></app-nav-right>
+    </div>
   </div>
-</mat-toolbar>
+</header>
+

@@ -1,30 +1,60 @@
 <div class="manage-container" *ngIf="eleicao$ | async as eleicao; else loading">
 
-  <div class="header-container">
-    <h1>{{ eleicao.titulo }}</h1>
-    <div class="header-actions">
-      <button (click)="onCopiarLink(eleicao.id)" class="btn-header btn-copiar-link">
-        🔗 Copiar Link
+  <!-- Control Room Hero Glass Card -->
+  <div class="control-hero-card">
+    <div class="hero-top-row">
+      <div class="hero-title-group">
+        <span class="hero-badge">✦ Sala de Controle ao Vivo</span>
+        <h1>{{ eleicao.titulo }}</h1>
+      </div>
+
+      <div class="hero-status-pill" [ngClass]="eleicao.status">
+        <span class="status-dot"></span>
+        <span>{{ formatStatus(eleicao.status) }}</span>
+      </div>
+    </div>
+
+    <div class="hero-actions-bar">
+      <a *ngIf="eleicao.status === 'agendada'" [routerLink]="['/eleicoes/editar', eleicao.id]" class="btn-hero btn-hero-secondary text-decoration-none">
+        <span>✏️ Editar Eleição</span>
+      </a>
+      <button (click)="onCopiarLink(eleicao.id)" class="btn-hero btn-hero-primary">
+        <span>🔗 Copiar Link de Votação</span>
       </button>
-      <button (click)="onGerarPdfGeral(eleicao)" class="btn-header btn-pdf-geral">
-        🖨️ Gerar Relatório Geral (PDF)
+
+      <button (click)="onGerarPdfGeral(eleicao)" class="btn-hero btn-hero-secondary">
+        <span>🖨️ Relatório Geral (PDF)</span>
       </button>
     </div>
+
+
+    <!-- Active Voting Glass Banner -->
+    <div *ngIf="eleicao.cargoAbertoParaVotacao as aberto" class="live-voting-banner">
+      <div class="banner-pulse">
+        <span class="pulse-core"></span>
+      </div>
+      <div class="banner-content">
+        <span class="banner-tag">● VOTAÇÃO EM ANDAMENTO</span>
+        <span class="banner-title">
+          Cargo: <strong>{{ getCargoTitulo(eleicao, aberto.cargoId) }}</strong>
+        </span>
+        <span class="banner-escrutinio">{{ aberto.escrutinioNum }}º Escrutínio</span>
+      </div>
+    </div>
   </div>
-  <p><strong>Status:</strong> {{ eleicao.status }}</p>
 
-  <div *ngIf="eleicao.cargoAbertoParaVotacao as aberto" class="votacao-aberta-aviso">
-    ⚠️ VOTAÇÃO ABERTA: Cargo ID {{ aberto.cargoId }}, Escrutínio Nº {{ aberto.escrutinioNum }}
+  <div class="section-title-bar">
+    <h2>Cargos & Escrutínios</h2>
+    <p>Gerencie a abertura dos escrutínios e apuração em tempo real</p>
   </div>
 
-  <hr>
-
-  <h2>Cargos</h2>
   <div class="cargos-lista">
+
 
     <div *ngFor="let cargo of eleicao.cargos" class="cargo-card">
       <h3>{{ cargo.titulo }}</h3>
-      <p class="cargo-status">Status do Cargo: <strong>{{ cargo.status | uppercase }}</strong></p>
+      <p class="cargo-status">Status do Cargo: <strong>{{ formatStatus(cargo.status) }}</strong></p>
+
 
 
       <div *ngIf="cargo.status === 'finalizado' && cargo.vencedor" class="vencedor-bloco">

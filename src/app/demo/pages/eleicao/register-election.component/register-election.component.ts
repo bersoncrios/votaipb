@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 // Ajuste os caminhos para seus serviços e modelos
 import { EleicaoAdminService } from '../../../../services/eleicao-admin.service'; // Ajuste o caminho
 import { Membro } from '../../../../models/Membro'; // Ajuste o caminho
@@ -56,12 +56,15 @@ const CARGOS_PERMITIDOS: Cargo['titulo'][] = [
 export class RegisterElectionComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private eleicaoAdminService = inject(EleicaoAdminService);
   private snackBar = inject(MatSnackBar);
 
   eleicaoForm: FormGroup;
   cargosDisponiveis = [...CARGOS_PERMITIDOS];
   isSaving = false;
+  isEditMode = false;
+  eleicaoId: string | null = null;
   selectedCargoIndex = 0; // <-- MUDANÇA: Índice da aba selecionada
 
   constructor() {
@@ -78,7 +81,80 @@ export class RegisterElectionComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.eleicaoId = this.route.snapshot.paramMap.get('id');
+    if (this.eleicaoId) {
+      this.isEditMode = true;
+      this.carregarEleicaoParaEdicao(this.eleicaoId);
+    }
+  }
+
+  carregarEleicaoParaEdicao(id: string) {
+    this.eleicaoAdminService.getEleicaoObservable(id).subscribe({
+      next: (eleicao) => {
+        if (!eleicao) {
+          this.snackBar.open('Eleição não encontrada.', 'Fechar', { duration: 3000 });
+          this.router.navigate(['/eleicoes/lista']);
+          return;
+        }
+
+        if (eleicao.status !== 'agendada' && (eleicao.status as string) !== 'aguardando') {
+          this.snackBar.open('Apenas eleições agendadas ou não iniciadas podem ser editadas.', 'Aviso', { duration: 4000 });
+
+          this.router.navigate(['/eleicoes/lista']);
+          return;
+        }
+
+        // Preenche Titulo
+        this.formPassoTitulo.patchValue({ titulo: eleicao.titulo });
+
+        // Preenche Membros Elegíveis
+        this.membrosElegiveisArr.clear();
+        (eleicao.membrosElegiveis || []).forEach(membro => {
+          this.membrosElegiveisArr.push(this.createMembroGroup(membro));
+        });
+
+        // Preenche Cargos e Candidatos
+        this.cargosArr.clear();
+        (eleicao.cargos || []).forEach(cargo => {
+          const cargoFG = this.fb.group({
+            id: [cargo.id || nanoid(8)],
+            titulo: [cargo.titulo, Validators.required],
+            candidatosIniciais: this.fb.array([], [Validators.required, Validators.minLength(1)])
+          });
+
+          const candidatosArr = cargoFG.get('candidatosIniciais') as FormArray;
+          (cargo.candidatosIniciais || []).forEach(cand => {
+            candidatosArr.push(this.fb.group({
+              userId: [cand.userId, Validators.required],
+              nome: [cand.nome, Validators.required]
+            }));
+          });
+
+          this.cargosArr.push(cargoFG);
+        });
+
+        if (this.cargosArr.length > 0) {
+          this.selectedCargoIndex = 0;
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar eleição para edição:', err);
+        this.snackBar.open('Erro ao carregar dados da eleição.', 'Fechar', { duration: 3000 });
+      }
+    });
+  }
+
+
+  getInitials(name: string): string {
+    if (!name) return 'M';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+
 
   get formPassoTitulo(): FormGroup {
     return this.eleicaoForm.get('passoTitulo') as FormGroup;
@@ -260,10 +336,14 @@ export class RegisterElectionComponent implements OnInit {
         cargos: this.formPassoCargos.value.cargos
       };
 
-      console.log('Enviando para o service:', formData);
-      const novoId = await this.eleicaoAdminService.createEleicao(formData);
+      if (this.isEditMode && this.eleicaoId) {
+        await this.eleicaoAdminService.updateEleicaoFull(this.eleicaoId, formData);
+        this.snackBar.open(`Eleição "${formData.titulo}" atualizada com sucesso!`, 'OK', { duration: 4000 });
+      } else {
+        const novoId = await this.eleicaoAdminService.createEleicao(formData);
+        this.snackBar.open(`Eleição "${formData.titulo}" criada com sucesso! Redirecionando...`, 'OK', { duration: 4000 });
+      }
 
-      this.snackBar.open(`Eleição "${formData.titulo}" criada com sucesso! Redirecionando...`, 'OK', { duration: 4000 });
       this.router.navigate(['/eleicoes/lista']);
     } catch (e: any) {
       console.error('Erro ao salvar eleição:', e);
@@ -271,6 +351,7 @@ export class RegisterElectionComponent implements OnInit {
     } finally {
       this.isSaving = false;
     }
+
   }
 
   async onFileChange(event: any) {

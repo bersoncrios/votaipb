@@ -20,9 +20,13 @@
     </div>
     } @else if (allEleicoes().length === 0) {
     <div class="empty-state">
-        <p>Nenhuma eleição de oficiais encontrada.</p>
+        <div class="empty-icon-circle">
+            <mat-icon>person_check</mat-icon>
+        </div>
+        <h3>Nenhuma eleição de oficiais encontrada</h3>
+        <p>Cadastre a eleição de Presbíteros e Diáconos para iniciar o processo de votação.</p>
         <a [routerLink]="['/eleicoes/oficiais/registrar']" class="btn-criar-nova">
-            Cadastrar Nova Eleição
+            ✦ Cadastrar Nova Eleição
         </a>
     </div>
     } @else {
@@ -33,8 +37,9 @@
                 <h3 class="card-title">{{ eleicao.titulo }}</h3>
 
                 <div class="card-status" [ngClass]="eleicao.status">
-                    {{ eleicao.status | titlecase }}
+                    {{ eleicao.status === 'em_andamento' ? 'Em Andamento' : (eleicao.status === 'agendada' ? 'Agendada' : 'Finalizada') }}
                 </div>
+
 
                 <p class="card-info info-cargos">
                     {{ eleicao.cargos.length }}
@@ -50,11 +55,18 @@
                 </p>
             </div>
 
-            <div class="card-footer">
+            <div class="card-footer d-flex gap-2 justify-content-end">
+                <a *ngIf="eleicao.status === 'agendada'"
+                    [routerLink]="['/eleicoes/oficiais/editar', eleicao.id]"
+                    class="btn-gerenciar btn-editar-link" title="Editar Eleição">
+                    <mat-icon class="icon-18 me-1">edit</mat-icon> Editar
+                </a>
                 <a [routerLink]="['/eleicoes/oficiais/gerenciar', eleicao.id]" class="btn-gerenciar">
                     Gerenciar
                 </a>
             </div>
+
+
         </div>
         }
     </div>

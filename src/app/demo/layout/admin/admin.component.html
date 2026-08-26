@@ -1,24 +1,10 @@
-<mat-drawer-container class="drawer-container">
-  <mat-drawer #sidebar class="pc-sidebar" [mode]="modeValue" opened>
-    <nav>
-      <div class="navbar-wrapper">
-        <div class="m-header">
-          <a href="/" style="display: flex; align-items: center; text-decoration: none;">
-            <img src="assets/images/logo.png" alt="Vota IPB Logo" style="height: 55px; margin-right: 10px;" />
-            <span class="version"> v{{ currentApplicationVersion }} </span>
-          </a>
-        </div>
-        <app-vertical-menu [menus]="menus"></app-vertical-menu>
-      </div>
-    </nav>
-  </mat-drawer>
+<div class="vota-app-shell">
   <app-nav-bar></app-nav-bar>
-  <div class="app-container">
-    <div class="main-body">
-      <div class="page-wrapper">
-        <router-outlet></router-outlet>
-      </div>
+  <main class="vota-main-content">
+    <div class="vota-page-wrapper">
+      <router-outlet></router-outlet>
     </div>
-  </div>
+  </main>
   <app-footer></app-footer>
-</mat-drawer-container>
+</div>
+

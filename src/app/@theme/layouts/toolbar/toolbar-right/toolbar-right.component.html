@@ -1,12 +1,6 @@
 <div class="header-button">
-  <button mat-button (click)="themeService.toggleTheme()" aria-label="Alternar Tema" class="header-item">
-    <a href="javascript:" class="pc-head-link">
-      <mat-icon class="pc-icon" style="font-size: 20px; height: 20px; width: 20px; line-height: 20px;">
-        {{ (themeService.isDarkTheme$ | async) ? 'light_mode' : 'dark_mode' }}
-      </mat-icon>
-    </a>
-  </button>
   <button mat-button [matMenuTriggerFor]="Notification" aria-label="Notificações" class="header-item">
+
     <a href="javascript:" class="pc-head-link badge-on-button" matBadge="0" matBadgeColor="primary" matBadgeOverlap="false">
       <svg class="pc-icon">
         <use xlink:href="assets/fonts/custom-icon.svg#custom-notification"></use>

@@ -16,8 +16,10 @@ import { Escrutinio } from '../models/Escritineo';
 import { Observable, map } from 'rxjs';
 import { nanoid } from 'nanoid';
 import { Candidato } from '../models/Candidato';
+import { Membro } from '../models/Membro';
 import { AuthService } from '../services/auth.service';
 import { Eleicao } from './../models/Eleicao';
+
 
 @Injectable({
   providedIn: 'root'
@@ -119,6 +121,46 @@ export class EleicaoAdminService {
     const eleicaoRef = doc(this.db, 'eleicoes', id);
     return updateDoc(eleicaoRef, updates);
   }
+
+  async updateEleicaoFull(
+    id: string,
+    eleicaoData: { titulo: string; membrosElegiveis: Membro[]; cargos: any[] }
+  ): Promise<void> {
+    const eleicaoRef = doc(this.db, 'eleicoes', id);
+
+    await runTransaction(this.db, async (transaction) => {
+      const eleicaoSnap = await transaction.get(eleicaoRef);
+      if (!eleicaoSnap.exists()) throw new Error('Eleição não encontrada.');
+
+      const eleicaoAtual = eleicaoSnap.data() as Eleicao;
+      if (eleicaoAtual.status !== 'agendada' && (eleicaoAtual.status as string) !== 'aguardando') {
+        throw new Error('Apenas eleições não iniciadas podem ser alteradas.');
+      }
+
+
+      const cargosProcessados: Cargo[] = eleicaoData.cargos.map(cargo => {
+        const cargoExistente = eleicaoAtual.cargos?.find(c => c.id === cargo.id || c.titulo === cargo.titulo);
+        const candidatosIniciais: Candidato[] = cargo.candidatosIniciais || [];
+        const escrutinios = this.gerarEscrutiniosIniciais(candidatosIniciais);
+
+        return {
+          ...cargo,
+          id: cargoExistente ? cargoExistente.id : (cargo.id || nanoid(8)),
+          candidatosIniciais,
+          escrutinios,
+          status: cargoExistente ? cargoExistente.status : 'aguardando',
+          vencedor: null
+        };
+      });
+
+      transaction.update(eleicaoRef, {
+        titulo: eleicaoData.titulo,
+        membrosElegiveis: eleicaoData.membrosElegiveis,
+        cargos: cargosProcessados
+      });
+    });
+  }
+
 
   getEleicoesDoAdmin(adminUid: string): Observable<Eleicao[]> {
     const q = query(

@@ -1,266 +1,303 @@
-/* ==============================================
-   Variáveis de Cor (Tema do Admin)
-   ============================================== */
-:host {
-  --primary-color: var(--primary-500);
-  --primary-dark: var(--primary-700);
-  --bg-color: var(--accent-100);
-  --card-bg-color: var(--accent-50);
-  --nested-card-bg: var(--accent-200);
-  --border-color: var(--accent-300);
-  --text-color: var(--accent-900);
-  --text-muted: var(--accent-600);
-
-  // Cores de Ação
-  --action-open: var(--primary-500);
-  --action-close: var(--warn-500);
-  --action-prepare: var(--warning-500);
-  --action-secondary: var(--accent-600);
-  --action-confirm: var(--success-500);
-
-  // Cores de Status
-  --status-aberto: var(--success-500);
-  --status-fechado: var(--accent-600);
-  --status-pendente: var(--primary-600); // Was #0097a7
-  --status-desempate: var(--warning-600);
-  --status-nao-iniciado: var(--accent-400);
-  --status-aguardando: var(--primary-500);
-  --status-em_votacao: var(--status-aberto);
-}
-
-/* ==============================================
-   Container Principal (Admin)
-   ============================================== */
 :host {
   display: block;
-  background-color: var(--bg-color);
   min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .manage-container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
-  font-family: inherit;
-  color: var(--text-color);
+  padding: 1rem 0;
+  color: #0f172a;
 }
 
-/* ==============================================
-   [NOVO] Header Principal (Título e Ações)
-   ============================================== */
-.header-container {
+.control-hero-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 28px;
+  padding: 2.25rem 2.5rem;
+  box-shadow: 0 16px 40px rgba(31, 38, 135, 0.08);
+  margin-bottom: 2.5rem;
+}
+
+.hero-top-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap; // Permite quebra de linha em telas pequenas
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.03em;
+  }
 
   h1 {
-    color: var(--primary-dark);
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 0; // Remove margem que estava no h1
-    flex-grow: 1; // Permite que o título ocupe espaço
+    color: #0f172a;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.03em;
   }
 }
 
-.header-actions {
+.hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  &.em_andamento, &.em_votacao {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  &.agendada {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  &.finalizada, &.finalizado {
+    background: rgba(100, 116, 139, 0.12);
+    color: #475569;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+  }
+}
+
+.hero-actions-bar {
   display: flex;
-  flex-wrap: wrap; // Permite que os botões quebrem a linha
-  gap: 0.75rem;
-}
+  flex-wrap: wrap;
+  gap: 1rem;
 
-.btn-header {
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  white-space: nowrap; // Impede que o texto do botão quebre
+  .btn-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.75rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    &.btn-hero-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      color: white;
+      box-shadow: 0 4px 18px rgba(79, 70, 229, 0.35);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(79, 70, 229, 0.5);
+      }
+    }
+
+    &.btn-hero-secondary {
+      background: rgba(241, 245, 249, 0.9);
+      color: #334155;
+      border: 1px solid rgba(203, 213, 225, 0.8);
+
+      &:hover {
+        background: #ffffff;
+        color: #0f172a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      }
+    }
   }
 }
 
-.btn-copiar-link {
-  background-color: var(--action-open); // Reusa a variável --primary-color
-  color: white;
+.live-voting-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(245, 158, 11, 0.08) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 20px;
+  padding: 1.25rem 1.75rem;
+  margin-top: 1.75rem;
+  animation: bannerPulse 2s infinite alternate;
 
-  &:hover {
-    background-color: var(--primary-dark);
+  .banner-pulse {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+
+    .pulse-core {
+      width: 14px;
+      height: 14px;
+      background: #ef4444;
+      border-radius: 50%;
+      display: block;
+      box-shadow: 0 0 12px #ef4444;
+    }
+  }
+
+  .banner-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+
+    .banner-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #ef4444;
+      letter-spacing: 0.05em;
+    }
+
+    .banner-title {
+      font-size: 1.05rem;
+      color: #0f172a;
+
+      strong {
+        color: #4f46e5;
+        font-weight: 800;
+      }
+    }
+
+    .banner-escrutinio {
+      background: rgba(79, 70, 229, 0.1);
+      color: #4f46e5;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+    }
   }
 }
 
-.btn-pdf-geral {
-  background-color: var(--action-secondary); // Reusa a variável --action-secondary
-  color: white;
-
-  &:hover {
-    background-color: var(--accent-700); // Was #5a6268
-  }
-}
-
-.manage-container p {
-  font-size: 1.1rem;
-
-  strong {
-    color: var(--text-muted);
-  }
-}
-
-.manage-container hr {
-  border: 0;
-  border-top: 1px solid var(--border-color);
-  margin: 2rem 0;
-}
-
-
-/* ==============================================
-   Aviso de Votação Aberta
-   ============================================== */
-.votacao-aberta-aviso {
-  background-color: var(--nested-card-bg);
-  border: 1px solid var(--warning-300);
-  border-left: 5px solid var(--warning-700);
-  padding: 1rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-color);
+.section-title-bar {
   margin-bottom: 1.5rem;
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.25rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.95rem;
+  }
 }
 
-/* ==============================================
-   Lista de Cargos (Card Principal)
-   ============================================== */
+
 .cargos-lista {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  margin-top: 1.5rem;
 }
 
 .cargo-card {
-  background-color: var(--card-bg-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(31, 38, 135, 0.07);
   overflow: hidden;
 
   h3 {
-    font-size: 1.75rem;
-    color: var(--primary-dark);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0f172a;
     margin: 0;
-    padding: 1.5rem 2rem 0.5rem 2rem;
-    background-color: var(--nested-card-bg);
+    padding: 1.75rem 2rem 0.5rem 2rem;
   }
 
   .cargo-status {
     padding: 0 2rem 1.5rem 2rem;
-    background-color: var(--nested-card-bg);
     font-weight: 600;
-    color: var(--text-muted);
-    font-size: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    color: #64748b;
+    font-size: 0.95rem;
 
     strong {
-      color: var(--primary-color);
+      color: #3b82f6;
       font-weight: 700;
-    }
-
-    [ngIf*="pendente_confirmacao"]+.cargo-status strong,
-    [ngIf*="status === 'pendente_confirmacao'"] strong {
-      color: var(--status-pendente);
-    }
-
-    /* [NOVO] */
-    [ngIf*="pendente_desempate"]+.cargo-status strong,
-    [ngIf*="status === 'pendente_desempate'"] strong {
-      color: var(--status-desempate);
-    }
-
-    [ngIf*="finalizado"]+.cargo-status strong,
-    [ngIf*="status === 'finalizado'"] strong {
-      color: var(--status-fechado);
-    }
-
-    [ngIf*="em_votacao"]+.cargo-status strong,
-    [ngIf*="status === 'em_votacao'"] strong {
-      color: var(--status-aberto);
-    }
-
-    [ngIf*="aguardando"]+.cargo-status strong,
-    [ngIf*="status === 'aguardando'"] strong {
-      color: var(--status-aguardando);
     }
   }
 }
 
-/* ==============================================
-   Lista de Escrutínios (Cards Aninhados)
-   ============================================== */
 .escrutinios-lista {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
-  padding: 2rem;
+  padding: 1.5rem 2rem 2rem;
 }
 
 .escrutinio-card {
-  background-color: var(--nested-card-bg);
-  border: 1px solid var(--accent-300); // Was #eee
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
-  transition: all 0.2s ease;
+  backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
 
   h4 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    color: var(--primary-color);
-  }
-
-  p {
-    font-size: 1rem;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: var(--text-muted);
-    font-weight: 600;
-
-    strong {
-      display: inline-block;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      color: white;
-      background-color: var(--text-muted);
-    }
-  }
-
-  & [ngIf*="fechado"]+p strong {
-    background-color: var(--status-fechado);
-  }
-
-  & [ngIf*="aberto"]+p strong {
-    background-color: var(--status-aberto);
-  }
-
-  & [ngIf*="aberto"] {
-    border-left: 5px solid var(--status-aberto);
-    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: #0f172a;
   }
 }
 
-/* ==============================================
-   Botões de Controle
-   ============================================== */
+.contagem-votacao {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.5rem;
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.contagem-item {
+  strong {
+    display: block;
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  &.total strong { color: #3b82f6; }
+  &.faltam strong { color: #f59e0b; }
+}
+
 .controles {
   display: flex;
   flex-direction: column;
@@ -269,548 +306,65 @@
 
   button {
     width: 100%;
-    padding: 0.8rem 1rem;
-    font-size: 1rem;
-    font-weight: 600;
+    padding: 0.9rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 700;
     border: none;
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 
-    background-color: var(--action-open);
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
     color: white;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
 
     &:hover:not(:disabled) {
-      background-color: var(--primary-dark);
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
     }
 
     &:disabled {
-      background-color: var(--accent-400); // Was #bdc3c7
+      opacity: 0.5;
       cursor: not-allowed;
     }
   }
-
-  button[ngIf*="numero === 3"] {
-    background-color: var(--action-prepare);
-    color: #333;
-
-    &:hover:not(:disabled) {
-      background-color: var(--warning-400); // Was #fdd835
-    }
-  }
-
-  button[ngIf*="aberto"] {
-    background-color: var(--action-close);
-
-    &:hover:not(:disabled) {
-      background-color: var(--warn-900); // Was #b71c1c
-    }
-  }
 }
 
-/* ==============================================
-   Resultados da Apuração (Dentro do Escrutínio Card)
-   ============================================== */
-.apuracao-resultados {
-  background-color: var(--accent-50);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 1rem;
-  margin-top: 1rem;
-
-  strong {
-    display: block;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    color: var(--primary-dark);
-  }
-
-  button {
-    background-color: var(--primary-color);
-    color: white;
-    width: 100%;
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-bottom: 1rem;
-
-    &:hover:not(:disabled) {
-      background-color: var(--accent-700); // Was #5a6268
-    }
-  }
-}
-
-/* ==============================================
-   Bloco Vencedor (Finalizado)
-   ============================================== */
 .vencedor-bloco {
-  padding: 2rem 2.5rem;
-  background-color: var(--nested-card-bg);
+  padding: 2.25rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.1) 100%);
   text-align: center;
-  border: 1px solid var(--success-500);
+  border-radius: 20px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  backdrop-filter: blur(16px);
 
   h4 {
-    font-size: 1.5rem;
-    color: var(--success-500);
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    font-size: 1.1rem;
-    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #047857;
+    margin: 0 0 0.5rem 0;
   }
 
   strong {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--success-900);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #065f46;
   }
 }
-
-/* Bloco "Sem Vencedor" (Finalizado) */
-.sem-vencedor {
-  background-color: var(--nested-card-bg);
-  border: 1px solid var(--warning-500);
-
-  h4 {
-    color: var(--warning-500);
-  }
-
-  p {
-    color: var(--text-color);
-
-    strong {
-      color: var(--warning-500);
-    }
-  }
-}
-
-
-/* ==============================================
-   [REFATORADO] Estilos para a Lista de Apuração
-   (GLOBAL - Usado por .apuracao-resultados e .apuracao-final-item)
-   ============================================== */
-.lista-resultados-apuracao {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 1rem 0;
-
-  li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.6rem 0.75rem;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-
-    .nome-candidato {
-      font-size: 0.95rem;
-      font-weight: 500;
-
-      .id-candidato {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        display: block;
-      }
-    }
-
-    .votos-candidato {
-      font-size: 1.1rem;
-    }
-  }
-
-  li.vencedor-item {
-    background-color: var(--nested-card-bg);
-    border-left: 4px solid var(--action-confirm);
-
-    .nome-candidato {
-      color: var(--text-color);
-    }
-
-    .votos-candidato {
-      color: var(--action-confirm);
-      font-weight: 700;
-    }
-  }
-
-  li.outros-item {
-    background-color: var(--accent-50);
-    border-left: 4px solid var(--accent-200);
-  }
-}
-
-.brancos-nulos {
-  border-top: 1px dashed var(--accent-300); // Was #ccc
-  padding-top: 0.75rem;
-  margin-top: 1rem;
-
-  p {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin: 0.25rem 0;
-    color: var(--text-muted);
-  }
-}
-
-/* ==============================================
-   Bloco de Contagem de Votos
-   ============================================== */
-.contagem-votacao {
-  display: flex;
-  justify-content: space-around;
-  gap: 0.5rem;
-  background-color: var(--accent-100); // Was #f8f9fa
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.75rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.contagem-item {
-  margin: 0 !important;
-  padding: 0;
-  font-size: 0.9rem !important;
-  color: var(--text-muted) !important;
-  font-weight: 600 !important;
-
-  strong {
-    display: block;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-color);
-  }
-
-  &.total strong {
-    color: var(--primary-color);
-  }
-
-  &.faltam strong {
-    color: var(--action-close);
-  }
-}
-
-/* ==============================================
-   Bloco de Confirmação Pendente
-   ============================================== */
-.vencedor-pendente-bloco {
-  padding: 2rem 2.5rem;
-  background-color: var(--nested-card-bg);
-  text-align: center;
-  border: 1px solid var(--primary-500);
-
-  h4 {
-    font-size: 1.5rem;
-    color: var(--primary-500);
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    font-size: 1.1rem;
-    margin: 0.25rem 0;
-    color: var(--text-color); // Was #333
-  }
-
-  strong {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--primary-500);
-  }
-}
-
-.controles-confirmacao {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-
-  @media (min-width: 600px) {
-    flex-direction: row;
-    gap: 1rem;
-  }
-
-  button {
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 0.8rem 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  .btn-aceitar {
-    background-color: var(--action-confirm);
-    color: white;
-
-    &:hover {
-      background-color: var(--success-700); // Was #388E3C
-    }
-  }
-
-  .btn-declinar {
-    background-color: var(--action-close);
-    color: white;
-
-    &:hover {
-      background-color: var(--warn-900); // Was #b71c1c
-    }
-  }
-}
-
-/* ==============================================
-   [NOVO] Bloco de Desempate Pendente
-   ============================================== */
-.desempate-pendente-bloco {
-  padding: 2rem 2.5rem;
-  background-color: var(--nested-card-bg);
-  text-align: center;
-  border: 1px solid var(--warning-500);
-
-  h4 {
-    font-size: 1.5rem;
-    color: var(--warning-500);
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    font-size: 1.1rem;
-    margin: 0.25rem 0;
-    color: var(--text-color); // Was #333
-  }
-}
-
-.controles-desempate {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-
-  .candidato-empatado {
-    border: 2px solid var(--border-color);
-    padding: 1rem;
-    border-radius: 8px;
-    background: var(--card-bg-color);
-  }
-
-  .candidato-nome {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--primary-dark);
-    margin: 0 0 0.75rem 0;
-  }
-
-  .btn-desempatar {
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 0.8rem 1.2rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: var(--action-open); // Azul
-    color: white;
-    width: 100%;
-
-    @media (min-width: 600px) {
-      width: auto; // Botão não ocupa 100% em telas maiores
-    }
-
-    &:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-  }
-}
-
-
-/* ==============================================
-   Bloco de Apuração Final (em Finalizado/Pendente)
-   ============================================== */
-.apuracao-finalizada-container {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid var(--border-color);
-  text-align: left;
-
-  h5 {
-    font-size: 1.3rem;
-    color: var(--primary-dark);
-    margin-top: 0;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-
-  button {
-    background-color: var(--primary-color);
-    color: white;
-    width: 100%;
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-bottom: 1rem;
-
-    &:hover:not(:disabled) {
-      background-color: var(--accent-700); // Was #5a6268
-    }
-  }
-}
-
-.apuracao-final-item {
-  background-color: var(--accent-100); // Was #f8f9fa
-  border: 1px solid var(--accent-300); // Was #eee
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
-
-.apuracao-final-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color); // Was #e0e0e0
-  background-color: var(--card-bg-color); // Was #fdfdfd
-
-  >strong {
-    display: block;
-    font-size: 1.1rem;
-    color: var(--text-color);
-  }
-}
-
-.status-badge {
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 0.25rem 0.6rem;
-  border-radius: 12px;
-  color: white;
-
-  &.status-fechado {
-    background-color: var(--status-fechado);
-  }
-
-  &.status-nao-iniciado {
-    background-color: var(--status-nao-iniciado);
-  }
-
-  &.status-aberto {
-    background-color: var(--status-aberto);
-  }
-}
-
-.apuracao-final-content {
-  padding: 1rem;
-}
-
-.total-votos-info {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-/* ==============================================
-   [NOVOS ESTILOS] Botão Sanfona (Acordeão)
-   ============================================== */
-.btn-sanfona {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  background-color: var(--accent-100); // Was #f1f3f5
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  margin-top: 1.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--primary-dark);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: var(--accent-200); // Was #e9ecef
-  }
-
-  .sanfona-icon {
-    font-size: 0.9rem;
-  }
-}
-
-/* Container do conteúdo da sanfona */
-.sanfona-conteudo {
-  .apuracao-finalizada-container {
-    margin-top: 0.75rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-  }
-}
-
-
-/* ==============================================
-   [NOVO] Botão Gerar PDF (INDIVIDUAL, DENTRO DO CARD)
-   ============================================== */
-/* ==============================================
-   [NOVO] Botão Gerar PDF (INDIVIDUAL, DENTRO DO CARD)
-   ============================================== */
 .btn-gerar-pdf {
-  display: block; // Garante que ocupe a linha
+  display: block;
   width: 100%;
   padding: 0.8rem 1rem;
   font-size: 1rem;
   font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background-color: var(--action-secondary); // Cor cinza
-  color: white;
-  margin: 0 auto 0.75rem auto; // Centraliza e dá espaço inferior
+  background: rgba(241, 245, 249, 0.8);
+  color: #334155;
 
-  &:hover:not(:disabled) {
-    background-color: var(--accent-700); // Was #5a6268
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Nos blocos finalizados/pendentes, limitar a largura em telas maiores */
-  .vencedor-bloco &,
-  .vencedor-pendente-bloco &,
-  .desempate-pendente-bloco & {
-    // [NOVO]
-    margin-top: 1.5rem; // Adiciona espaço superior
-
-    @media (min-width: 600px) {
-      max-width: 300px; // Limita a largura em telas de desktop
-    }
-  }
-
-  /* Ajuste específico para o bloco pendente */
-  .vencedor-pendente-bloco &,
-  .desempate-pendente-bloco & {
-    // [NOVO]
-    margin-bottom: 0; // Remove a margem inferior antes da sanfona
+  &:hover {
+    background: rgba(255, 255, 255, 0.95);
+    color: #0f172a;
   }
 }

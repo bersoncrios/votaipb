@@ -1,104 +1,83 @@
-<div class="instrucoes-container">
-  <header class="page-header">
-    <mat-icon class="header-icon">help_outline</mat-icon>
-    <div>
-      <h1>Guia do Administrador</h1>
-      <p class="subtitulo">Siga estes passos para criar uma eleição do zero.</p>
+<div class="vota-sobre-shell">
+  <!-- Hero Section -->
+  <div class="sobre-hero-card">
+    <div class="hero-badge">
+      <span>✦ VotaIPB • Guia de Uso</span>
     </div>
-  </header>
+    <h1>Guia Completo do Administrador</h1>
+    <p class="subtitulo">Siga o passo a passo simplificado para realizar eleições e votações na sua igreja com total transparência e segurança.</p>
+  </div>
 
-  <mat-accordion class="instrucoes-acordeao" multi="false">
-
-    <!-- ETAPA 1: LISTA DE INSCRIÇÃO -->
-    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <span class="step-number">1</span>
-          Etapa 1: Criar Lista de Inscrição
-        </mat-panel-title>
-        <mat-panel-description>
-          Recolher os dados dos eleitores
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <div class="panel-content">
-        <p>
-          Antes de criar a eleição, precisa de uma lista oficial de quem pode votar. A forma mais simples é criar uma lista pública e deixar que os eleitores se inscrevam.
-        </p>
-        <ol class="step-list">
-          <li>
-            Clique no menu <strong><a routerLink="/inscricoes/lista">Gerênciar Inscrições</a></strong>.
-          </li>
-          <li>
-            Clique em <span class="destaque">Nova Lista</span> e dê um título (ex: "Eleição 2024") e uma descrição (opcional).
-          </li>
-          <li>
-            Após criar, clique no ícone <mat-icon class="inline-icon">link</mat-icon> <strong>(Copiar Link)</strong> no cartão da lista.
-          </li>
-          <li>
-            <strong>Compartilhe esse link</strong> com os seus eleitores/candidatos (via e-mail, WhatsApp, etc.). Eles irão usar esse link para registar o seu Nome e ID.
-          </li>
-          <li>
-            Quando o prazo de inscrição terminar, clique no ícone <mat-icon class="inline-icon">download</mat-icon> <strong>(Descarregar XLS)</strong>.
-          </li>
-        </ol>
-        <div class="alerta-info">
-          <mat-icon>info</mat-icon>
-          <span>Este ficheiro Excel (.xlsx) será necessário na próxima etapa.</span>
-        </div>
+  <!-- Step Cards Grid -->
+  <div class="steps-grid">
+    <!-- ETAPA 1 -->
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">Etapa 1</span>
+        <h2>Criar Lista de Inscrição</h2>
       </div>
+      <p class="step-desc">Recolha os dados dos eleitores de forma pública e automática antes da votação.</p>
+      
+      <ol class="step-items">
+        <li>Acesse a página de <strong>Gerenciar Inscrições</strong>.</li>
+        <li>Clique em <strong>+ Nova Lista</strong>, informe o título (ex: <i>Assembleia Geral 2024</i>) e salve.</li>
+        <li>Copie o link público da lista e envie via WhatsApp ou e-mail para que os membros se inscrevam.</li>
+        <li>Após o encerramento das inscrições, faça o download da lista em formato <strong>Excel (.xlsx)</strong>.</li>
+      </ol>
 
-      <mat-action-row>
-        <button mat-button color="primary" (click)="nextStep()">Próximo</button>
-      </mat-action-row>
-    </mat-expansion-panel>
-
-    <!-- ETAPA 2: CRIAR ELEIÇÃO -->
-    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <span class="step-number">2</span>
-          Etapa 2: Configurar a Eleição
-        </mat-panel-title>
-        <mat-panel-description>
-          Carregar eleitores e definir cargos
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <div class="panel-content">
-        <p>
-          Com o arquivo Excel dos eleitores pronto, seguimos para configuração da votação.
-        </p>
-        <ol class="step-list">
-          <li>
-            Clique no menu <strong><a routerLink="/eleicoes/registrar">Registrar Eleição</a></strong>.
-          </li>
-          <li>
-            Preencha os dados básicos.
-          </li>
-          <li>
-            Na secção de Eleitores, faça o <strong>upload do ficheiro Excel</strong> que descarregou na Etapa 1.<br/>
-            Ou, preencha manualmente se preferir
-          </li>
-          <li>
-            Adicione os <strong>Cargos</strong> (ex: Presidente) e os respetivos <strong>Candidatos</strong>.
-
-          </li>
-          <li>
-            Clique em <strong>"Salvar Eleição"</strong> para finalizar.
-          </li>
-        </ol>
-        <div class="alerta-sucesso">
-          <mat-icon>check_circle</mat-icon>
-          <span>A eleição está pronta! Pode agora compartilhar o link de votação disponível no painel de gestão.</span>
-        </div>
+      <div class="step-action">
+        <a routerLink="/inscricoes/lista" class="btn-step-action">
+          <i class="ti ti-forms"></i>
+          <span>Ir para Inscrições</span>
+        </a>
       </div>
+    </div>
 
-      <mat-action-row>
-        <button mat-button color="warn" (click)="prevStep()">Anterior</button>
-        <button mat-button color="primary" (click)="nextStep()">Finalizar</button>
-      </mat-action-row>
-    </mat-expansion-panel>
+    <!-- ETAPA 2 -->
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge step-badge-blue">Etapa 2</span>
+        <h2>Configurar & Salvar a Eleição</h2>
+      </div>
+      <p class="step-desc">Cadastre os cargos, escrutínios e faça o upload da lista de membros elegíveis.</p>
+      
+      <ol class="step-items">
+        <li>Acesse a página de <strong>Registrar Eleição</strong>.</li>
+        <li>Faça o upload do arquivo Excel gerado na Etapa 1 para carregar a lista de eleitores automaticamente.</li>
+        <li>Cadastre os cargos (ex: <i>Presidente, Vice-Presidente, Secretário</i>) e adicione os candidatos de cada um.</li>
+        <li>Clique em <strong>Salvar Eleição</strong> para concluir a configuração.</li>
+      </ol>
 
-  </mat-accordion>
+      <div class="step-action">
+        <a routerLink="/eleicoes/registrar" class="btn-step-action btn-blue">
+          <i class="ti ti-file-plus"></i>
+          <span>Registrar Nova Eleição</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ETAPA 3 -->
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge step-badge-emerald">Etapa 3</span>
+        <h2>Sala de Controle ao Vivo</h2>
+      </div>
+      <p class="step-desc">Abra os escrutínios, acompanhe os votos em tempo real e gere os relatórios em PDF.</p>
+      
+      <ol class="step-items">
+        <li>Na lista de eleições, clique em <strong>Gerenciar</strong> na eleição desejada.</li>
+        <li>Compartilhe o link direto da votação com a assembleia da igreja.</li>
+        <li>Abra o 1º escrutínio para votação e acompanhe a contagem ao vivo na tela.</li>
+        <li>Ao finalizar, apure os resultados instantaneamente e gere o relatório oficial em PDF.</li>
+      </ol>
+
+      <div class="step-action">
+        <a routerLink="/eleicoes/lista" class="btn-step-action btn-emerald">
+          <i class="ti ti-adjustments-check"></i>
+          <span>Gerenciar Eleições</span>
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
+
