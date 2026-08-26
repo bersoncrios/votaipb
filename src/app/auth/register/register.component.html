@@ -1,32 +1,38 @@
 <form [formGroup]="registerForm" class="auth-main">
   <div class="auth-wrapper version-1">
+    <div class="auth-background">
+      <div class="yellow-circle"></div>
+      <div class="red-circle"></div>
+    </div>
+    
     <div class="auth-form">
-      <div class="auth-background">
-        <div class="yellow-circle"></div>
-        <div class="red-circle"></div>
-      </div>
       <div class="main-form">
-        <app-card [showHeader]="false" class="auth-form-card" [padding]="40">
-          <div class="text-center">
-            <img src="assets/images/logo.png" alt="Vota IPB Logo" style="max-width: 100px; margin-bottom: 20px;" />
+        <app-card [showHeader]="false" class="auth-form-card">
+          <div class="text-center m-b-20">
+            <img src="assets/images/logo.png" alt="Vota IPB Logo" style="max-width: 90px; margin-bottom: 10px;" />
+            <div>
+              <span class="beta-badge" matTooltip="Esta versão (v2.0.0) está em fase BETA. Caso encontre algum bug ou instabilidade, por favor entre em contato conosco!" matTooltipPosition="below">
+                <i class="ti ti-bug"></i> v2.0.0 BETA
+              </span>
+            </div>
           </div>
 
           <div class="row text-start">
             <div class="col-md-6">
-              <label for="firstName" class="f-w-500">Primeiro Nome</label>
+              <label for="firstName" class="f-w-600 f-14 text-dark">Primeiro Nome</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
                 <input matInput formControlName="firstName" placeholder="Primeiro Nome" />
               </mat-form-field>
             </div>
             <div class="col-md-6">
-              <label for="lastName" class="f-w-500">Sobrenome</label>
+              <label for="lastName" class="f-w-600 f-14 text-dark">Sobrenome</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
                 <input matInput formControlName="lastName" placeholder="Sobrenome" />
               </mat-form-field>
             </div>
 
             <div class="col-12">
-              <label for="email" class="f-w-500">Email</label>
+              <label for="email" class="f-w-600 f-14 text-dark">Email</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
                 <input matInput formControlName="email" required placeholder="Digite seu email" />
                 <mat-error *ngIf="registerForm.get('email')?.invalid">
@@ -36,11 +42,11 @@
             </div>
 
             <div class="col-12">
-              <label for="password" class="f-w-500">Senha</label>
+              <label for="password" class="f-w-600 f-14 text-dark">Senha</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
                 <input matInput [type]="hide ? 'password' : 'text'" formControlName="password"
                   placeholder="Digite sua senha" />
-                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
                   [attr.aria-pressed]="hide">
                   <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
@@ -48,11 +54,11 @@
             </div>
 
             <div class="col-12">
-              <label for="confirmPassword" class="f-w-500">Confirmar Senha</label>
+              <label for="confirmPassword" class="f-w-600 f-14 text-dark">Confirmar Senha</label>
               <mat-form-field appearance="outline" class="w-100 m-t-5">
                 <input matInput [type]="coHide ? 'password' : 'text'" formControlName="confirmPassword"
                   placeholder="Confirme sua senha" />
-                <button mat-icon-button matSuffix (click)="coHide = !coHide" [attr.aria-label]="'Hide password'"
+                <button type="button" mat-icon-button matSuffix (click)="coHide = !coHide" [attr.aria-label]="'Hide password'"
                   [attr.aria-pressed]="coHide">
                   <mat-icon>{{ coHide ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
@@ -60,22 +66,22 @@
             </div>
           </div>
 
-          <div class="check-me">
-            <mat-checkbox formControlName="terms" class="float-start" color="primary">
+          <div class="check-me m-t-5">
+            <mat-checkbox formControlName="terms" color="primary">
               Concordo com os Termos & Condições
             </mat-checkbox>
           </div>
 
-          <div class="grid">
-            <button mat-flat-button color="primary" class="b-rad-20 m-t-15" (click)="register()"
+          <div class="m-t-15">
+            <button mat-flat-button class="auth-submit-btn" (click)="register()"
               [disabled]="registerForm.invalid">
               Registrar
             </button>
           </div>
 
-          <div class="check-me m-t-15 text-center">
-            <h6 class="f-w-400 text-muted m-b-0">Já tem uma conta?</h6>
-            <a class="text-primary-500" [routerLink]="['/auth/login']">Entrar</a>
+          <div class="text-center m-t-20">
+            <span class="f-w-400 text-muted f-14">Já tem uma conta? </span>
+            <a class="text-primary-500 f-w-600 f-14" [routerLink]="['/auth/login']">Entrar</a>
           </div>
         </app-card>
       </div>

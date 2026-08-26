@@ -48,6 +48,43 @@
   }
 }
 
+.disclaimer-card {
+  background: rgba(254, 243, 199, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 24px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.08);
+
+  .disclaimer-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+    color: #b45309;
+
+    i {
+      font-size: 1.3rem;
+      color: #d97706;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: #78350f;
+
+    strong {
+      color: #451a03;
+    }
+  }
+}
+
 .steps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
